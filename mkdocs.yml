@@ -1,0 +1,155 @@
+site_name: Advanced Math, Properly
+site_description: The math foundation for machine learning, algorithms, information theory and physics, explained from the ground up with proofs, pictures and interactive animations.
+site_url: https://kdellis135.github.io/advanced_math/
+repo_url: https://github.com/kdellis135/advanced_math
+repo_name: kdellis135/advanced_math
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  icon:
+    logo: material/sigma
+  favicon: assets/favicon.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.footer
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - toc.follow
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/katex-config.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
+  - javascripts/viz.js
+  - javascripts/progress.js
+
+nav:
+  - Home: index.md
+  - Start Here:
+      - start/index.md
+      - How to learn this without losing again: start/how-to-learn.md
+      - The roadmap: start/roadmap.md
+  - 1 · Foundations:
+      - foundations/index.md
+      - Logic and proofs: foundations/logic-and-proofs.md
+      - Sets, functions and notation: foundations/sets-functions.md
+      - Exponentials, logarithms and trig: foundations/exp-log-trig.md
+      - Complex numbers: foundations/complex-numbers.md
+  - 2 · Calculus:
+      - calculus/index.md
+      - Limits and continuity: calculus/limits.md
+      - Derivatives: calculus/derivatives.md
+      - Using derivatives: calculus/applications.md
+      - Integrals: calculus/integrals.md
+      - Series and Taylor expansions: calculus/series-taylor.md
+  - 3 · Linear Algebra:
+      - linear-algebra/index.md
+      - Vectors and the dot product: linear-algebra/vectors.md
+      - Matrices are transformations: linear-algebra/matrices.md
+      - Solving linear systems: linear-algebra/linear-systems.md
+      - Vector spaces, basis, rank: linear-algebra/vector-spaces.md
+      - Determinants: linear-algebra/determinants.md
+      - Orthogonality and least squares: linear-algebra/orthogonality.md
+      - Eigenvalues and eigenvectors: linear-algebra/eigen.md
+      - Symmetric matrices and the spectral theorem: linear-algebra/spectral.md
+      - SVD and PCA: linear-algebra/svd.md
+  - 4 · Multivariable Calculus:
+      - multivariable/index.md
+      - Partial derivatives and the gradient: multivariable/gradient.md
+      - Jacobians, the chain rule and backprop: multivariable/chain-rule.md
+      - The Hessian and second-order Taylor: multivariable/hessian.md
+      - Matrix calculus for ML: multivariable/matrix-calculus.md
+      - Multiple integrals and change of variables: multivariable/integrals.md
+      - Lagrange multipliers: multivariable/lagrange.md
+  - 5 · Probability:
+      - probability/index.md
+      - Counting: probability/counting.md
+      - Probability, conditioning and Bayes: probability/foundations.md
+      - Random variables and expectation: probability/random-variables.md
+      - The distribution zoo: probability/distributions.md
+      - Several random variables: probability/joint.md
+      - Inequalities and limit theorems: probability/limit-theorems.md
+  - 6 · Statistics:
+      - statistics/index.md
+      - Estimation, MLE and MAP: statistics/estimation.md
+      - Bias, variance and generalization: statistics/bias-variance.md
+      - Confidence intervals and tests: statistics/inference.md
+  - 7 · Optimization:
+      - optimization/index.md
+      - Convexity and Jensen: optimization/convexity.md
+      - Gradient descent and friends: optimization/gradient-descent.md
+      - Constraints, KKT and duality: optimization/constrained.md
+  - 8 · Information Theory:
+      - information-theory/index.md
+      - Entropy: information-theory/entropy.md
+      - Cross-entropy, KL and mutual information: information-theory/kl-divergence.md
+      - Compression and coding: information-theory/coding.md
+  - 9 · Discrete Math & Algorithms:
+      - discrete/index.md
+      - Asymptotics and Big-O: discrete/asymptotics.md
+      - Recurrences and divide and conquer: discrete/recurrences.md
+      - Graphs: discrete/graphs.md
+      - Number theory for computing: discrete/number-theory.md
+  - 10 · Signals & Dynamics:
+      - further/index.md
+      - Differential equations: further/differential-equations.md
+      - Fourier series and transforms: further/fourier.md
+  - Reference:
+      - Notation cheat sheet: reference/notation.md
+      - Free resources: reference/resources.md

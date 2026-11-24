@@ -1,0 +1,88 @@
+/* ---------- Custom admonitions: definition, theorem, proof, intuition, ml ---------- */
+:root {
+  --md-admonition-icon--definition: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>');
+  --md-admonition-icon--theorem: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>');
+  --md-admonition-icon--proof: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg>');
+  --md-admonition-icon--intuition: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>');
+  --md-admonition-icon--ml: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 4h12v2h2v2h-2v3h2v2h-2v3h2v2h-2v2H6v-2H4v-2h2v-3H4v-2h2V8H4V6h2zm2 4v8h8V8zm2 2h4v4h-4z"/></svg>');
+}
+
+.md-typeset .admonition.definition, .md-typeset details.definition { border-color: #2f6fde; }
+.md-typeset .definition > .admonition-title, .md-typeset .definition > summary { background-color: rgba(47, 111, 222, .1); }
+.md-typeset .definition > .admonition-title::before, .md-typeset .definition > summary::before {
+  background-color: #2f6fde; -webkit-mask-image: var(--md-admonition-icon--definition); mask-image: var(--md-admonition-icon--definition);
+}
+
+.md-typeset .admonition.theorem, .md-typeset details.theorem { border-color: #8a4fd8; }
+.md-typeset .theorem > .admonition-title, .md-typeset .theorem > summary { background-color: rgba(138, 79, 216, .1); }
+.md-typeset .theorem > .admonition-title::before, .md-typeset .theorem > summary::before {
+  background-color: #8a4fd8; -webkit-mask-image: var(--md-admonition-icon--theorem); mask-image: var(--md-admonition-icon--theorem);
+}
+
+.md-typeset .admonition.proof, .md-typeset details.proof { border-color: #6b7a8f; }
+.md-typeset .proof > .admonition-title, .md-typeset .proof > summary { background-color: rgba(107, 122, 143, .1); }
+.md-typeset .proof > .admonition-title::before, .md-typeset .proof > summary::before {
+  background-color: #6b7a8f; -webkit-mask-image: var(--md-admonition-icon--proof); mask-image: var(--md-admonition-icon--proof);
+}
+.md-typeset .proof > p:last-child::after { content: "∎"; float: right; margin-left: .5em; opacity: .7; }
+
+.md-typeset .admonition.intuition, .md-typeset details.intuition { border-color: #e8860c; }
+.md-typeset .intuition > .admonition-title, .md-typeset .intuition > summary { background-color: rgba(232, 134, 12, .1); }
+.md-typeset .intuition > .admonition-title::before, .md-typeset .intuition > summary::before {
+  background-color: #e8860c; -webkit-mask-image: var(--md-admonition-icon--intuition); mask-image: var(--md-admonition-icon--intuition);
+}
+
+.md-typeset .admonition.ml, .md-typeset details.ml { border-color: #12a37f; }
+.md-typeset .ml > .admonition-title, .md-typeset .ml > summary { background-color: rgba(18, 163, 127, .1); }
+.md-typeset .ml > .admonition-title::before, .md-typeset .ml > summary::before {
+  background-color: #12a37f; -webkit-mask-image: var(--md-admonition-icon--ml); mask-image: var(--md-admonition-icon--ml);
+}
+
+/* ---------- Lesson meta strip ---------- */
+.md-typeset .lesson-meta {
+  display: flex; flex-wrap: wrap; gap: .4rem 1.2rem;
+  padding: .6rem .9rem; margin: 0 0 1.4rem;
+  border-radius: .4rem;
+  background: var(--md-code-bg-color);
+  font-size: .75rem; color: var(--md-default-fg-color--light);
+}
+.md-typeset .lesson-meta p { margin: 0; }
+
+/* ---------- Interactive figures ---------- */
+.md-typeset .viz {
+  margin: 1.4rem 0; padding: .8rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: .5rem;
+  background: var(--md-default-bg-color);
+}
+.viz canvas { display: block; width: 100%; touch-action: none; border-radius: .3rem; }
+.viz .viz-title { font-weight: 700; font-size: .8rem; margin-bottom: .4rem; }
+.viz .viz-controls { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; margin-top: .6rem; font-size: .72rem; align-items: center; }
+.viz .viz-controls label { display: inline-flex; align-items: center; gap: .4rem; }
+.viz .viz-controls input[type=range] { width: 8.5rem; accent-color: var(--md-accent-fg-color); }
+.viz .viz-controls select, .viz .viz-controls button {
+  font: inherit; padding: .15rem .55rem; border-radius: .25rem;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  background: var(--md-default-bg-color); color: var(--md-default-fg-color); cursor: pointer;
+}
+.viz .viz-controls button:hover { border-color: var(--md-accent-fg-color); }
+.viz .viz-readout { font-family: var(--md-code-font-family); font-size: .7rem; margin-top: .45rem; color: var(--md-default-fg-color--light); white-space: pre-wrap; }
+.viz .viz-hint { font-size: .68rem; color: var(--md-default-fg-color--light); margin-top: .3rem; font-style: italic; }
+.viz .val { font-family: var(--md-code-font-family); min-width: 2.6rem; display: inline-block; }
+
+/* ---------- Progress ---------- */
+.lesson-done-bar { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--md-default-fg-color--lightest); display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.lesson-done-bar button {
+  font: inherit; font-size: .8rem; padding: .45rem 1rem; border-radius: 2rem; cursor: pointer;
+  border: 2px solid #12a37f; background: transparent; color: #12a37f; font-weight: 600;
+}
+.lesson-done-bar button.done { background: #12a37f; color: #fff; }
+.lesson-done-bar span { font-size: .72rem; color: var(--md-default-fg-color--light); }
+.md-typeset .progress-list a.is-done::after { content: " ✓"; color: #12a37f; font-weight: 700; }
+.progress-meter { height: .6rem; border-radius: 1rem; background: var(--md-default-fg-color--lightest); overflow: hidden; margin: .5rem 0 1.5rem; }
+.progress-meter > div { height: 100%; width: 0; background: linear-gradient(90deg, #12a37f, #2f6fde); transition: width .4s; }
+
+/* ---------- Home page cards ---------- */
+.md-typeset .grid.cards > ul > li { transition: border-color .2s, box-shadow .2s; }
+.md-typeset table:not([class]) { font-size: .72rem; }
+.md-typeset .katex-display { overflow-x: auto; overflow-y: hidden; padding: .2rem 0; }
