@@ -37,6 +37,21 @@ $A$ acts on $\vv v$ by pure scaling:
 
 Any nonzero multiple of an eigenvector is also an eigenvector, so really an eigenvector is an *eigen-direction*.
 
+(Why: if $A\vv v = \lambda \vv v$, then $A(c\vv v) = cA\vv v = c\lambda\vv v = \lambda(c\vv v)$.)
+
+!!! example "Warm-up: testing whether a vector is an eigenvector"
+    Take $A = \begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$. Multiply, then ask "is the output a multiple of the input?"
+
+    | $\vv v$ | $A\vv v$ | multiple of $\vv v$? |
+    |---|---|---|
+    | $(1, 0)$ | $(2, 1)$ | no: direction changed |
+    | $(1, 2)$ | $(4, 5)$ | no |
+    | $(1, 1)$ | $(3, 3)$ | **yes**, $3(1, 1)$: eigenvalue $3$ |
+    | $(1, -1)$ | $(1, -1)$ | **yes**, $1(1, -1)$: eigenvalue $1$ |
+    | $(2, 2)$ | $(6, 6)$ | **yes**, the same direction as $(1, 1)$ |
+
+    Most inputs get turned. Only the two special directions are left pointing the same way.
+
 <div class="viz" data-viz="eigen"></div>
 
 Some examples without any computation:
@@ -47,11 +62,17 @@ Some examples without any computation:
 | **Reflection** across a line | vectors on the line; perpendicular vectors | $1$; $-1$ |
 | **Rotation** by $90°$ | none: no real direction is preserved | $\pm i$ (complex) |
 
+For instance, reflecting across the $x$-axis leaves $(1, 0)$ alone ($\lambda = 1$) and flips $(0, 1)$ to $(0, -1)$ ($\lambda = -1$). A vector like $(1, 1)$ goes to $(1, -1)$, which is a different direction, so it's not an eigenvector.
+
 ## 2. Finding eigenvalues: the characteristic equation
+
+Guessing works for simple maps. For a general matrix we need a method.
 
 $A\vv v = \lambda\vv v$ means $(A - \lambda I)\vv v = \vv 0$ with $\vv v \neq \vv 0$.
 
-So $A - \lambda I$ must have a nontrivial null space, i.e. be singular:
+(Rewrite $\lambda \vv v$ as $\lambda I\vv v$, then move it left: $A\vv v - \lambda I\vv v = (A - \lambda I)\vv v$. The matrix $A - \lambda I$ is just $A$ with $\lambda$ subtracted from each diagonal entry.)
+
+So $A - \lambda I$ must have a nontrivial null space, i.e. be singular. By [Determinants](determinants.md), a matrix is singular exactly when its determinant is $0$:
 
 $$
 \boxed{\det(A - \lambda I) = 0.}
@@ -69,8 +90,14 @@ This is a polynomial of degree $n$ in $\lambda$, the **characteristic polynomial
     \det\begin{pmatrix}2 - \lambda & 1\\ 1 & 2-\lambda\end{pmatrix} = (2-\lambda)^2 - 1 = \lambda^2 - 4\lambda + 3 = (\lambda - 1)(\lambda - 3).
     $$
 
-    - $\lambda_1 = 3$: $A - 3I = \begin{pmatrix}-1 & 1\\1&-1\end{pmatrix}$, null space spanned by $\vv v_1 = (1, 1)$.
-    - $\lambda_2 = 1$: $A - I = \begin{pmatrix}1&1\\1&1\end{pmatrix}$, null space spanned by $\vv v_2 = (1, -1)$.
+    (The determinant $(2 - \lambda)(2 - \lambda) - 1 \cdot 1$, expanded: $4 - 4\lambda + \lambda^2 - 1$.)
+
+    Now find the eigenvectors, one eigenvalue at a time, by solving $(A - \lambda I)\vv v = \vv 0$:
+
+    - $\lambda_1 = 3$: $A - 3I = \begin{pmatrix}-1 & 1\\1&-1\end{pmatrix}$. Both rows say $-x + y = 0$, i.e. $y = x$. Choosing $x = 1$: $\vv v_1 = (1, 1)$.
+    - $\lambda_2 = 1$: $A - I = \begin{pmatrix}1&1\\1&1\end{pmatrix}$. Both rows say $x + y = 0$. Choosing $x = 1$: $\vv v_2 = (1, -1)$.
+
+    The rows of $A - \lambda I$ always come out as multiples of each other (for a $2 \times 2$). That's guaranteed, because we chose $\lambda$ to make the matrix singular. If they don't, you've made an arithmetic error.
 
     Check: $A(1,1) = (3,3)$ ✓ and $A(1,-1) = (1,-1)$ ✓.
 
@@ -82,7 +109,11 @@ $$
 \det(A - \lambda I) = \lambda^2 - (\tr A)\lambda + \det A,
 $$
 
-where $\tr A = a + d$ is the **trace** (sum of the diagonal). So
+where $\tr A = a + d$ is the **trace** (sum of the diagonal).
+
+(Derivation: $\det\begin{pmatrix}a - \lambda & b\\c & d - \lambda\end{pmatrix} = (a - \lambda)(d - \lambda) - bc = \lambda^2 - (a + d)\lambda + (ad - bc)$.)
+
+So, by the quadratic formula,
 
 $$
 \lambda = \frac{\tr A}{2} \pm\sqrt{\left(\frac{\tr A}{2}\right)^2 - \det A}.
@@ -133,7 +164,15 @@ So if $A$ ($n\times n$) has $n$ distinct eigenvalues, its eigenvectors form a ba
 - Put the eigenvectors as columns of $V$.
 - Put the eigenvalues on the diagonal of $\Lambda$.
 
-The equations $A\vv v_i = \lambda_i\vv v_i$, all at once, read $AV = V\Lambda$, so:
+The equations $A\vv v_i = \lambda_i\vv v_i$, all at once, read $AV = V\Lambda$.
+
+Check it column by column. Column $i$ of $AV$ is $A\vv v_i$. Column $i$ of $V\Lambda$ is $V$ times the $i$-th column of $\Lambda$, which is $\lambda_i\vv e_i$, giving $\lambda_i\vv v_i$. So "$AV = V\Lambda$" says exactly "$A\vv v_i = \lambda_i \vv v_i$ for every $i$." For our example:
+
+$$
+\underbrace{\begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}}_{A}\underbrace{\begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}}_{V} = \begin{pmatrix}3 & 1\\3 & -1\end{pmatrix} = \underbrace{\begin{pmatrix}1 & 1\\1 & -1\end{pmatrix}}_{V}\underbrace{\begin{pmatrix}3 & 0\\0 & 1\end{pmatrix}}_{\Lambda}.
+$$
+
+Since the columns of $V$ are independent, $V$ is invertible. Multiply $AV = V\Lambda$ on the right by $V^{-1}$:
 
 !!! theorem "Diagonalization"
     If $A$ has $n$ independent eigenvectors, then
@@ -153,6 +192,8 @@ The equations $A\vv v_i = \lambda_i\vv v_i$, all at once, read $AV = V\Lambda$, 
 
 Not every matrix can be diagonalized. The shear $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ has $\lambda = 1$ twice, but only one eigen-direction, $(1, 0)$.
 
+(It's triangular, so its eigenvalues are the diagonal entries, $1$ and $1$. Then $A - I = \begin{pmatrix}0 & 1\\0 & 0\end{pmatrix}$ forces $y = 0$, so the only eigenvectors are multiples of $(1, 0)$. One direction isn't enough for a basis of $\R^2$.)
+
 Such "defective" matrices are rare: an arbitrarily small perturbation makes the eigenvalues distinct.
 
 ## 4. Powers and dynamics
@@ -163,11 +204,30 @@ $$
 A^k = V\Lambda^kV^{-1}, \qquad \Lambda^k = \diag(\lambda_1^k, \ldots, \lambda_n^k).
 $$
 
+For example, $A^2 = (V\Lambda V^{-1})(V\Lambda V^{-1}) = V\Lambda(V^{-1}V)\Lambda V^{-1} = V\Lambda^2 V^{-1}$. And powers of a diagonal matrix just raise each diagonal entry to that power.
+
 Equivalently: write the starting vector in the eigenbasis, $\vv x_0 = c_1\vv v_1 + \cdots + c_n\vv v_n$. Then
 
 $$
 A^k\vv x_0 = c_1\lambda_1^k\vv v_1 + \cdots + c_n\lambda_n^k\vv v_n.
 $$
+
+(Apply $A$ once: each $\vv v_i$ just gets multiplied by $\lambda_i$, by linearity. Apply it $k$ times: by $\lambda_i^k$.)
+
+!!! example "Example: $A^k$ applied to a vector, with numbers"
+    Again $A = \begin{pmatrix}2 & 1\\1 & 2\end{pmatrix}$ and start at $\vv x_0 = (1, 0)$.
+
+    1. Write $\vv x_0$ in the eigenbasis: $(1, 0) = \frac12(1, 1) + \frac12(1, -1)$.
+    2. Apply $A^k$: $\ A^k\vv x_0 = \frac12 \cdot 3^k(1, 1) + \frac12 \cdot 1^k (1, -1)$.
+
+    | $k$ | $A^k \vv x_0$ | direction |
+    |---|---|---|
+    | 0 | $(1, 0)$ | along the $x$-axis |
+    | 1 | $(2, 1)$ | |
+    | 2 | $(5, 4)$ | |
+    | 5 | $(122, 121)$ | almost exactly along $(1, 1)$ |
+
+    The $(1, 1)$ component grows like $3^k$, while the $(1, -1)$ component stays fixed. So the vector swings toward the dominant eigen-direction.
 
 **As $k\to\infty$ the term with the largest $|\lambda|$ dominates.**
 
@@ -181,13 +241,19 @@ $$
     \begin{pmatrix}F_{k+1}\\F_k\end{pmatrix} = \begin{pmatrix}1&1\\1&0\end{pmatrix}\begin{pmatrix}F_k\\F_{k-1}\end{pmatrix}.
     $$
 
-    - The characteristic equation is $\lambda^2 - \lambda - 1 = 0$, so $\lambda = \frac{1\pm\sqrt5}{2}$.
+    (Row 1 of the product is $F_k + F_{k-1} = F_{k+1}$; row 2 just copies $F_k$ down.)
+
+    - The characteristic equation is $\lambda^2 - \lambda - 1 = 0$ ($\tr = 1$, $\det = -1$), so $\lambda = \frac{1\pm\sqrt5}{2}$.
     - These are the golden ratio $\varphi \approx 1.618$ and $\psi \approx -0.618$.
-    - Hence $F_k = c_1\varphi^k + c_2\psi^k$, and from $F_0 = 0$, $F_1 = 1$:
+    - Hence $F_k = c_1\varphi^k + c_2\psi^k$ for some constants. Find them from the first two values:
+        - $F_0 = 0$: $\ c_1 + c_2 = 0$, so $c_2 = -c_1$.
+        - $F_1 = 1$: $\ c_1\varphi - c_1\psi = 1$, so $c_1 = \frac{1}{\varphi - \psi} = \frac{1}{\sqrt5}$.
 
     $$
     F_k = \frac{\varphi^k - \psi^k}{\sqrt5}.
     $$
+
+    Check $k = 2$: $\varphi^2 - \psi^2 = (\varphi - \psi)(\varphi + \psi) = \sqrt5 \cdot 1$, so $F_2 = 1$. ✓
 
     Since $|\psi| < 1$:
 
@@ -214,6 +280,20 @@ $$
 
     Since $0.6^k \to 0$, **every starting distribution converges to 75% city, 25% suburbs.** (Pick the "Markov matrix" preset in the figure above.)
 
+    Watch it happen, starting with everyone in the city:
+
+    | Day | city | suburbs |
+    |---|---|---|
+    | 0 | 1.00 | 0.00 |
+    | 1 | 0.90 | 0.10 |
+    | 2 | 0.84 | 0.16 |
+    | 3 | 0.804 | 0.196 |
+    | 10 | $\approx 0.752$ | $\approx 0.248$ |
+
+    The gap to $0.75$ shrinks by the factor $0.6$ each day: $0.25, 0.15, 0.09, 0.054, \dots$ That factor is exactly $\lambda_2$.
+
+    Check the steady state: $M(0.75, 0.25) = (0.675 + 0.075,\ 0.075 + 0.175) = (0.75, 0.25)$. ✓
+
 **PageRank** is exactly this:
 
 - The web is a giant Markov chain (a random surfer clicking links).
@@ -226,6 +306,8 @@ A real matrix may have complex eigenvalues, which come in conjugate pairs $a \pm
 
 - The matrix then acts like **rotation by $\theta$ combined with scaling by $r$** in some plane.
 - Example: the rotation matrix $R_\theta$ has eigenvalues $e^{\pm i\theta}$.
+
+For the 90° rotation $\begin{pmatrix}0 & -1\\1 & 0\end{pmatrix}$: $\tr = 0$ and $\det = 1$, so $\lambda^2 + 1 = 0$ and $\lambda = \pm i$. No real number works, matching the picture: a quarter-turn leaves no direction unchanged. The eigenvectors exist too, but they have complex entries: $(1, -i)$ for $\lambda = i$.
 
 For dynamics $\vv x_{k+1} = A\vv x_k$, complex eigenvalues produce **oscillation**: spiraling in if $r < 1$, and out if $r > 1$.
 

@@ -32,6 +32,28 @@ It's the average surprise when the truth is $p$ but you assign probabilities wit
 
 In coding terms ([next lesson](coding.md)), it's the average code length if you design your code for $q$ but the data follow $p$.
 
+!!! example "Example: a weather forecaster"
+    In some town it's really sunny 75% of the time: $p = (0.75, 0.25)$ for (sun, rain). Different forecasters believe different $q$:
+
+    | Forecaster's belief $q$ | $H(p, q)$ (bits) |
+    |---|---|
+    | $(0.75, 0.25)$: knows the truth | $0.811 = H(p)$ |
+    | $(0.9, 0.1)$: overconfident in sun | $0.944$ |
+    | $(0.5, 0.5)$: no idea | $1.000$ |
+    | $(0.25, 0.75)$: backwards | $1.604$ |
+
+    For the backwards forecaster: $\ 0.75\log_2\frac{1}{0.25} + 0.25\log_2\frac{1}{0.75} = 0.75(2) + 0.25(0.415) \approx 1.604$.
+
+    The forecaster who knows the truth has the lowest average surprise. Every wrong belief costs extra.
+
+**With a one-hot label**, cross-entropy collapses to a single term. If the true class is $c$, then $p(c) = 1$ and $p(x) = 0$ for every other class, so
+
+$$
+H(p, q) = -\log q(c).
+$$
+
+That's the familiar classification loss: minus the log of the probability the model gave to the right answer.
+
 ## 2. KL divergence
 
 How much worse is believing $q$ than knowing $p$?
@@ -44,6 +66,26 @@ How much worse is believing $q$ than knowing $p$?
     (For densities, replace the sum with an integral.)
 
 KL is the **expected extra surprise** (or extra bits) from using the wrong model.
+
+!!! example "Example: the forecasters' KL"
+    Subtract $H(p) = 0.811$ from each row of the table above:
+
+    | Belief $q$ | $\KL(p\,\Vert\,q)$ (bits) |
+    |---|---|
+    | $(0.75, 0.25)$ | $0$ |
+    | $(0.9, 0.1)$ | $0.133$ |
+    | $(0.5, 0.5)$ | $0.189$ |
+    | $(0.25, 0.75)$ | $0.792$ |
+
+    Read it as a price. The "no idea" forecaster wastes 0.189 bits per day compared to someone who knows the true odds. The backwards forecaster wastes almost 0.8 bits per day.
+
+    The same number from the sum formula, for $q = (0.5, 0.5)$:
+
+    $$
+    0.75\log_2\frac{0.75}{0.5} + 0.25\log_2\frac{0.25}{0.5} = 0.75(0.585) + 0.25(-1) \approx 0.189.
+    $$
+
+    One term is negative: on rainy days, the "no idea" forecaster is *less* surprised than the expert. On average, though, the expert always wins. That's the next theorem.
 
 !!! theorem "Gibbs' inequality"
     $$
@@ -61,6 +103,8 @@ KL is the **expected extra surprise** (or extra bits) from using the wrong model
 
     Equality in Jensen requires $q(X)/p(X)$ to be constant, and since both sum to 1 the constant is 1.
 
+    (The middle step: $\E_p\left[\frac{q(X)}{p(X)}\right] = \sum_x p(x)\cdot\frac{q(x)}{p(x)}$, and the $p(x)$ cancels in each term. Only the $x$ with $p(x) > 0$ appear in the expectation, so we get the $q$-mass of those outcomes, which is at most 1. Since $-\log$ is decreasing, $-\log(\text{something} \leq 1) \geq 0$.)
+
 !!! warning "KL is not a distance"
     - It's not symmetric: $\KL(p\,\|\,q)\neq\KL(q\,\|\,p)$ in general.
     - It doesn't satisfy the triangle inequality.
@@ -73,6 +117,17 @@ For two Gaussians there's a closed form, which the figure computes:
 $$
 \KL\big(\mathcal N(\mu_1, \sigma_1^2)\,\|\,\mathcal N(\mu_2, \sigma_2^2)\big) = \log\frac{\sigma_2}{\sigma_1} + \frac{\sigma_1^2 + (\mu_1 - \mu_2)^2}{2\sigma_2^2} - \frac12.
 $$
+
+!!! example "Example: plugging in (in nats)"
+    | $p$ | $q$ | $\KL(p\,\Vert\,q)$ |
+    |---|---|---|
+    | $\mathcal N(0, 1)$ | $\mathcal N(0, 1)$ | $0 + \frac12 - \frac12 = 0$ |
+    | $\mathcal N(0, 1)$ | $\mathcal N(1, 1)$ | $0 + \frac{1 + 1}{2} - \frac12 = 0.5$ |
+    | $\mathcal N(0, 1)$ | $\mathcal N(0, 2^2)$ | $\ln 2 + \frac{1}{8} - \frac12 \approx 0.318$ |
+    | $\mathcal N(0, 2^2)$ | $\mathcal N(0, 1)$ | $\ln\frac12 + \frac{4}{2} - \frac12 \approx 0.807$ |
+
+    - With equal widths, KL is $\frac{(\mu_1 - \mu_2)^2}{2\sigma^2}$: squared distance between the means, measured in units of the width.
+    - The last two rows swap $p$ and $q$ and get different answers. Using a *too-narrow* $q$ (last row) is punished more than using a too-wide one: the narrow $q$ is badly surprised by $p$'s tails.
 
 ## 3. Minimizing cross-entropy is maximum likelihood
 
@@ -92,6 +147,21 @@ That's the **average negative log-likelihood**. So:
 !!! proof "Proof"
     - **First equality:** $H(p, q) = H(p) + \KL(p\,\|\,q)$, and $H(p_{\text{data}})$ doesn't depend on $\theta$.
     - **Second equality:** the computation above, plus the fact that $-\log$ is decreasing.
+
+!!! example "Example: fitting a coin by minimizing cross-entropy"
+    The data are 10 flips with 7 heads, so $p_{\text{data}} = (0.7, 0.3)$. The model is a coin with heads-probability $\theta$:
+
+    $$
+    H(p_{\text{data}}, q_\theta) = -\big(0.7\log_2\theta + 0.3\log_2(1 - \theta)\big).
+    $$
+
+    | $\theta$ | $0.3$ | $0.5$ | $0.7$ | $0.9$ |
+    |---|---|---|---|---|
+    | cross-entropy (bits) | $1.370$ | $1.000$ | $\mathbf{0.881}$ | $1.103$ |
+
+    - The minimum is at $\theta = 0.7$: the MLE, the observed fraction of heads.
+    - The minimum value $0.881 = H(0.7, 0.3)$ is the data's own entropy. That's the floor: the KL part has been driven to 0.
+    - Setting the derivative to zero gives the same answer: $\ -\frac{0.7}{\theta} + \frac{0.3}{1 - \theta} = 0$, so $\theta = 0.7$.
 
 **Training a classifier or language model with cross-entropy loss**
 
@@ -115,6 +185,25 @@ When approximating a complicated $p$ by a simpler $q$, the direction of the KL m
 
 In the figure, make $p$ wide and $q$ narrow (and then the reverse) to see the two directions disagree.
 
+!!! example "Example: a two-humped $p$, in numbers"
+    Three outcomes (left, middle, right). The truth has two humps: $p = (0.49, 0.02, 0.49)$. Compare two simple approximations:
+
+    | Candidate $q$ | Forward $\KL(p\,\Vert\,q)$ | Reverse $\KL(q\,\Vert\,p)$ |
+    |---|---|---|
+    | spread out: $(\frac13, \frac13, \frac13)$ | $\mathbf{0.464}$ | $0.982$ |
+    | one hump: $(0.96, 0.02, 0.02)$ | $1.786$ | $\mathbf{0.839}$ |
+
+    (bits; bold marks the winner in each column)
+
+    - **Forward KL prefers spreading out.** The one-hump $q$ gives the right hump only $0.02$, but $p$ puts $0.49$ there. Averaging over $p$, that miss is expensive.
+    - **Reverse KL prefers one hump.** The spread-out $q$ puts $\frac13$ on the middle, where $p$ is only $0.02$. Averaging over $q$, wasted mass in the valley is expensive.
+
+!!! intuition "Who is doing the averaging?"
+    The expectation is always taken under the *first* argument.
+
+    - $\KL(p\,\Vert\,q)$ looks at the places where $p$ lives and asks: "is $q$ there too?" Missing any part of $p$ costs a lot.
+    - $\KL(q\,\Vert\,p)$ looks at the places where $q$ lives and asks: "is $p$ there too?" Going anywhere $p$ isn't costs a lot. Staying home on one safe hump is cheap.
+
 ## 5. Mutual information
 
 How much does knowing $X$ tell you about $Y$?
@@ -137,6 +226,49 @@ How much does knowing $X$ tell you about $Y$?
     $$
     \sum_{x,y}p(x,y)\log\frac{p(x,y)}{p(x)p(y)} = \sum p(x,y)\log p(x,y) - \sum p(x,y)\log p(x) - \sum p(x,y)\log p(y) = -H(X,Y) + H(X) + H(Y).
     $$
+
+!!! example "Example: the joint table from the entropy lesson"
+    | | $Y=0$ | $Y=1$ | $p_X$ |
+    |---|---|---|---|
+    | $X=0$ | 0.3 | 0.1 | 0.4 |
+    | $X=1$ | 0.2 | 0.4 | 0.6 |
+    | $p_Y$ | 0.5 | 0.5 | |
+
+    **Route 1: entropies.** The [entropy lesson](entropy.md#4-joint-and-conditional-entropy) found $H(Y) = 1$ and $H(Y\mid X) \approx 0.875$, so
+
+    $$
+    I(X; Y) = 1 - 0.875 \approx 0.125 \text{ bits.}
+    $$
+
+    **Route 2: KL from independence.** If $X$ and $Y$ were independent, the table would be $p(x)p(y)$:
+
+    | | $Y=0$ | $Y=1$ |
+    |---|---|---|
+    | $X=0$ | 0.2 | 0.2 |
+    | $X=1$ | 0.3 | 0.3 |
+
+    Compare the real table cell by cell:
+
+    $$
+    0.3\log_2\tfrac{0.3}{0.2} + 0.1\log_2\tfrac{0.1}{0.2} + 0.2\log_2\tfrac{0.2}{0.3} + 0.4\log_2\tfrac{0.4}{0.3} \approx 0.175 - 0.100 - 0.117 + 0.166 \approx 0.125.
+    $$
+
+    Both routes agree. Mutual information measures how far the joint table is from the "no relationship" table.
+
+!!! example "Example: a noisy channel"
+    Send a fair bit $X$. The receiver gets $Y$, which equals $X$ except that it's flipped with probability $\varepsilon$.
+
+    Given $X$, the only uncertainty about $Y$ is whether a flip happened, so $H(Y\mid X) = H(\varepsilon)$. Also $Y$ is still a fair bit, so $H(Y) = 1$, and
+
+    $$
+    I(X; Y) = 1 - H(\varepsilon).
+    $$
+
+    | Flip probability $\varepsilon$ | $0$ | $0.01$ | $0.1$ | $0.25$ | $0.5$ |
+    |---|---|---|---|---|---|
+    | bits that get through, $I(X; Y)$ | $1$ | $0.919$ | $0.531$ | $0.189$ | $0$ |
+
+    At $\varepsilon = 0.5$ the output is a coin flip unrelated to the input: nothing gets through. This $1 - H(\varepsilon)$ is the **capacity** of the channel, the subject of Shannon's noisy-channel theorem.
 
 Consequences:
 
@@ -168,7 +300,15 @@ $$
 \log p_\theta(\vv x) = \text{ELBO} + \KL\big(q(\vv z)\,\|\,p_\theta(\vv z\mid\vv x)\big).
 $$
 
-(Check by writing $p_\theta(\vv x, \vv z) = p_\theta(\vv x)p_\theta(\vv z\mid\vv x)$ inside the ELBO.)
+(Check by writing $p_\theta(\vv x, \vv z) = p_\theta(\vv x)p_\theta(\vv z\mid\vv x)$ inside the ELBO. Exercise 6 does this.)
+
+Where the first equation came from, step by step:
+
+1. Multiply and divide by $q(\vv z)$ inside the integral: $\ \int p_\theta(\vv x, \vv z)\,d\vv z = \int q(\vv z)\,\frac{p_\theta(\vv x, \vv z)}{q(\vv z)}\,d\vv z$.
+2. An integral of "$q(\vv z)$ times something" is an expectation under $q$, so this is $\E_q\left[\frac{p_\theta(\vv x, \vv z)}{q(\vv z)}\right]$.
+3. $\log$ is concave, so by [Jensen](../optimization/convexity.md), $\log\E[\,\cdot\,]\geq\E[\log\,\cdot\,]$.
+
+The point of the trick: the right side is an average under $q$, which we choose to be easy to sample from. We can estimate it by drawing a few $\vv z$'s, even though the original integral was hopeless.
 
 So maximizing the ELBO simultaneously:
 
@@ -180,6 +320,19 @@ Rearranging the ELBO gives the familiar VAE loss, reconstruction minus a KL regu
 $$
 \E_q[\log p_\theta(\vv x\mid\vv z)] - \KL(q(\vv z)\,\|\,p(\vv z)).
 $$
+
+To get there, split the joint the other way, $p_\theta(\vv x, \vv z) = p_\theta(\vv x\mid\vv z)\,p(\vv z)$:
+
+$$
+\text{ELBO} = \E_q\left[\log p_\theta(\vv x\mid\vv z) + \log\frac{p(\vv z)}{q(\vv z)}\right] = \E_q[\log p_\theta(\vv x\mid\vv z)] - \E_q\left[\log\frac{q(\vv z)}{p(\vv z)}\right].
+$$
+
+The second expectation is $\KL(q\,\Vert\,p(\vv z))$ by definition.
+
+| Term | What it asks | In a VAE |
+|---|---|---|
+| $\E_q[\log p_\theta(\vv x\mid\vv z)]$ | Can the code $\vv z$ rebuild $\vv x$? | reconstruction loss of the decoder |
+| $\KL(q(\vv z)\,\Vert\,p(\vv z))$ | Does the code stay close to the prior? | regularizer on the encoder, usually toward $\mathcal N(\vv 0, I)$ |
 
 !!! ml "Where this shows up"
     - **Cross-entropy loss:** every classifier and language model.

@@ -38,6 +38,24 @@ Read "$=$" as "is in the class": $f = O(g)$ is really $f\in O(g)$.
 
 **The rule of thumb this proves:** for a polynomial, only the highest power matters.
 
+!!! example "Example: disproving a bound"
+    Claim: $n^2 \neq O(n)$.
+
+    1. Suppose it were true: some $c$ and $n_0$ with $n^2 \leq cn$ for all $n \geq n_0$.
+    2. Divide by $n$: $\ n \leq c$ for all $n \geq n_0$.
+    3. But $n = \max(n_0, \lceil c\rceil + 1)$ breaks this. Contradiction.
+
+    The pattern: to show $f \neq O(g)$, show that $f/g$ is unbounded, so no constant $c$ can cap it. (This is the [negation of a "there exists, for all" statement](../foundations/logic-and-proofs.md#negating-quantifiers) in action.)
+
+**Rules that save you from going back to the definition:**
+
+| Rule | Example |
+|---|---|
+| constants vanish: $c\cdot f = O(f)$ | $7n^2 = O(n^2)$ |
+| sums keep the biggest term: $O(f) + O(g) = O(\max(f, g))$ | $n^2 + n\log n = O(n^2)$ |
+| products multiply: $O(f)\cdot O(g) = O(fg)$ | a loop of $n$ steps, each $O(\log n)$, is $O(n\log n)$ |
+| transitivity: $f = O(g)$ and $g = O(h)$ give $f = O(h)$ | $\log n = O(n)$ and $n = O(n^2)$ |
+
 !!! theorem "Limit test"
     If $\lim_{n\to\infty}\frac{f(n)}{g(n)} = L$, then:
 
@@ -48,6 +66,15 @@ Read "$=$" as "is in the class": $f = O(g)$ is really $f\in O(g)$.
     | $\infty$ | $f = \omega(g)$ |
 
 (If the ratio tends to $L$, it's eventually between $L/2$ and $2L$, which gives the constants.)
+
+!!! example "Example: the limit test in use"
+    | $f$ | $g$ | $\frac{f}{g}$ as $n\to\infty$ | Conclusion |
+    |---|---|---|---|
+    | $2n^2 + n$ | $n^2$ | $2 + \frac1n \to 2$ | $\Theta$ |
+    | $n\log n$ | $n^{1.5}$ | $\frac{\log n}{\sqrt n}\to 0$ | $o$ |
+    | $2^n$ | $n^{10}$ | $\to\infty$ (next theorem) | $\omega$ |
+
+    The test is usually faster than hunting for $c$ and $n_0$. It can fail only when the ratio has no limit (it oscillates), and then you go back to the definition.
 
 ## 2. The growth hierarchy
 
@@ -85,6 +112,19 @@ Each is $o$ of the next. The key comparisons:
 **The base of an exponential *does* matter:** $3^n/2^n = 1.5^n\to\infty$, so $3^n\neq O(2^n)$.
 
 <div class="viz" data-viz="growth"></div>
+
+**What the hierarchy means in seconds.** Suppose a computer does $10^9$ simple steps per second and $n = 10^6$ (a million items):
+
+| Running time | Steps | Wall-clock |
+|---|---|---|
+| $\log_2 n$ | $20$ | 20 nanoseconds |
+| $n$ | $10^6$ | 1 millisecond |
+| $n\log_2 n$ | $2\times10^7$ | 20 milliseconds |
+| $n^2$ | $10^{12}$ | about 17 minutes |
+| $n^3$ | $10^{18}$ | about 32 years |
+| $2^n$ | $2^{1{,}000{,}000}$ | far longer than the age of the universe |
+
+The jump from $n\log n$ to $n^2$ is the difference between "instant" and "go get lunch." That's why the class of an algorithm matters more than its constant.
 
 !!! intuition "Why constant factors are ignored, and when not to"
     A $100n$ algorithm beats an $n^2$ algorithm for all $n > 100$, and the gap keeps growing.
@@ -126,10 +166,51 @@ It also proves $\log n! = \sum\log i = \Theta(n\log n)$.
     ```
     Total work $\sum_{i=1}^ni = \Theta(n^2)$.
 
+    It does about half the work of a full $n\times n$ double loop ($\frac{n^2}{2}$ instead of $n^2$), but half is a constant factor, so the class is the same.
+
+!!! example "Example: a harmonic loop"
+    ```
+    for i in 1..n:
+        for j in 0, i, 2i, 3i, ... up to n:
+            constant work
+    ```
+    The inner loop runs about $\frac{n}{i}$ times. Total:
+
+    $$
+    \sum_{i=1}^n\frac ni = n\sum_{i=1}^n\frac1i = n H_n = \Theta(n\log n).
+    $$
+
+    | $i$ | 1 | 2 | 3 | ... | $n$ |
+    |---|---|---|---|---|---|
+    | inner steps | $n$ | $\frac n2$ | $\frac n3$ | ... | $1$ |
+
+    This pattern (visit every multiple of $i$) is the heart of the Sieve of Eratosthenes in [Number theory](number-theory.md).
+
+!!! example "Example: a halving loop"
+    ```
+    i = n
+    while i >= 1:
+        do i units of work
+        i = i // 2
+    ```
+    Total work $n + \frac n2 + \frac n4 + \cdots \leq 2n = \Theta(n)$: a geometric sum with $r = \frac12$, dominated by its first term.
+
+    Compare exercise 4: the *number of iterations* is $\Theta(\log n)$, but the *work* is $\Theta(n)$, because the first iteration is the expensive one.
+
 !!! example "Example: amortized analysis of a dynamic array"
     A list that doubles its capacity when full copies $1 + 2 + 4 + \cdots + 2^k < 2n$ elements in total over $n$ appends. That's a geometric sum dominated by its last term.
 
     So appends take **$O(1)$ amortized** time, even though an individual append can cost $O(n)$.
+
+    For $n = 17$ appends starting from capacity 1:
+
+    | Capacity full at | 1 | 2 | 4 | 8 | 16 |
+    |---|---|---|---|---|---|
+    | elements copied | 1 | 2 | 4 | 8 | 16 |
+
+    Total copies $1 + 2 + 4 + 8 + 16 = 31 < 2 \times 17$. Fewer than 2 copies per append, on average.
+
+    **Growing by a fixed amount instead** (say +10 slots each time) is a classic bug: the copies are $10 + 20 + 30 + \cdots$, an arithmetic sum, $\Theta(n^2)$ in total. Doubling is what makes it work.
 
 ## 4. Lower bounds: sorting needs $n\log n$
 
@@ -147,7 +228,20 @@ It also proves $\log n! = \sum\log i = \Theta(n\log n)$.
 
     This is an information-theoretic argument: identifying one of $n!$ possibilities requires $\log_2n!$ bits, and each comparison yields at most 1 bit.
 
+!!! example "Example: sorting three items"
+    Three items $a, b, c$ can be in $3! = 6$ orders.
+
+    - With 2 comparisons, each with two possible answers, you can distinguish at most $2^2 = 4$ cases. Not enough for 6.
+    - So some input needs at least 3 comparisons, and indeed $\lceil\log_2 6\rceil = 3$.
+
+    For 10 items: $\log_2 10! = \log_2 3{,}628{,}800 \approx 21.8$, so every comparison sort needs at least 22 comparisons on some input. Merge sort uses at most 25.
+
 So merge sort's $O(n\log n)$ (proved in the [next lesson](recurrences.md)) is optimal.
+
+!!! warning "The lower bound has fine print"
+    It only covers algorithms that learn about the data *by comparing pairs*.
+
+    Counting sort and radix sort look at the values directly (e.g. "which bucket does this digit go in?"). For integers in a limited range they run in $O(n)$, without contradicting the theorem.
 
 !!! ml "Where this shows up"
     - **Attention is $O(n^2)$** in sequence length $n$: every token attends to every token.

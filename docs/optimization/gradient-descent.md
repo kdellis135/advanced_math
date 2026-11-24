@@ -34,6 +34,14 @@ We need to know two things:
 
     For twice-differentiable $f$, this means the Hessian's eigenvalues are at most $L$ in absolute value: curvature is bounded.
 
+In words: **the slope can't change too abruptly.** Moving a distance $d$ changes the gradient by at most $L d$.
+
+Examples:
+
+- $f(x) = \frac{a}{2}x^2$ has $f'(x) = ax$, so $\lvert f'(x) - f'(y)\rvert = a\lvert x - y\rvert$: it's $L$-smooth with $L = a$, the curvature.
+- $f(x, y) = \frac12(x^2 + 10y^2)$ has Hessian $\diag(1, 10)$, so $L = 10$: set by the steepest direction.
+- $f(x) = \lvert x\rvert$ is **not** smooth: its slope jumps from $-1$ to $+1$ at $0$, however close you look.
+
 !!! theorem "Descent lemma"
     If $f$ is $L$-smooth:
 
@@ -50,13 +58,24 @@ We need to know two things:
 
     using Cauchy–Schwarz and the Lipschitz condition.
 
+    The first equality: $g(t) = f(\vv x + t\vv d)$ has $g'(t) = \nabla f(\vv x + t\vv d)^\top \vv d$ by the chain rule, and $f(\vv y) - f(\vv x) = g(1) - g(0) = \int_0^1 g'(t)\,dt$. Subtracting the constant $\nabla f(\vv x)^\top\vv d$ (which integrates to itself over $[0, 1]$) gives the integrand shown. The inequality: the gradient at distance $t\norm{\vv d}$ differs from $\nabla f(\vv x)$ by at most $Lt\norm{\vv d}$, and then Cauchy–Schwarz bounds the dot product with $\vv d$.
+
 The function sits *below* a quadratic upper bound touching it at $\vv x$. Gradient descent minimizes that bound.
 
-Plug in $\vv y = \vv x - \eta\nabla f(\vv x)$:
+(In 1D: the bound is a parabola with curvature $L$ that touches $f$ at $x$ and lies above it everywhere. Since $f$ curves *at most* as much as $L$, it can't escape above.)
+
+Plug in $\vv y = \vv x - \eta\nabla f(\vv x)$, so $\vv y - \vv x = -\eta\nabla f$. Writing $\vv g = \nabla f(\vv x_k)$:
+
+- the linear term is $\vv g^\top(-\eta\vv g) = -\eta\norm{\vv g}^2$;
+- the quadratic term is $\frac L2\norm{-\eta\vv g}^2 = \frac{L\eta^2}{2}\norm{\vv g}^2$.
+
+Together:
 
 $$
 f(\vv x_{k+1})\leq f(\vv x_k) - \eta\left(1 - \frac{L\eta}{2}\right)\norm{\nabla f(\vv x_k)}^2.
 $$
+
+With $\eta \leq \frac1L$, the bracket is at least $1 - \frac12 = \frac12$, which gives the next theorem.
 
 !!! theorem "Sufficient decrease"
     With $0 < \eta\leq\frac1L$, every step decreases $f$ by at least $\frac\eta2\norm{\nabla f(\vv x_k)}^2$.
@@ -66,6 +85,8 @@ This holds **even for non-convex $f$**. Summing over $k$ steps gives
 $$
 \min_{i<k}\norm{\nabla f(\vv x_i)}^2\leq\frac{2(f(\vv x_0) - f^*)}{\eta k}.
 $$
+
+(The decreases add up: $\frac\eta2\sum_{i<k}\norm{\nabla f(\vv x_i)}^2 \leq f(\vv x_0) - f(\vv x_k) \leq f(\vv x_0) - f^*$. You can't descend more than the total height available. The smallest of $k$ terms is at most their average, so divide by $k$.)
 
 Gradient descent always finds an approximately stationary point, at rate $O(1/k)$.
 
@@ -87,6 +108,20 @@ $$
 y_{i,k+1} = (1 - \eta\lambda_i)\,y_{i,k}.
 $$
 
+(Write $\vv x_k = \sum_i y_{i,k}\vv q_i$ with orthonormal eigenvectors $\vv q_i$. Then $(I - \eta A)\vv q_i = (1 - \eta\lambda_i)\vv q_i$, so each component just gets multiplied by its own factor, exactly as for powers of a matrix in [Eigenvalues](../linear-algebra/eigen.md#4-powers-and-dynamics).)
+
+!!! example "Example: watching the two coordinates"
+    $f(x, y) = \frac12(x^2 + 10y^2)$, so $\lambda = 1$ for $x$ and $\lambda = 10$ for $y$. Start at $(1, 1)$.
+
+    | $\eta$ | factor for $x$ | factor for $y$ | after 10 steps $(x, y)$ |
+    |---|---|---|---|
+    | $0.05$ | $0.95$ | $0.5$ | $(0.60, 0.001)$ |
+    | $0.15$ | $0.85$ | $-0.5$ | $(0.20, 0.001)$ |
+    | $0.19$ | $0.81$ | $-0.9$ | $(0.12, 0.35)$ |
+    | $0.21$ | $0.79$ | $-1.1$ | $(0.09, 2.59)$: diverging |
+
+    A bigger $\eta$ helps the slow $x$-direction, but the fast $y$-direction sets the ceiling at $\eta < 0.2$. Negative factors mean $y$ flips sign each step: that's the zigzag.
+
 So:
 
 - **Stability:** we need $|1 - \eta\lambda_i| < 1$ for all $i$, i.e. $0 < \eta < \frac{2}{L}$.
@@ -98,7 +133,9 @@ $$
 \frac{L - \mu}{L + \mu} = \frac{\kappa - 1}{\kappa + 1}, \qquad\kappa = \frac L\mu\ \text{(the condition number)}.
 $$
 
-With $\kappa = 100$ that's $0.98$ per step: about 115 steps to gain each factor of 10.
+Where the best $\eta$ comes from: the overall speed is set by the *worse* of the two extreme factors, $\lvert 1 - \eta\mu\rvert$ (slowest direction) and $\lvert 1 - \eta L\rvert$ (steepest direction). Increasing $\eta$ improves the first and worsens the second. The best compromise makes them equal: $1 - \eta\mu = \eta L - 1$, so $\eta = \frac{2}{L + \mu}$, and then the common factor is $1 - \frac{2\mu}{L + \mu} = \frac{L - \mu}{L + \mu}$.
+
+With $\kappa = 100$ that's $0.98$ per step: about 115 steps to gain each factor of 10. (Solve $0.98^k = 0.1$: $k = \frac{\ln 0.1}{\ln 0.98} \approx 114$.)
 
 **Gradient descent's speed is governed by the condition number:**
 
@@ -133,7 +170,7 @@ With $\kappa = 100$ that's $0.98$ per step: about 115 steps to gain each factor 
     f(\vv x_{k+1}) - f^*\leq\vv g^\top(\vv x_k - \vv x^*) - \frac\eta2\norm{\vv g}^2 = \frac{1}{2\eta}\Big(\norm{\vv x_k - \vv x^*}^2 - \norm{\vv x_k - \vv x^* - \eta\vv g}^2\Big).
     $$
 
-    (Expand the right side to check.)
+    (Expand the right side to check. With $\vv a = \vv x_k - \vv x^*$: $\ \norm{\vv a}^2 - \norm{\vv a - \eta\vv g}^2 = \norm{\vv a}^2 - \norm{\vv a}^2 + 2\eta\,\vv g^\top\vv a - \eta^2\norm{\vv g}^2$. Dividing by $2\eta$ gives $\vv g^\top\vv a - \frac\eta2\norm{\vv g}^2$, the left side.)
 
     Since $\vv x_k - \eta\vv g = \vv x_{k+1}$, the bracket is $\norm{\vv x_k - \vv x^*}^2 - \norm{\vv x_{k+1} - \vv x^*}^2$. It **telescopes** when summed over the steps:
 
@@ -169,6 +206,17 @@ $$
 - **Unbiased:** $\E[\vv g_k] = \nabla f(\vv x_k)$ (linearity of expectation).
 - **Noisy:** its variance is $\propto\frac{1}{|B|}$ ([limit theorems](../probability/limit-theorems.md)).
 
+!!! example "Example: noisy but right on average"
+    Fit a single number $x$ to data $a = (1, 2, 3, 6)$ by minimizing $f(x) = \frac14\sum_i\frac12(x - a_i)^2$. The full gradient is $x - \bar a = x - 3$, and the minimum is at $x = 3$.
+
+    At $x = 0$, the full gradient is $-3$. Using a single random example as the "batch," the gradient is $x - a_i = -a_i$:
+
+    | example picked | $a_1 = 1$ | $a_2 = 2$ | $a_3 = 3$ | $a_4 = 6$ |
+    |---|---|---|---|---|
+    | gradient | $-1$ | $-2$ | $-3$ | $-6$ |
+
+    Each guess is off, but their average is $-3$: unbiased. Every one of them still points the right way (toward larger $x$). Averaging over a batch of 2 or 3 examples would cut the scatter.
+
 Because of the noise, SGD with a constant learning rate doesn't converge exactly. It bounces around the minimum, in a region whose size is proportional to $\eta$.
 
 Hence **learning rate schedules**: decay $\eta$ over time (step decay, cosine decay), typically after a short **warmup**.
@@ -190,6 +238,17 @@ Gradient descent forgets its history. **Momentum** (the "heavy ball") accumulate
 $$
 \vv v_{k+1} = \beta\vv v_k - \eta\nabla f(\vv x_k), \qquad\vv x_{k+1} = \vv x_k + \vv v_{k+1}.
 $$
+
+Unroll the recursion (starting from $\vv v_0 = \vv 0$) to see what the velocity is:
+
+$$
+\vv v_{k+1} = -\eta\left(\vv g_k + \beta\vv g_{k-1} + \beta^2\vv g_{k-2} + \cdots\right).
+$$
+
+A weighted sum of all past gradients, with older ones discounted by powers of $\beta$. With $\beta = 0.9$ the weights are $1, 0.9, 0.81, 0.73, \dots$, so roughly the last 10 gradients matter.
+
+- If the gradients keep pointing the same way, the sum is a geometric series: $1 + \beta + \beta^2 + \cdots = \frac{1}{1 - \beta} = 10$. **The effective step is 10× larger.**
+- If they alternate, $\vv g, -\vv g, \vv g, \dots$, the sum is $1 - \beta + \beta^2 - \cdots = \frac{1}{1 + \beta} \approx 0.53$. **The oscillation is damped.**
 
 In the narrow valley:
 
@@ -217,6 +276,14 @@ $$
 $$
 
 where $\hat{\vv m}_k = \vv m_k/(1 - \beta_1^k)$ and $\hat{\vv s}_k = \vv s_k/(1 - \beta_2^k)$ correct the bias from initializing at zero.
+
+(Here $\vv g_k^2$ and the square root are taken entry by entry, and the division is entry by entry too. So each coordinate gets its own step size.)
+
+**Exponential moving averages.** Each line has the form "new average = $\beta$ × old average + $(1 - \beta)$ × new value." With $\beta = 0.9$, the newest value gets weight $0.1$, the one before $0.09$, then $0.081$, and so on: a smoothed recent average.
+
+**Why bias correction?** Starting from $\vv m_0 = \vv 0$, the first average is $\vv m_1 = 0.1\,\vv g_1$, only a tenth of the gradient, because the zero start is still weighing it down. Dividing by $1 - \beta_1^1 = 0.1$ restores $\vv g_1$. As $k$ grows, $\beta_1^k \to 0$ and the correction fades away.
+
+**Why divide by $\sqrt{\vv s}$?** $\vv s$ tracks the typical squared size of each coordinate's gradient. A coordinate whose gradients are consistently around $100$ gets $\sqrt{s} \approx 100$, and its step $\frac{m}{\sqrt s}$ is about 1. A coordinate with gradients around $0.01$ gets the same step size. Large and small gradients are put on an equal footing.
 
 | Hyperparameter | Typical value |
 |---|---|

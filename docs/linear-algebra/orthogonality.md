@@ -22,7 +22,19 @@ $$
 \vv a\cdot(\vv b - \hat x\vv a) = 0 \quad\Longrightarrow\quad \hat x = \frac{\vv a\cdot\vv b}{\vv a\cdot\vv a}, \qquad \vv p = \frac{\vv a\cdot\vv b}{\vv a\cdot\vv a}\,\vv a.
 $$
 
+The algebra in the middle: expand the dot product by linearity, $\ \vv a\cdot\vv b - \hat x\,(\vv a\cdot\vv a) = 0$. The unknown $\hat x$ is just a number, so solve for it by dividing by $\vv a \cdot \vv a$.
+
 <div class="viz" data-viz="projection"></div>
+
+!!! example "Example: projecting $(3, 1)$ onto the line through $(1, 1)$"
+    1. $\vv a\cdot\vv b = 3 + 1 = 4$ and $\vv a\cdot\vv a = 1 + 1 = 2$, so $\hat x = 2$.
+    2. $\vv p = 2(1, 1) = (2, 2)$: the closest point on the diagonal line.
+    3. $\vv e = \vv b - \vv p = (1, -1)$.
+    4. Check: $\vv e\cdot\vv a = 1 - 1 = 0$. ✓ The error is perpendicular to the line.
+
+    Sketch it: from $(3, 1)$, drop straight down to the diagonal at a right angle, and you land at $(2, 2)$. The distance from $\vv b$ to the line is $\norm{\vv e} = \sqrt 2$.
+
+    If $\vv a$ is a unit vector, $\vv a \cdot \vv a = 1$ and the formula simplifies to $\vv p = (\vv a\cdot\vv b)\,\vv a$. This is the "shadow" from [Vectors](vectors.md).
 
 !!! theorem "Theorem: the projection is the closest point"
     For every point $t\vv a$ on the line, $\norm{\vv b - t\vv a} \geq \norm{\vv b - \vv p}$, with equality only at $t\vv a = \vv p$.
@@ -38,17 +50,37 @@ $$
 
 As a matrix: $\vv p = P\vv b$ with $P = \dfrac{\vv a\vv a^\top}{\vv a^\top\vv a}$.
 
+Where it comes from: $\vv p = \vv a\,\hat x = \vv a\,\frac{\vv a^\top \vv b}{\vv a^\top \vv a}$ (writing the number $\hat x$ on the right of the vector is allowed). Regroup as $\frac{\vv a\vv a^\top}{\vv a^\top\vv a}\vv b$.
+
+For $\vv a = (1, 1)$: $\ P = \frac{1}{2}\begin{pmatrix}1 & 1\\1 & 1\end{pmatrix}$, and $P(3, 1) = \frac12(4, 4) = (2, 2)$, matching the example.
+
 Check $P^2 = P$: projecting twice is the same as projecting once.
+
+(Algebraically: $P^2 = \frac{\vv a(\vv a^\top\vv a)\vv a^\top}{(\vv a^\top\vv a)^2} = \frac{\vv a\vv a^\top}{\vv a^\top\vv a} = P$, since the middle $\vv a^\top \vv a$ is a number that cancels one factor of the denominator.)
 
 ## 2. Projection onto a subspace
 
 Now project $\vv b$ onto the column space of an $m\times n$ matrix $A$ (independent columns).
 
-We seek $\vv p = A\hat{\vv x}$ with error $\vv e = \vv b - A\hat{\vv x}$ perpendicular to **every column** of $A$:
+Points in the column space are exactly the vectors $A\vv x$, so the closest one is $\vv p = A\hat{\vv x}$ for some $\hat{\vv x}$ we must find.
+
+The error $\vv e = \vv b - A\hat{\vv x}$ should be perpendicular to the whole subspace. It's enough to be perpendicular to **every column** of $A$ (then it's perpendicular to every combination of columns too).
+
+Now the key translation. The rows of $A^\top$ are the columns of $A$. So the entries of $A^\top \vv e$ are exactly the dot products (column $j$) $\cdot\ \vv e$:
+
+$$
+A^\top\vv e = \begin{pmatrix}\vv a_1 \cdot \vv e\\ \vdots\\ \vv a_n\cdot\vv e\end{pmatrix}.
+$$
+
+"Perpendicular to every column" is therefore $A^\top\vv e = \vv 0$:
 
 $$
 A^\top(\vv b - A\hat{\vv x}) = \vv 0 \quad\Longrightarrow\quad \boxed{A^\top A\,\hat{\vv x} = A^\top\vv b.}
 $$
+
+(Expand the left side to $A^\top\vv b - A^\top A\hat{\vv x} = \vv 0$, and move one term across.)
+
+With a single column $\vv a$, this is $(\vv a^\top \vv a)\hat x = \vv a^\top \vv b$: exactly the line formula from Section 1.
 
 These are the **normal equations**. If the columns of $A$ are independent, $A^\top A$ is invertible (proof below), so
 
@@ -70,8 +102,21 @@ The same Pythagoras argument shows $\vv p$ is the closest point of $C(A)$ to $\v
 
 ## 3. Least squares regression
 
+How regression becomes a projection: each data point $(x_i, y_i)$ gives one equation "prediction = observation." Stack them into $A\vv x = \vv b$ where
+
+- each **row** of $A$ is one data point's inputs,
+- each **column** of $A$ is one feature (including a column of 1's for the intercept),
+- $\vv x$ holds the unknown parameters,
+- $\vv b$ holds the observed outputs.
+
 !!! example "Fitting a line"
-    Data: $(1, 1), (2, 2), (3, 2)$. We want $y = c + mx$. Three equations, two unknowns:
+    Data: $(1, 1), (2, 2), (3, 2)$. We want $y = c + mx$. Each point gives one equation $c + m x_i = y_i$:
+
+    $$
+    c + m = 1, \qquad c + 2m = 2, \qquad c + 3m = 2.
+    $$
+
+    Three equations, two unknowns. The first two force $m = 1$, $c = 0$, but then the third says $3 = 2$. In matrix form:
 
     $$
     \underbrace{\begin{pmatrix}1&1\\1&2\\1&3\end{pmatrix}}_{A}\begin{pmatrix}c\\m\end{pmatrix} = \underbrace{\begin{pmatrix}1\\2\\2\end{pmatrix}}_{\vv b}\qquad\text{(no exact solution)}.
@@ -83,11 +128,21 @@ The same Pythagoras argument shows $\vv p$ is the closest point of $C(A)$ to $\v
     A^\top A = \begin{pmatrix}3 & 6\\6 & 14\end{pmatrix}, \qquad A^\top\vv b = \begin{pmatrix}5\\11\end{pmatrix}.
     $$
 
-    Solving $3c + 6m = 5$ and $6c + 14m = 11$ gives $m = \frac12$, $c = \frac23$.
+    Each entry of $A^\top A$ is a column of $A$ dotted with a column of $A$. With columns $\vv a_1 = (1, 1, 1)$ and $\vv a_2 = (1, 2, 3)$:
+
+    | Entry | Dot product | Meaning | Value |
+    |---|---|---|---|
+    | $(1,1)$ | $\vv a_1\cdot\vv a_1$ | number of points | $3$ |
+    | $(1,2)$, $(2,1)$ | $\vv a_1\cdot\vv a_2$ | $\sum x_i$ | $1 + 2 + 3 = 6$ |
+    | $(2,2)$ | $\vv a_2\cdot\vv a_2$ | $\sum x_i^2$ | $1 + 4 + 9 = 14$ |
+
+    And $A^\top \vv b = (\vv a_1\cdot\vv b,\ \vv a_2 \cdot\vv b) = (\sum y_i, \sum x_iy_i) = (1 + 2 + 2,\ 1 + 4 + 6) = (5, 11)$.
+
+    Solve $3c + 6m = 5$ and $6c + 14m = 11$: subtract twice the first from the second to get $2m = 1$, so $m = \frac12$. Then $3c = 5 - 3 = 2$, so $c = \frac23$.
 
     **Best line:** $y = \frac23 + \frac12x$.
 
-    The residuals $\vv e = \vv b - A\hat{\vv x} = (-\frac16, \frac13, -\frac16)$ are perpendicular to both columns:
+    The predictions at $x = 1, 2, 3$ are $\frac76, \frac53, \frac{13}{6}$. Subtracting from the observations $1, 2, 2$, the residuals $\vv e = \vv b - A\hat{\vv x} = (-\frac16, \frac13, -\frac16)$ are perpendicular to both columns:
 
     - column 1: their sum is $0$;
     - column 2: $1\cdot(-\frac16) + 2\cdot\frac13 + 3\cdot(-\frac16) = 0$.
@@ -114,6 +169,7 @@ With an orthonormal basis:
 
 - **Coordinates are dot products:** if $\vv v = \sum c_i\vv q_i$, then $c_i = \vv q_i\cdot\vv v$.
     - Dot both sides with $\vv q_i$; the other terms vanish. No system to solve.
+    - Example: $\vv q_1 = \frac{1}{\sqrt2}(1, 1)$, $\vv q_2 = \frac{1}{\sqrt2}(1, -1)$ and $\vv v = (3, 1)$. Then $c_1 = \frac{4}{\sqrt2} = 2\sqrt2$ and $c_2 = \frac{2}{\sqrt2} = \sqrt2$. Check: $2\sqrt2\,\vv q_1 + \sqrt2\,\vv q_2 = (2, 2) + (1, -1) = (3, 1)$. ✓ (Compare the [basis example](vector-spaces.md#3-basis-and-dimension), where the same directions without normalizing needed a linear system.)
 - **Projection is simple:** onto $C(Q)$ it's $P = QQ^\top$, since $(Q^\top Q)^{-1} = I$.
 - **Lengths and angles are preserved:** $\norm{Q\vv x}^2 = \vv x^\top Q^\top Q\vv x = \norm{\vv x}^2$, and $(Q\vv x)\cdot(Q\vv y) = \vv x\cdot\vv y$.
     - Orthogonal matrices are rotations and reflections.
@@ -137,12 +193,33 @@ and so on.
 - Each $\vv u_k$ is perpendicular to the previous $\vv q$'s by construction (the projections have been removed).
 - It's nonzero because $\vv a_k$ is independent of the earlier vectors.
 
+Each subtracted term $(\vv q_1 \cdot \vv a_2)\vv q_1$ is the projection of $\vv a_2$ onto the line through $\vv q_1$, using the unit-vector formula from Section 1. So step 2 says: **keep only the part of $\vv a_2$ perpendicular to $\vv q_1$.**
+
+!!! example "Example: Gram–Schmidt in the plane"
+    $\vv a_1 = (3, 0)$, $\vv a_2 = (2, 2)$.
+
+    1. $\vv q_1 = \frac{(3, 0)}{3} = (1, 0)$.
+    2. $\vv q_1 \cdot\vv a_2 = 2$. Remove that much of $\vv q_1$: $\vv u_2 = (2, 2) - 2(1, 0) = (0, 2)$.
+    3. $\vv q_2 = \frac{(0, 2)}{2} = (0, 1)$.
+
+    Picture: $\vv a_2$ leans along $\vv a_1$ by $2$ units. Subtracting that lean leaves a vector standing straight up.
+
 Recording the coefficients gives the **QR decomposition** $A = QR$:
 
 - $Q$ has orthonormal columns;
 - $R$ is upper triangular (each $\vv a_k$ is a combination of $\vv q_1, \ldots, \vv q_k$ only).
 
+The entries of $R$ are $R_{ij} = \vv q_i\cdot \vv a_j$. In the plane example: $\vv a_1 = 3\vv q_1$ and $\vv a_2 = 2\vv q_1 + 2\vv q_2$, so
+
+$$
+\underbrace{\begin{pmatrix}3 & 2\\0 & 2\end{pmatrix}}_{A} = \underbrace{\begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}}_{Q}\underbrace{\begin{pmatrix}3 & 2\\0 & 2\end{pmatrix}}_{R}.
+$$
+
+(Here $Q$ happens to be $I$ because $\vv a_1$ was already along an axis.)
+
 Least squares then becomes $R\hat{\vv x} = Q^\top\vv b$, a triangular solve.
+
+Why: substitute $A = QR$ into the normal equations. $A^\top A = R^\top Q^\top Q R = R^\top R$ and $A^\top \vv b = R^\top Q^\top\vv b$. So $R^\top R\hat{\vv x} = R^\top Q^\top \vv b$, and cancelling the invertible $R^\top$ leaves $R\hat{\vv x} = Q^\top\vv b$.
 
 This is numerically much more stable than forming $A^\top A$, because forming $A^\top A$ squares the condition number. It's what good regression libraries do.
 

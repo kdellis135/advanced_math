@@ -39,9 +39,44 @@ Vocabulary:
 
     (Double counting again: count (vertex, edge) incidences two ways.)
 
+!!! example "Example: checking it on a small graph"
+    Edges: A–B, A–C, A–D, B–C (so $m = 4$).
+
+    ```text
+        B
+       / \
+      A---C
+      |
+      D
+    ```
+
+    | Vertex | Neighbors | Degree |
+    |---|---|---|
+    | A | B, C, D | 3 |
+    | B | A, C | 2 |
+    | C | A, B | 2 |
+    | D | A | 1 |
+    | | **sum** | **8** $= 2 \times 4$ ✓ |
+
+    The odd-degree vertices are A and D: two of them, an even number.
+
 Corollary: the number of odd-degree vertices is even.
 
+(The even-degree vertices contribute an even amount to a sum that is even, so the odd degrees must also add up to an even number. That needs an even count of them.)
+
 At any party, the number of people who shook an odd number of hands is even.
+
+**Storing a graph in a computer.** Two standard choices:
+
+| | Adjacency **list** | Adjacency **matrix** |
+|---|---|---|
+| what it stores | for each vertex, a list of its neighbors | an $n\times n$ table of 0s and 1s |
+| memory | $O(n + m)$ | $O(n^2)$ |
+| "is there an edge $u$–$v$?" | scan $u$'s list: $O(\deg u)$ | look it up: $O(1)$ |
+| "list $u$'s neighbors" | $O(\deg u)$ | scan a row: $O(n)$ |
+| best for | sparse graphs (most real ones) | dense graphs, and linear algebra (§6) |
+
+A social network with a billion users, each with a few hundred friends, fits as a list. As a matrix it would need $10^{18}$ entries.
 
 ## 2. Trees
 
@@ -56,6 +91,17 @@ At any party, the number of people who shook an odd number of hands is even.
     3. exactly $n - 1$ edges.
 
     Also: in a tree, there's exactly one path between any two vertices.
+
+Why you need *two* of the three conditions, with 4 vertices:
+
+| Graph | Connected? | No cycles? | Edges | Tree? |
+|---|---|---|---|---|
+| a path A–B–C–D | ✓ | ✓ | 3 | yes |
+| a triangle A–B–C, plus D alone | ✗ | ✗ | 3 | no: right edge count, but the edges are "wasted" on a cycle |
+| a square A–B–C–D–A | ✓ | ✗ | 4 | no: one edge too many |
+| two separate edges A–B, C–D | ✗ | ✓ | 2 | no: one edge too few |
+
+Any one condition alone can hold for a non-tree.
 
 !!! proof "Proof that a tree has $n - 1$ edges"
     Induction on $n$. *Base:* a single vertex has 0 edges. ✓
@@ -81,6 +127,30 @@ Every connected graph contains a **spanning tree**. Finding a minimum-weight one
 2. then their unvisited neighbors;
 3. and so on.
 
+!!! example "Example: BFS on a small graph"
+    Edges: $s$–$a$, $s$–$b$, $a$–$c$, $b$–$c$, $c$–$d$.
+
+    ```text
+        a
+       / \
+      s   c---d
+       \ /
+        b
+    ```
+
+    | Step | Take from queue | Newly discovered (added to queue) | Queue after |
+    |---|---|---|---|
+    | 0 | | $s$ (layer 0) | $s$ |
+    | 1 | $s$ | $a, b$ (layer 1) | $a, b$ |
+    | 2 | $a$ | $c$ (layer 2) | $b, c$ |
+    | 3 | $b$ | nothing ($s$ and $c$ already seen) | $c$ |
+    | 4 | $c$ | $d$ (layer 3) | $d$ |
+    | 5 | $d$ | nothing | empty |
+
+    Each vertex's layer is its distance from $s$: $d$ is 3 edges away, via $s \to a \to c \to d$.
+
+    The queue is what makes it work: first in, first out, so all of layer 1 is processed before anything in layer 2.
+
 !!! theorem "BFS finds shortest paths in unweighted graphs"
     The layer in which BFS first reaches $v$ equals the minimum number of edges on a path from $s$ to $v$.
 
@@ -101,6 +171,15 @@ Every connected graph contains a **spanning tree**. Finding a minimum-weight one
 
 Both visit every vertex and edge once: $O(n + m)$ time.
 
+On the same graph, DFS from $s$ (taking neighbors alphabetically) goes $s \to a \to c \to b$, finds $b$'s neighbors all visited, backs up to $c$, then goes to $d$. Visit order: $s, a, c, b, d$.
+
+| | BFS | DFS |
+|---|---|---|
+| data structure | queue (first in, first out) | stack or recursion (last in, first out) |
+| shape of exploration | ripples outward in layers | dives down one path, then backtracks |
+| visit order above | $s, a, b, c, d$ | $s, a, c, b, d$ |
+| good for | shortest paths (unweighted) | cycles, components, topological order |
+
 ## 4. Directed acyclic graphs and topological order
 
 A **DAG** (directed acyclic graph) is a directed graph with no directed cycles. Examples:
@@ -118,6 +197,25 @@ A **DAG** (directed acyclic graph) is a directed graph with no directed cycles. 
     2. Put that vertex first and remove it. What's left is still a DAG.
     3. Repeat.
 
+!!! example "Example: ordering courses"
+    Prerequisites: Calculus → Multivariable, Linear algebra → Multivariable, Multivariable → ML, Probability → ML.
+
+    The proof is an algorithm: repeatedly take a vertex with no remaining incoming edges.
+
+    | Step | Vertices with no incoming edges | Take | Edges removed |
+    |---|---|---|---|
+    | 1 | Calculus, Linear algebra, Probability | Calculus | Calculus → Multivariable |
+    | 2 | Linear algebra, Probability | Linear algebra | Linear algebra → Multivariable |
+    | 3 | Probability, Multivariable | Probability | Probability → ML |
+    | 4 | Multivariable | Multivariable | Multivariable → ML |
+    | 5 | ML | ML | |
+
+    Order: Calculus, Linear algebra, Probability, Multivariable, ML. Every prerequisite comes before the course that needs it.
+
+    At steps 1–3 there was a choice, so topological orders usually aren't unique.
+
+    If the graph had a cycle (A needs B, B needs A), at some step no vertex would be free, and the algorithm would get stuck. That's how it detects cycles.
+
 **This is exactly how backpropagation is scheduled:**
 
 - the forward pass evaluates nodes in topological order;
@@ -131,6 +229,23 @@ With non-negative edge weights, **Dijkstra's algorithm** maintains tentative dis
 2. **Finalize** the unfinalized vertex $v$ with the smallest $d$.
 3. **Relax** its outgoing edges: $d(w)\leftarrow\min(d(w), d(v) + \text{weight}(v, w))$.
 4. Repeat steps 2–3.
+
+!!! example "Example: Dijkstra by hand"
+    Edges (directed, with weights): $s\to a$ 4, $s\to b$ 1, $b\to a$ 2, $a\to t$ 1, $b\to t$ 5.
+
+    Each row finalizes one vertex (bold) and relaxes its edges:
+
+    | Step | Finalize | $d(s)$ | $d(a)$ | $d(b)$ | $d(t)$ |
+    |---|---|---|---|---|---|
+    | start | | $0$ | $\infty$ | $\infty$ | $\infty$ |
+    | 1 | $s$ | $\mathbf 0$ | $4$ | $1$ | $\infty$ |
+    | 2 | $b$ | | $\min(4, 1 + 2) = 3$ | $\mathbf 1$ | $1 + 5 = 6$ |
+    | 3 | $a$ | | $\mathbf 3$ | | $\min(6, 3 + 1) = 4$ |
+    | 4 | $t$ | | | | $\mathbf 4$ |
+
+    The shortest path to $t$ is $s\to b\to a\to t$, length $1 + 2 + 1 = 4$.
+
+    The direct-looking routes are worse: $s\to a\to t$ costs 5 and $s\to b\to t$ costs 6. Dijkstra found the detour because it always expands the closest unfinished vertex first.
 
 !!! proof "Why it's correct (sketch)"
     Invariant: when $v$ is finalized, $d(v)$ is the true distance.
@@ -164,6 +279,22 @@ It's symmetric for undirected graphs.
 
     A walk of length $k + 1$ from $i$ to $j$ is a walk of length $k$ from $i$ to some $\ell$, followed by an edge $\ell\to j$. Sum over all possible $\ell$.
 
+!!! example "Example: counting triangles with matrix powers"
+    The triangle graph (3 vertices, all joined):
+
+    $$
+    A = \begin{pmatrix}0&1&1\\1&0&1\\1&1&0\end{pmatrix}, \qquad A^2 = \begin{pmatrix}2&1&1\\1&2&1\\1&1&2\end{pmatrix}, \qquad A^3 = \begin{pmatrix}2&3&3\\3&2&3\\3&3&2\end{pmatrix}.
+    $$
+
+    - $(A^2)_{11} = 2$: the walks $1\to2\to1$ and $1\to3\to1$. In general the diagonal of $A^2$ is the degrees.
+    - $(A^3)_{11} = 2$: the walks $1\to2\to3\to1$ and $1\to3\to2\to1$, the triangle in both directions.
+
+    A closed walk of length 3 *is* a triangle. Each triangle is counted once for each of its 3 starting vertices and 2 directions, so
+
+    $$
+    \text{number of triangles} = \frac{\operatorname{tr}(A^3)}{6} = \frac{6}{6} = 1.
+    $$
+
 So linear algebra answers graph questions.
 
 The **graph Laplacian** $L = D - A$ (where $D$ is the diagonal matrix of degrees) is symmetric and PSD, since
@@ -178,6 +309,26 @@ Its eigenvalues reveal structure:
     - Proof: $\vv x^\top L\vv x = 0$ forces $x_i = x_j$ across every edge, so $\vv x$ is constant on each component.
 - The eigenvectors for the next-smallest eigenvalues vary slowly across the graph.
     - Using them as coordinates and clustering is **spectral clustering**.
+
+!!! example "Example: the Laplacian of a path"
+    For the path $1 - 2 - 3$, the degrees are $(1, 2, 1)$:
+
+    $$
+    L = D - A = \begin{pmatrix}1&0&0\\0&2&0\\0&0&1\end{pmatrix} - \begin{pmatrix}0&1&0\\1&0&1\\0&1&0\end{pmatrix} = \begin{pmatrix}1&-1&0\\-1&2&-1\\0&-1&1\end{pmatrix}.
+    $$
+
+    Take $\vv x = (1, 2, 4)$, a number on each vertex. The edge formula gives
+
+    $$
+    \vv x^\top L\vv x = (x_1 - x_2)^2 + (x_2 - x_3)^2 = 1 + 4 = 5.
+    $$
+
+    Read $\vv x^\top L\vv x$ as "how much $\vv x$ jumps across edges." It's 0 exactly when $\vv x$ is constant along every edge, like $(1, 1, 1)$.
+
+    | Graph | Eigenvalues of $L$ | Zero eigenvalues | Components |
+    |---|---|---|---|
+    | path $1 - 2 - 3$ | $0, 1, 3$ | 1 | 1 |
+    | two separate edges $1 - 2$, $3 - 4$ | $0, 0, 2, 2$ | 2 | 2 |
 
 !!! ml "Where this shows up"
     - **Graph neural networks** update each node from its neighbors: $H' = \sigma(\hat AHW)$, where $\hat A$ is a normalized adjacency matrix.

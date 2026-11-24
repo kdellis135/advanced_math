@@ -19,6 +19,21 @@ Adding a **prior** gives MAP estimation, which turns out to be regularization.
 - A **statistical model** is a family of distributions $p(x\mid\theta)$ indexed by a parameter $\theta$.
 - Given i.i.d. data $x_1, \ldots, x_n$, an **estimator** $\hat\theta$ is any function of the data meant to approximate $\theta$.
 
+**i.i.d.** means "independent and identically distributed": each data point is drawn from the same distribution, independently of the others. Like repeated rolls of the same die.
+
+For example, the model "coin flips with unknown bias" is the family $\text{Bernoulli}(\theta)$ for $\theta \in [0, 1]$. Each $\theta$ is one candidate explanation of the data, and estimation means picking one.
+
+!!! example "Example: three estimators of the same thing"
+    Data $x_1, \ldots, x_n$ from a distribution with unknown mean $\mu$. Any recipe that outputs a number is an estimator:
+
+    | Estimator | Recipe | Good? |
+    |---|---|---|
+    | sample mean | $\bar x = \frac1n\sum x_i$ | yes: centered on $\mu$, and gets more precise with $n$ |
+    | first observation | $x_1$ | centered on $\mu$, but ignores $n - 1$ data points, so it never improves |
+    | always 5 | $5$ | zero variability, but wrong unless $\mu$ happens to be 5 |
+
+    The definitions below put numbers on "centered" and "precise."
+
 Since the data are random, $\hat\theta$ is a random variable, and we judge it by its behavior:
 
 !!! definition "Definition: bias, variance, MSE"
@@ -36,6 +51,16 @@ Since the data are random, $\hat\theta$ is a random variable, and we judge it by
     2. Square and take expectations.
     3. The cross term is $2(\E\hat\theta - \theta)\E[\hat\theta - \E\hat\theta] = 0$.
 
+For the three estimators above (data with variance $\sigma^2$):
+
+| Estimator | Bias | Variance | MSE |
+|---|---|---|---|
+| $\bar x$ | $0$ | $\sigma^2/n$ | $\sigma^2/n$ |
+| $x_1$ | $0$ | $\sigma^2$ | $\sigma^2$ |
+| $5$ | $5 - \mu$ | $0$ | $(5 - \mu)^2$ |
+
+Picture an archer. **Bias** is how far the center of the arrow cluster is from the bullseye. **Variance** is how scattered the arrows are. MSE is the average squared distance of an arrow from the bullseye, and it counts both.
+
 An estimator can be biased yet better (lower MSE) than an unbiased one, if it has much less variance.
 
 This trade-off is the subject of the [next lesson](bias-variance.md).
@@ -44,6 +69,8 @@ This trade-off is the subject of the [next lesson](bias-variance.md).
     $\bar X = \frac1n\sum X_i$ is unbiased for $\mu$, with variance $\sigma^2/n$.
 
     The sample variance needs a correction: $\E\left[\sum_i(X_i - \bar X)^2\right] = (n - 1)\sigma^2$, so the unbiased estimator is $s^2 = \frac{1}{n-1}\sum_i(X_i - \bar X)^2$.
+
+    With numbers: data $2, 4, 9$ have $\bar x = 5$ and squared deviations $9, 1, 16$ (total 26). Dividing by $n = 3$ gives $8.67$; dividing by $n - 1 = 2$ gives $s^2 = 13$. The difference matters for small $n$ and fades for large $n$.
 
 ??? proof "Why $n - 1$ (deeper)"
     1. Expand $X_i - \mu = (X_i - \bar X) + (\bar X - \mu)$. The cross term sums to zero, because $\sum_i(X_i - \bar X) = 0$. So
@@ -67,6 +94,19 @@ This trade-off is the subject of the [next lesson](bias-variance.md).
 
     The **maximum likelihood estimate** is $\hat\theta_{\text{MLE}} = \argmax_\theta L(\theta) = \argmax_\theta\sum_{i=1}^n\log p(x_i\mid\theta)$.
 
+!!! example "Example: computing a likelihood by hand"
+    You flip a coin 3 times and see H, H, T. For each candidate bias $\theta$, how probable was that exact data?
+
+    By independence, $P(\text{H, H, T}\mid\theta) = \theta\cdot\theta\cdot(1 - \theta) = \theta^2(1 - \theta)$.
+
+    | $\theta$ | $0.2$ | $0.5$ | $0.6$ | $0.67$ | $0.8$ | $0.9$ |
+    |---|---|---|---|---|---|---|
+    | $L(\theta) = \theta^2(1-\theta)$ | $0.032$ | $0.125$ | $0.144$ | $\mathbf{0.148}$ | $0.128$ | $0.081$ |
+
+    The data is most probable around $\theta = \frac23$. A coin that lands heads two-thirds of the time is the "best explanation" of seeing 2 heads in 3 flips. That's the MLE.
+
+    Notice the $L$ values don't add up to 1 across $\theta$: they're probabilities of the *same* data under *different* hypotheses, not probabilities of different outcomes.
+
 We maximize the **log-likelihood** because log:
 
 - is increasing, so it has the same maximizer;
@@ -80,17 +120,22 @@ We maximize the **log-likelihood** because log:
 !!! example "Coin flips (Bernoulli)"
     Data: $k$ heads in $n$ flips.
 
+    0. Each head contributes a factor $\theta$, each tail a factor $1 - \theta$, so $L(\theta) = \theta^k(1 - \theta)^{n-k}$ (as in the H, H, T table).
     1. $\log L(\theta) = k\log\theta + (n - k)\log(1-\theta)$.
     2. $\frac{d}{d\theta}\log L = \frac k\theta - \frac{n-k}{1-\theta} = 0 \implies\hat\theta = \frac kn$.
 
-    The MLE is the observed frequency, as intuition says.
+    Solving step 2: move one term across, $\frac k\theta = \frac{n - k}{1 - \theta}$. Cross-multiply: $k(1 - \theta) = (n - k)\theta$, i.e. $k - k\theta = n\theta - k\theta$. The $k\theta$ terms cancel, leaving $k = n\theta$.
+
+    The MLE is the observed frequency, as intuition says. For H, H, T: $\frac23$, matching the table.
 
 !!! example "Gaussian"
     $$
     \log L(\mu, \sigma^2) = -\frac n2\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_i(x_i - \mu)^2.
     $$
 
-    - **$\partial/\partial\mu = 0$** gives $\hat\mu = \bar x$.
+    (Take the log of one density, $\log\left[(2\pi\sigma^2)^{-1/2}e^{-(x_i - \mu)^2/(2\sigma^2)}\right] = -\frac12\log(2\pi\sigma^2) - \frac{(x_i-\mu)^2}{2\sigma^2}$, then add $n$ of them.)
+
+    - **$\partial/\partial\mu = 0$** gives $\hat\mu = \bar x$. (The derivative is $\frac{1}{\sigma^2}\sum_i(x_i - \mu)$; setting it to zero gives $\sum x_i = n\mu$.)
     - **$\partial/\partial\sigma^2 = 0$:** $-\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum(x_i - \mu)^2 = 0$, so $\hat\sigma^2 = \frac1n\sum(x_i - \bar x)^2$.
 
     That's the *biased* version, dividing by $n$: MLEs need not be unbiased.
@@ -112,6 +157,8 @@ and
 $$
 -\log L(\theta) = \frac{1}{2\sigma^2}\sum_{i=1}^n\big(y_i - f_\theta(\vv x_i)\big)^2 + \text{const}.
 $$
+
+(The log turns the $\exp$ into its exponent; the minus sign flips it to positive. The $-\log(\sqrt{2\pi}\sigma)$ terms don't involve $\theta$, so they're the constant. And multiplying by the positive number $\frac{1}{2\sigma^2}$ doesn't move the minimizer.)
 
 **Maximizing Gaussian likelihood is exactly minimizing the sum of squared errors.**
 
@@ -153,6 +200,8 @@ Under mild regularity conditions, as $n\to\infty$ the MLE is:
 
 Intuition: a sharply peaked log-likelihood (high curvature) pins down $\theta$ precisely.
 
+Example, the coin: $\log p(x\mid\theta) = x\log\theta + (1 - x)\log(1 - \theta)$. Its second derivative is $-\frac{x}{\theta^2} - \frac{1-x}{(1-\theta)^2}$. Taking expectations with $\E[x] = \theta$ gives $I(\theta) = \frac{1}{\theta} + \frac{1}{1 - \theta} = \frac{1}{\theta(1 - \theta)}$. So $\Var(\hat\theta) \approx \frac{\theta(1 - \theta)}{n}$, exactly the variance of the sample proportion from the [limit theorems](../probability/limit-theorems.md) polling example.
+
 (The proofs combine the LLN, the CLT and a Taylor expansion of the score; they are outside the scope of this site.)
 
 ## 5. Bayesian inference and MAP
@@ -175,10 +224,26 @@ $$
 
     which is the Beta form. The normalizing constant takes care of itself.
 
+("$\propto$" means "proportional to": equal up to a constant factor that doesn't depend on $\theta$. We can ignore such constants because the posterior must integrate to 1, which pins the constant down.)
+
 So the prior acts like $\alpha$ "pseudo-heads" and $\beta$ "pseudo-tails" added to the real data.
 
 - The posterior mean $\frac{\alpha + k}{\alpha + \beta + n}$ is a compromise between the prior mean and the observed frequency.
 - The data wins as $n$ grows.
+
+!!! example "Example: updating a belief about a conversion rate"
+    Prior: $\text{Beta}(2, 8)$, mean $0.2$ ("past campaigns converted about 20%").
+
+    | Data so far | Posterior | Posterior mean | Raw frequency |
+    |---|---|---|---|
+    | none | $\text{Beta}(2, 8)$ | $0.20$ | |
+    | 3 of 10 convert | $\text{Beta}(5, 15)$ | $0.25$ | $0.30$ |
+    | 30 of 100 convert | $\text{Beta}(32, 78)$ | $0.29$ | $0.30$ |
+    | 300 of 1000 convert | $\text{Beta}(302, 708)$ | $0.299$ | $0.30$ |
+
+    With little data, the prior pulls the estimate toward 0.2. With lots, the data dominates.
+
+The **peak** (mode) of a $\text{Beta}(a, b)$ density, for $a, b > 1$, is at $\frac{a - 1}{a + b - 2}$. (Set the derivative of $\log[\theta^{a-1}(1-\theta)^{b-1}]$ to zero, exactly as in the coin MLE.)
 
 <div class="viz" data-viz="mle"></div>
 
@@ -188,6 +253,10 @@ So the prior acts like $\alpha$ "pseudo-heads" and $\beta$ "pseudo-tails" added 
     $$
     \hat\theta_{\text{MAP}} = \argmax_\theta\big[\log p(D\mid\theta) + \log p(\theta)\big].
     $$
+
+    (Take the log of "posterior $\propto$ likelihood × prior." The log of a product is a sum, and the constant $p(D)$ doesn't affect where the maximum is.)
+
+    Compare: the MLE maximizes only the first term. MAP adds a second term that rewards plausible $\theta$.
 
 ### Regularization is a prior
 
@@ -202,6 +271,8 @@ Then
 $$
 \hat{\vv w}_{\text{MAP}} = \argmin_{\vv w}\left[\frac{1}{2\sigma^2}\sum_i(y_i - \vv w^\top\vv x_i)^2 + \frac{1}{2\tau^2}\norm{\vv w}^2\right].
 $$
+
+How it comes together: MAP maximizes $\log(\text{likelihood}) + \log(\text{prior})$. Maximizing something is minimizing its negative, so minimize $-\log(\text{likelihood}) - \log(\text{prior})$. The first part is the squared-error sum from Section 3; the second is $\frac{\norm{\vv w}^2}{2\tau^2}$. Multiply everything by $2\sigma^2$ (which doesn't change the minimizer) and you get $\sum_i(y_i - \vv w^\top \vv x_i)^2 + \lambda\norm{\vv w}^2$ with $\lambda = \sigma^2/\tau^2$.
 
 | Prior on $\vv w$ | Regularizer |
 |---|---|

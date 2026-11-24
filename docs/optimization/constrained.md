@@ -25,6 +25,15 @@ $$
 \min_{\vv x}\ f(\vv x)\quad\text{subject to}\quad g_i(\vv x)\leq0\ (i = 1..m),\qquad h_j(\vv x) = 0\ (j = 1..p).
 $$
 
+This is the **standard form**: minimize, with every inequality written as "something $\leq 0$." Converting is mechanical:
+
+| Original | Standard form |
+|---|---|
+| maximize $f$ | minimize $-f$ |
+| $x \geq 1$ | $1 - x \leq 0$ |
+| $\norm{\vv x} \leq 1$ | $\norm{\vv x}^2 - 1 \leq 0$ |
+| $\vv a^\top\vv x = b$ | $h(\vv x) = \vv a^\top\vv x - b = 0$ |
+
 The **Lagrangian** attaches a multiplier to each constraint:
 
 $$
@@ -41,6 +50,22 @@ $$
 
     Both cases are captured by **complementary slackness**: $\lambda_ig_i(\vv x^*) = 0$.
 
+!!! example "Example: one variable, one fence"
+    Minimize $f(x) = (x - 2)^2$, whose unconstrained minimum is at $x = 2$, with a fence on the right.
+
+    **Fence at $x \leq 3$** ($g = x - 3 \leq 0$). The unconstrained minimum $x = 2$ is already allowed. The fence is irrelevant: **inactive**, $\lambda = 0$.
+
+    **Fence at $x \leq 1$** ($g = x - 1 \leq 0$). Now $x = 2$ is forbidden. The best you can do is walk up to the fence: $x^* = 1$. The constraint is **active**. Check stationarity: $f'(1) + \lambda g'(1) = -2 + \lambda = 0$, so $\lambda = 2 \geq 0$. ✓
+
+    Why $\lambda \geq 0$: at the fence, $f$ is still decreasing to the right ($f'(1) = -2$). It "wants" to push through the fence, and $\lambda g'$ is the fence pushing back. A *negative* $\lambda$ would mean the fence was pulling $x$ outward, which makes no sense for a wall.
+
+    | Condition | Fence at 3 ($x^* = 2$, $\lambda = 0$) | Fence at 1 ($x^* = 1$, $\lambda = 2$) |
+    |---|---|---|
+    | stationarity $f' + \lambda g' = 0$ | $0 + 0 = 0$ ✓ | $-2 + 2 = 0$ ✓ |
+    | primal feasibility $g \leq 0$ | $2 - 3 = -1 \leq 0$ ✓ | $1 - 1 = 0$ ✓ |
+    | dual feasibility $\lambda \geq 0$ | ✓ | ✓ |
+    | complementary slackness $\lambda g = 0$ | $0 \cdot (-1) = 0$ ✓ | $2 \cdot 0 = 0$ ✓ |
+
 !!! theorem "KKT conditions"
     Under mild regularity conditions ("constraint qualifications"), if $\vv x^*$ is optimal then there exist $\boldsymbol\lambda, \boldsymbol\nu$ such that:
 
@@ -54,6 +79,15 @@ $$
 The necessity proof generalizes the Lagrange argument using a separating-hyperplane theorem; it is outside the scope of this site.
 
 Sufficiency for convex problems follows from the duality argument in §3.
+
+**How to solve KKT by hand:** guess which constraints are active.
+
+1. Pick a subset of constraints to treat as active ($g_i = 0$); set $\lambda_i = 0$ for the rest.
+2. Solve stationarity plus the active equations.
+3. Check the remaining conditions: inactive constraints really satisfy $g_i < 0$, and every $\lambda_i \geq 0$.
+4. If a check fails, try another subset. (With $m$ constraints there are $2^m$ subsets, which is why real solvers are cleverer.)
+
+The next example does exactly this, with one constraint and two cases.
 
 !!! example "Example: projection onto a ball"
     Minimize $\norm{\vv x - \vv a}^2$ subject to $\norm{\vv x}^2\leq1$.
@@ -85,6 +119,21 @@ $$
 
 So every dual point gives a **lower bound** on the true optimum.
 
+!!! example "Example: lower bounds you can compute"
+    Minimize $x^2$ subject to $x \geq 1$ (so $f^* = 1$ at $x = 1$). In standard form, $g = 1 - x \leq 0$, and
+
+    $$
+    \mathcal L(x, \lambda) = x^2 + \lambda(1 - x).
+    $$
+
+    For a fixed $\lambda$, minimize over $x$ with no constraint: the derivative $2x - \lambda = 0$ gives $x = \frac\lambda2$, so $q(\lambda) = \frac{\lambda^2}{4} + \lambda - \frac{\lambda^2}{2} = \lambda - \frac{\lambda^2}{4}$.
+
+    | $\lambda$ | $0$ | $1$ | $2$ | $3$ | $4$ |
+    |---|---|---|---|---|---|
+    | $q(\lambda)$ | $0$ | $0.75$ | $\mathbf{1}$ | $0.75$ | $0$ |
+
+    Every value is $\leq f^* = 1$, as weak duality promises. The best bound, at $\lambda = 2$, equals $f^*$ exactly: strong duality. And $\lambda = 2$ is the KKT multiplier (exercise 1).
+
 The **dual problem** looks for the best bound:
 
 $$
@@ -111,6 +160,14 @@ Among all separating hyperplanes $\vv w^\top\vv x + b = 0$, find the one with th
 - Scale so the closest points satisfy $y_i(\vv w^\top\vv x_i + b) = 1$.
 - Then the distance from the hyperplane to the closest point is $1/\norm{\vv w}$.
 
+Why: the distance from a point $\vv x$ to the hyperplane $\vv w^\top\vv x + b = 0$ is $\frac{\lvert\vv w^\top\vv x + b\rvert}{\norm{\vv w}}$. ($\vv w$ is perpendicular to the hyperplane, and $\frac{\vv w^\top\vv x + b}{\norm{\vv w}}$ measures how far $\vv x$ sits along the unit normal, like the [projection](../linear-algebra/orthogonality.md) formula.) The scaling makes the numerator 1 for the closest points.
+
+The scaling is allowed because $(\vv w, b)$ and $(c\vv w, cb)$ describe the same hyperplane for any $c > 0$. So we can choose $c$ to make the closest points give exactly 1.
+
+**Why $y_i$ in the constraint:** $y_i(\vv w^\top\vv x_i + b) \geq 1$ packs two conditions into one. For a $+1$ point it says $\vv w^\top\vv x_i + b \geq 1$ (on the positive side); for a $-1$ point, multiplying by $-1$, it says $\vv w^\top\vv x_i + b \leq -1$.
+
+Maximizing the margin $\frac{1}{\norm{\vv w}}$ is the same as minimizing $\norm{\vv w}$, or (more conveniently, since it's smooth) $\frac12\norm{\vv w}^2$.
+
 So:
 
 $$
@@ -124,6 +181,17 @@ KKT stationarity with multipliers $\alpha_i\geq0$:
 $$
 \vv w = \sum_i\alpha_iy_i\vv x_i, \qquad\sum_i\alpha_iy_i = 0.
 $$
+
+(In standard form each constraint is $g_i = 1 - y_i(\vv w^\top\vv x_i + b) \leq 0$, so the Lagrangian is $\frac12\norm{\vv w}^2 + \sum_i\alpha_i\big(1 - y_i(\vv w^\top\vv x_i + b)\big)$. Its gradient in $\vv w$ is $\vv w - \sum_i\alpha_iy_i\vv x_i$, and its derivative in $b$ is $-\sum_i\alpha_iy_i$. Set both to zero.)
+
+!!! example "Example: the smallest SVM"
+    Two points: $\vv x_1 = (1, 1)$ with $y_1 = +1$, and $\vv x_2 = (-1, -1)$ with $y_2 = -1$.
+
+    1. Both points will be support vectors (with only two points, both must touch the margin). $\sum\alpha_iy_i = 0$ forces $\alpha_1 = \alpha_2 = \alpha$.
+    2. $\vv w = \alpha(1, 1) - \alpha(-1, -1) = 2\alpha(1, 1)$.
+    3. By symmetry $b = 0$. The active constraint for $\vv x_1$: $\vv w^\top\vv x_1 = 2\alpha\cdot 2 = 1$, so $\alpha = \frac14$ and $\vv w = (\frac12, \frac12)$.
+    4. The boundary is $\frac12x + \frac12y = 0$, the line $y = -x$, exactly halfway between the points.
+    5. Margin: $\frac{1}{\norm{\vv w}} = \frac{1}{1/\sqrt2} = \sqrt2$, the distance from $(1, 1)$ to that line. ✓
 
 By **complementary slackness**, $\alpha_i > 0$ only for points exactly on the margin: the **support vectors**.
 

@@ -19,10 +19,45 @@ $a\mid b$ ("$a$ divides $b$") means $b = ak$ for some integer $k$.
 !!! theorem "Division algorithm"
     For integers $a$ and $b > 0$, there are unique integers $q$ (quotient) and $r$ (remainder) with $a = qb + r$ and $0\leq r < b$. We write $r = a\bmod b$.
 
+| $a$ | $b$ | $a = qb + r$ | $a \bmod b$ |
+|---|---|---|---|
+| $17$ | $5$ | $17 = 3\cdot5 + 2$ | $2$ |
+| $20$ | $5$ | $20 = 4\cdot5 + 0$ | $0$ (so $5\mid20$) |
+| $3$ | $5$ | $3 = 0\cdot5 + 3$ | $3$ |
+| $-7$ | $3$ | $-7 = (-3)\cdot3 + 2$ | $2$ |
+
+!!! warning "Negative numbers in code"
+    The math convention keeps $0\leq r < b$, so $-7\bmod3 = 2$. Python's `-7 % 3` agrees and gives `2`.
+
+    C, C++, Java and JavaScript round the quotient toward zero instead, so `-7 % 3` is `-1` there. That's a classic bug when hashing negative keys or wrapping array indices.
+
 A **prime** is an integer $p\geq2$ whose only positive divisors are 1 and $p$.
 
 - Every integer $\geq2$ factors into primes ([proved by strong induction](../foundations/logic-and-proofs.md#34-proof-by-induction)), uniquely up to order.
 - There are infinitely many primes (Euclid, same lesson).
+
+!!! example "Example: the Sieve of Eratosthenes"
+    To find every prime up to $n$, cross out multiples:
+
+    1. Write $2, 3, \ldots, n$.
+    2. Take the smallest number not crossed out. It's prime.
+    3. Cross out all its multiples.
+    4. Repeat. You can stop once the prime exceeds $\sqrt n$.
+
+    For $n = 30$:
+
+    | Prime found | Crosses out |
+    |---|---|
+    | 2 | 4, 6, 8, …, 30 |
+    | 3 | 9, 15, 21, 27 (the even ones are already gone) |
+    | 5 | 25 (the others are already gone) |
+    | 7 | stop: $7 > \sqrt{30}\approx5.5$ |
+
+    What survives: **2, 3, 5, 7, 11, 13, 17, 19, 23, 29**.
+
+    Why stop at $\sqrt n$: a composite number $c = ab$ with $a\leq b$ has $a\leq\sqrt c$. So it has a prime factor at most $\sqrt n$, and it was already crossed out by then.
+
+    **Cost:** crossing out the multiples of $p$ takes about $\frac np$ steps. That's the [harmonic loop](asymptotics.md#3-sums-the-most-common-analysis) restricted to primes, $n\left(\frac12 + \frac13 + \frac15 + \cdots\right)$. It's at most $O(n\log n)$, and the true answer is $\Theta(n\log\log n)$, almost linear.
 
 ## 2. GCD and Euclid's algorithm
 
@@ -66,6 +101,17 @@ $$
 21 = 105 - 2\cdot42 = 105 - 2(252 - 2\cdot105) = 5\cdot105 - 2\cdot252.
 $$
 
+How we got there:
+
+1. Step 2 of the example says $105 = 2\cdot42 + 21$. Solve it for the gcd: $\ 21 = 105 - 2\cdot42$.
+2. Step 1 says $252 = 2\cdot105 + 42$. Solve it for the remainder: $\ 42 = 252 - 2\cdot105$.
+3. Substitute this into step 1's result to get rid of 42: $\ 21 = 105 - 2(252 - 2\cdot105)$.
+4. Collect the 105s and 252s: $\ 105 + 4\cdot105 - 2\cdot252 = 5\cdot105 - 2\cdot252$.
+
+Check: $5\cdot105 = 525$, $2\cdot252 = 504$, and $525 - 504 = 21$. ✓
+
+The rule: always substitute to eliminate the most recent remainder, until only the original two numbers are left.
+
 ## 3. Modular arithmetic
 
 !!! definition "Definition: congruence"
@@ -88,6 +134,19 @@ So **you can reduce mod $n$ at every step** of a computation, keeping numbers sm
 
 That's $O(\log k)$ multiplications. $3^{100}\bmod7$ needs only about 8.
 
+!!! example "Example: $3^{100}\bmod7$ by repeated squaring"
+    **Square repeatedly**, reducing mod 7 each time:
+
+    | Power | $3^1$ | $3^2$ | $3^4$ | $3^8$ | $3^{16}$ | $3^{32}$ | $3^{64}$ |
+    |---|---|---|---|---|---|---|---|
+    | mod 7 | $3$ | $9\equiv2$ | $2^2 = 4$ | $4^2 = 16\equiv2$ | $4$ | $2$ | $4$ |
+
+    **Write the exponent in binary:** $100 = 64 + 32 + 4$.
+
+    **Multiply those powers:** $\ 3^{100} = 3^{64}\cdot3^{32}\cdot3^4\equiv4\cdot2\cdot4 = 32\equiv4\pmod7$.
+
+    That's 6 squarings and 2 multiplications, and no number ever got bigger than $6^2 = 36$. Computing $3^{100}$ first would mean a 48-digit number.
+
 ### Inverses
 
 !!! theorem "Modular inverse"
@@ -96,6 +155,17 @@ That's $O(\log k)$ multiplications. $3^{100}\bmod7$ needs only about 8.
 !!! proof "Proof"
     - If $\gcd(a, n) = 1$, Bézout gives $ax + ny = 1$, so $ax\equiv1\pmod n$.
     - Conversely, if $ax\equiv1$, then $ax - 1 = ny$, and any common divisor of $a$ and $n$ divides 1.
+
+!!! example "Example: who has an inverse?"
+    Multiply each nonzero number by $k$ and see whether 1 appears:
+
+    | | $\times1$ | $\times2$ | $\times3$ | $\times4$ | $\times5$ | Inverse? |
+    |---|---|---|---|---|---|---|
+    | $2$, mod 5 | 2 | 4 | **1** | 3 | | yes: $2^{-1}\equiv3$ |
+    | $2$, mod 6 | 2 | 4 | 0 | 2 | 4 | no: $\gcd(2, 6) = 2$ |
+    | $5$, mod 6 | 5 | 4 | 3 | 2 | **1** | yes: $5^{-1}\equiv5$ |
+
+    Multiples of 2 mod 6 are always even, so they can never be 1. That's the gcd obstruction in action.
 
 So if $p$ is prime, every nonzero number mod $p$ is invertible.
 
@@ -121,11 +191,37 @@ Arithmetic mod $p$ is a **field**: you can add, subtract, multiply and divide.
 
     $(p-1)!$ is invertible mod $p$ (a product of invertibles), so cancel it.
 
+!!! example "Example: the proof with $p = 5$, $a = 2$"
+    | $k$ | 1 | 2 | 3 | 4 |
+    |---|---|---|---|---|
+    | $2k$ | 2 | 4 | 6 | 8 |
+    | $2k\bmod5$ | 2 | 4 | 1 | 3 |
+
+    The bottom row is $1, 2, 3, 4$ shuffled. Multiplying each row together:
+
+    $$
+    (2\cdot1)(2\cdot2)(2\cdot3)(2\cdot4) = 2^4\cdot4!\ \equiv\ 2\cdot4\cdot1\cdot3 = 4!\pmod5.
+    $$
+
+    Cancel $4! = 24$ to get $2^4\equiv1$. Directly: $2^4 = 16 = 3\cdot5 + 1$. ✓
+
+**A primality test, and its catch.** If $a^{n-1}\not\equiv1\pmod n$ for some $a$, then $n$ is definitely *not* prime. But the converse fails: $561 = 3\cdot11\cdot17$ passes for every $a$ coprime to it. Numbers like that are called Carmichael numbers. Real tests (Miller–Rabin) add an extra check that no composite can pass for most $a$.
+
 **Euler's generalization:** if $\gcd(a, n) = 1$, then $a^{\varphi(n)}\equiv1\pmod n$.
 
 - $\varphi(n)$ counts the integers in $1..n$ coprime to $n$.
 - The same proof works, using only those integers.
 - For $n = pq$ with distinct primes, $\varphi(n) = (p-1)(q-1)$.
+
+| $n$ | Integers in $1..n$ coprime to $n$ | $\varphi(n)$ |
+|---|---|---|
+| $7$ (prime) | $1, 2, 3, 4, 5, 6$ | $6 = 7 - 1$ |
+| $10 = 2\cdot5$ | $1, 3, 7, 9$ | $4 = 1\cdot4$ |
+| $15 = 3\cdot5$ | $1, 2, 4, 7, 8, 11, 13, 14$ | $8 = 2\cdot4$ |
+
+Why $(p-1)(q-1)$: of the $pq$ numbers, the multiples of $p$ ($q$ of them) and the multiples of $q$ ($p$ of them) share a common factor with $n$. Only $pq$ itself is counted twice. So $\varphi = pq - q - p + 1 = (p-1)(q-1)$.
+
+Check Euler with $n = 10$, $a = 3$: $\ 3^4 = 81 = 8\cdot10 + 1\equiv1\pmod{10}$. ✓
 
 ## 5. RSA
 
@@ -165,12 +261,26 @@ Arithmetic mod $p$ is a **field**: you can add, subtract, multiply and divide.
     | encrypt $m = 7$ | $7^3 = 343 = 6\cdot55 + 13$, so $c = 13$ |
     | decrypt | $13^{27}\bmod55 = 7$ (verify with repeated squaring!) |
 
+    Why it works here: $ed = 81 = 1 + 2\cdot40$, so $\ 7^{81} = 7\cdot(7^{40})^2\equiv7\cdot1^2 = 7\pmod{55}$.
+
+    **What an attacker sees:** $n = 55$, $e = 3$ and $c = 13$. To find $d$ they need $\varphi = 40$, which needs the factors $5$ and $11$. For 55 that's trivial. For a 617-digit $n$, nobody knows how.
+
 **Why it's secure:**
 
 - Computing $d$ requires $\varphi(n)$, which requires factoring $n$.
 - Multiplying two 1024-bit primes is instant; factoring their product is believed infeasible for classical computers.
 
 Shor's algorithm on a large quantum computer would break it, using the Fourier transform to find periods. That's why post-quantum cryptography is being deployed.
+
+!!! example "Example: why hash tables like prime sizes"
+    Hash the keys $10, 20, 30, 40, 50$ with $h(x) = x\bmod m$:
+
+    | Table size $m$ | Buckets used |
+    |---|---|
+    | $10$ | $0, 0, 0, 0, 0$: every key collides |
+    | $11$ (prime) | $10, 9, 8, 7, 6$: no collisions |
+
+    Real keys often share a common factor (IDs that step by 10, addresses aligned to 8 bytes). If $m$ shares that factor, only a fraction of the buckets ever get used. A prime $m$ shares a factor with almost nothing.
 
 !!! ml "Where this shows up"
     - **Hashing:** hash tables, Bloom filters and the "hashing trick" for features use $h(x)\bmod m$.

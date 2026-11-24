@@ -22,6 +22,19 @@ An estimate computed from random data is itself random.
 | sample mean | $\sigma/\sqrt n$, estimated by $s/\sqrt n$ |
 | proportion $\hat p$ | $\sqrt{\hat p(1 - \hat p)/n}$ |
 
+!!! example "Example: a sampling distribution you can picture"
+    A fair coin, flipped 100 times. The fraction of heads $\hat p$ might come out $0.47$. Do it again: $0.53$. Again: $0.51$.
+
+    Repeat the whole 100-flip experiment thousands of times and make a histogram of the $\hat p$ values. That histogram is the **sampling distribution** of $\hat p$:
+
+    - it's centered at the true $p = 0.5$;
+    - its standard deviation is $\sqrt{0.5 \cdot 0.5/100} = 0.05$: that's the standard error;
+    - by the CLT, it's bell-shaped.
+
+    In practice you run the experiment *once*. The standard error tells you how much your one number would have wobbled if you'd been able to repeat it.
+
+Both formulas come from the [limit theorems lesson](../probability/limit-theorems.md): an average of $n$ independent draws has standard deviation $\sigma/\sqrt n$, and a proportion is the average of $n$ Bernoulli draws with $\sigma^2 = p(1 - p)$. Since the true $\sigma$ or $p$ is unknown, we plug in the estimate.
+
 By the [CLT](../probability/limit-theorems.md#4-the-central-limit-theorem), for large $n$,
 
 $$
@@ -35,6 +48,14 @@ Since $P(-1.96\leq Z\leq1.96) = 0.95$ for $Z\sim\mathcal N(0,1)$:
 $$
 P\big(\hat\theta - 1.96\,\text{SE}\leq\theta\leq\hat\theta + 1.96\,\text{SE}\big)\approx0.95.
 $$
+
+How we got there, by rearranging the inequality inside the probability:
+
+1. $\frac{\hat\theta - \theta}{\text{SE}}$ is approximately $Z$, so $P\left(-1.96 \leq \frac{\hat\theta - \theta}{\text{SE}} \leq 1.96\right) \approx 0.95$.
+2. Multiply through by SE: $\ -1.96\,\text{SE} \leq \hat\theta - \theta \leq 1.96\,\text{SE}$. In words: "$\hat\theta$ lands within $1.96$ SE of $\theta$."
+3. That's the same as "$\theta$ lies within $1.96$ SE of $\hat\theta$": $\ \hat\theta - 1.96\,\text{SE} \leq \theta \leq \hat\theta + 1.96\,\text{SE}$.
+
+The distance between two points is the same measured from either end. So if the estimate is usually close to the truth, then the truth is usually close to the estimate, and we can build an interval around the number we actually have.
 
 !!! definition "Definition: confidence interval"
     A **95% confidence interval** is a procedure that produces an interval from the data, such that the interval contains the true parameter in 95% of repeated experiments.
@@ -55,10 +76,31 @@ $$
 
     With lots of data and weak priors the two usually agree numerically, which is why the confusion persists.
 
+!!! intuition "100 researchers"
+    Imagine 100 researchers, each collecting their own dataset and computing a 95% interval. About 95 of the intervals capture the true value and about 5 miss it. Each researcher only sees their own interval and can't tell which group they're in. "95%" is the success rate of the method.
+
+**What controls the width** ($\pm z\cdot\text{SE}$):
+
+| Change | Effect on the interval |
+|---|---|
+| more confidence (95% → 99%) | wider ($z$: 1.96 → 2.576) |
+| 4× more data | half as wide (SE has $\sqrt n$ in the denominator) |
+| noisier data (bigger $\sigma$) | wider |
+
 For small samples from a roughly normal population, replace 1.96 by a quantile of the **Student $t$ distribution** with $n - 1$ degrees of freedom.
 
 - It has heavier tails, accounting for the uncertainty in estimating $\sigma$ by $s$.
 - For $n > 30$ the difference is small.
+
+| Sample size $n$ | 95% multiplier |
+|---|---|
+| 5 | $2.78$ |
+| 10 | $2.26$ |
+| 30 | $2.05$ |
+| 100 | $1.98$ |
+| $\infty$ | $1.96$ (the normal value) |
+
+With only 5 data points, you must widen the interval by about 40% to be honest about the extra uncertainty.
 
 ## 3. Hypothesis tests
 
@@ -68,6 +110,18 @@ For small samples from a roughly normal population, replace 1.96 by a quantile o
     - **p-value:** the probability, *assuming $H_0$ is true*, of a test statistic at least as extreme as the one observed.
     - **Decision:** reject $H_0$ if $p < \alpha$ (the significance level, conventionally 0.05).
 
+!!! intuition "A courtroom"
+    $H_0$ is "innocent." The test asks: *if* the defendant were innocent, how surprising would this evidence be? If very surprising (small p-value), we reject innocence. If not, we don't convict, but that's "not proven guilty," not "proven innocent." Failing to reject $H_0$ never shows $H_0$ is true.
+
+**The recipe for a large-sample test:**
+
+1. State $H_0$ and what it predicts for the estimate (its mean and SE under $H_0$).
+2. Compute $z = \frac{\text{observed} - \text{expected under } H_0}{\text{SE}}$: how many standard errors away the data landed.
+3. Find the p-value: $P(\lvert Z\rvert \geq \lvert z\rvert)$ for a **two-sided** test (any difference counts), or $P(Z \geq z)$ for a **one-sided** test (only one direction counts).
+4. Compare with $\alpha$, and report the effect size and a confidence interval too.
+
+Why "at least as extreme," not "exactly this"? The probability of any *exact* outcome is tiny even when $H_0$ is true (exactly 50 heads in 100 flips has probability only 8%). The question is whether the data are *out in the tail*.
+
 !!! example "Is the coin fair?"
     60 heads in 100 flips. Under $H_0$ ($p = 0.5$):
 
@@ -76,6 +130,10 @@ For small samples from a roughly normal population, replace 1.96 by a quantile o
     3. Two-sided p-value: $P(|Z|\geq2)\approx0.046$.
 
     Reject at the 5% level, barely.
+
+    (Step 1: the number of heads is Binomial$(100, 0.5)$ under $H_0$, with variance $np(1-p) = 25$. Step 3: $P(Z \geq 2) \approx 0.023$, doubled for both tails.)
+
+**Tests and intervals are two views of the same thing.** A two-sided test at level 5% rejects $H_0: \theta = \theta_0$ exactly when $\theta_0$ falls outside the 95% confidence interval. For the coin: $\hat p = 0.6$, SE $\approx\sqrt{0.6 \cdot 0.4/100} \approx 0.049$, so the interval is $0.6 \pm 0.096 = [0.504, 0.696]$. It just barely excludes $0.5$, matching the borderline p-value.
 
 !!! warning "What a p-value is not"
     - It is **not** the probability that $H_0$ is true.
@@ -95,6 +153,15 @@ For small samples from a roughly normal population, replace 1.96 by a quantile o
 
 The **power** grows with sample size and effect size. Before running an experiment, compute the $n$ needed to detect the effect you care about.
 
+!!! example "Example: the power of the coin test"
+    Suppose the coin really lands heads 60% of the time. How often would our 100-flip test catch it?
+
+    1. The test rejects when $\lvert\text{heads} - 50\rvert \geq 1.96 \times 5 = 9.8$, i.e. at 60 or more heads (or 40 or fewer).
+    2. With the true $p = 0.6$, heads has mean 60 and SD $\sqrt{100 \cdot 0.6 \cdot 0.4} \approx 4.9$.
+    3. $P(\text{heads} \geq 59.8) \approx P\left(Z \geq \frac{59.8 - 60}{4.9}\right) = P(Z \geq -0.04) \approx 0.52$.
+
+    Power is only about 52%: a coin biased 60/40 would slip past this test about half the time. With 400 flips, the same calculation gives a power of about 98%.
+
 ## 4. A/B testing: comparing two proportions
 
 | Variant | Conversions | Rate |
@@ -110,10 +177,12 @@ $$
 \text{SE} = \sqrt{\frac{\hat p_A(1 - \hat p_A)}{n_A} + \frac{\hat p_B(1-\hat p_B)}{n_B}} = \sqrt{\frac{0.09}{2000} + \frac{0.109}{2000}}\approx0.00998.
 $$
 
+(The numerators: $0.1 \times 0.9 = 0.09$ and $0.125 \times 0.875 \approx 0.109$. Adding variances is the [variance-of-a-sum rule](../probability/joint.md#3-covariance-and-correlation) with zero covariance, since the two groups of users are independent. A difference $\hat p_B - \hat p_A$ is a sum with a minus sign, and $\Var(-X) = \Var X$.)
+
 So:
 
-- $z\approx2.5$ and $p\approx0.012$;
-- the 95% CI for the difference is $0.025\pm0.0196 = [0.5\%, 4.5\%]$.
+- $z = \frac{0.025}{0.00998} \approx 2.5$, and $p = P(\lvert Z\rvert \geq 2.5)\approx0.012$;
+- the 95% CI for the difference is $0.025\pm1.96 \times 0.00998 = 0.025\pm0.0196$, i.e. $[0.5\%, 4.5\%]$.
 
 B is probably better, but the true improvement could be anywhere from tiny to substantial.
 

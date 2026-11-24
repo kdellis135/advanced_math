@@ -17,15 +17,56 @@ Consider $f(x) = \dfrac{x^2 - 1}{x - 1}$.
 - At $x = 1$ it's $\frac00$, undefined.
 - For every $x \neq 1$ we can cancel: $f(x) = x + 1$.
 
+(Why can we cancel? Factor the top: $x^2 - 1 = (x - 1)(x + 1)$. Dividing $(x-1)(x+1)$ by $(x - 1)$ is allowed whenever $x - 1 \neq 0$, i.e. $x \neq 1$.)
+
+Before any theory, just compute some values. Approach $1$ from both sides:
+
+| $x$ | $0.9$ | $0.99$ | $0.999$ | $1$ | $1.001$ | $1.01$ | $1.1$ |
+|---|---|---|---|---|---|---|---|
+| $f(x)$ | $1.9$ | $1.99$ | $1.999$ | undefined | $2.001$ | $2.01$ | $2.1$ |
+
+The outputs close in on $2$ from both sides. The graph of $f$ is the line $y = x + 1$ with a single missing point, a "hole," at $(1, 2)$.
+
 So as $x$ approaches 1, $f(x)$ approaches 2, even though $f(1)$ doesn't exist. We write
 
 $$
 \lim_{x \to 1} \frac{x^2 - 1}{x - 1} = 2.
 $$
 
+Read it as "the limit of $f(x)$ as $x$ approaches 1 is 2."
+
 The derivative will be exactly this kind of limit: a $\frac00$ expression that nonetheless approaches a definite value. (There it is $\frac{\text{change in } f}{\text{change in } x}$ as both changes shrink.)
 
+!!! warning "A table of values suggests, it doesn't prove"
+    Tables can fool you. $\sin(\pi/x)$ at $x = 0.1, 0.01, 0.001, \dots$ gives $0, 0, 0, \dots$ (since $\sin(10\pi) = \sin(100\pi) = 0$). But the limit as $x \to 0$ doesn't exist: at other points like $x = 2/21$ the value is $1$.
+
+    That's why we need a precise definition.
+
 ## 2. Making "close" precise
+
+### Warm-up: absolute value as distance
+
+$|x - a|$ is the **distance** between $x$ and $a$ on the number line. For example, $|5 - 2| = 3$ and $|2 - 5| = 3$.
+
+So an inequality like $|x - a| < \delta$ describes a **window** around $a$:
+
+$$
+|x - a| < \delta \iff -\delta < x - a < \delta \iff a - \delta < x < a + \delta.
+$$
+
+Example: $|x - 2| < 0.1$ means $1.9 < x < 2.1$.
+
+Adding the condition $0 < |x - a|$ just says $x \neq a$: the window with its center point removed.
+
+One fact about distances we'll use repeatedly, the **triangle inequality**:
+
+$$
+|u + v| \leq |u| + |v|.
+$$
+
+If $u$ and $v$ have the same sign it's an equality ($|3 + 4| = 7$). If they have opposite signs, they partly cancel and the left side is smaller ($|3 + (-4)| = 1 < 7$). Either way, it's never bigger.
+
+### The definition
 
 "$f(x)$ approaches $L$ as $x$ approaches $a$" should mean: **you can make $f(x)$ as close to $L$ as you like, by making $x$ close enough to $a$.**
 
@@ -36,6 +77,15 @@ Turn it into a game:
 3. You win if *every* such $x$ (other than $a$ itself) works.
 
 The limit is $L$ if you can win **no matter which $\varepsilon$** the skeptic picks.
+
+!!! example "Playing a few rounds, for $f(x) = 3x + 1$ near $a = 2$, $L = 7$"
+    | Skeptic's $\varepsilon$ | Your $\delta$ | Why it works |
+    |---|---|---|
+    | $1$ | $\frac13$ | $x \in (\frac53, \frac73)$ gives $3x + 1 \in (6, 8)$, within $1$ of $7$ |
+    | $0.1$ | $\frac{0.1}{3} \approx 0.033$ | $3x + 1$ moves 3 times as much as $x$, so a third of the tolerance suffices |
+    | $0.001$ | $\frac{0.001}{3}$ | same reasoning |
+
+    A pattern appears: $\delta = \varepsilon/3$ always wins. When you can give a *formula* for $\delta$ in terms of $\varepsilon$, you've proved the limit. That's what the examples below do.
 
 !!! definition "Definition: limit"
     $\displaystyle\lim_{x \to a} f(x) = L$ means:
@@ -78,8 +128,12 @@ The standard technique works *backwards*:
 
     If $0 < |x - 2| < \delta$, then $|(3x+1) - 7| = 3|x - 2| < 3\delta = \varepsilon$.
 
+This first example was easy because $|f(x) - L|$ turned out to be a constant times $|x - a|$. For curves, the constant varies with $x$, and we need one more trick.
+
 !!! example "Example: $\lim_{x \to 2} x^2 = 4$"
-    *Scratch:* $|x^2 - 4| = |x - 2|\,|x + 2|$. The factor $|x + 2|$ is a nuisance, so bound it:
+    *Scratch:* $|x^2 - 4| = |x - 2|\,|x + 2|$.
+
+    We control $|x - 2|$ (that's what $\delta$ does), but there's an extra factor $|x + 2|$. It isn't a constant, so we can't just divide by it. Instead, find an upper bound for it:
 
     - If we insist $|x - 2| < 1$, then $1 < x < 3$, so $|x + 2| < 5$.
     - Then $|x^2 - 4| < 5|x - 2|$, which is $< \varepsilon$ when $|x - 2| < \varepsilon/5$.
@@ -89,7 +143,34 @@ The standard technique works *backwards*:
     - $|x - 2| < 1$ gives $|x + 2| < 5$;
     - so $|x^2 - 4| = |x-2||x+2| < 5 \cdot \frac{\varepsilon}{5} = \varepsilon$.
 
+    Why the $\min$? We need **both** $|x - 2| < 1$ (to bound $|x + 2|$) and $|x - 2| < \varepsilon/5$ (to finish). Taking $\delta$ to be the smaller of the two guarantees both.
+
+    Sanity check with $\varepsilon = 0.1$: $\delta = \min(1, 0.02) = 0.02$. At the edge $x = 2.02$, $x^2 = 4.0804$, within $0.1$ of $4$. ✓
+
 The "$\min(1, \ldots)$" trick (first restrict to a bounded window, then shrink further) handles almost every polynomial example.
+
+!!! tip "You won't do ε–δ every day"
+    The point of these proofs is to understand what a limit *means*, and to be able to read proofs in books and papers. In practice you'll compute limits with the laws and techniques in the next two sections, which are themselves proved with ε–δ once and for all.
+
+### One-sided limits
+
+Sometimes $f$ behaves differently on each side of $a$. We can look at one side at a time:
+
+- $\displaystyle\lim_{x \to a^+} f(x) = L$ (**from the right**): same definition, but only for $x > a$, i.e. $a < x < a + \delta$.
+- $\displaystyle\lim_{x \to a^-} f(x) = L$ (**from the left**): only for $x < a$.
+
+The two-sided limit exists exactly when both one-sided limits exist and are equal.
+
+!!! example "Example: three ways a limit can fail to exist"
+    | Function at $0$ | From the left | From the right | Two-sided limit |
+    |---|---|---|---|
+    | $\dfrac{\lvert x\rvert}{x}$ ($-1$ for $x<0$, $1$ for $x>0$) | $-1$ | $1$ | doesn't exist (**jump**) |
+    | $\dfrac{1}{x}$ | $-\infty$ | $+\infty$ | doesn't exist (**blow-up**) |
+    | $\sin(1/x)$ | none | none | doesn't exist (**oscillation**) |
+
+    For $\sin(1/x)$: as $x \to 0$, $1/x$ races through infinitely many full cycles, so $\sin(1/x)$ keeps hitting every value in $[-1, 1]$ and settles on nothing.
+
+We write $\lim_{x \to 0^+} \frac{1}{x} = +\infty$ to describe *how* it fails: the values grow without bound. This is shorthand; $\infty$ is not a number, so the limit still doesn't exist in the strict sense.
 
 ## 3. Limit laws
 
@@ -109,7 +190,9 @@ You don't want to do ε–δ every time. Instead, prove a few general rules once
     - there is $\delta_1$ with $|f(x) - L| < \varepsilon/2$ when $0<|x-a|<\delta_1$;
     - there is $\delta_2$ with $|g(x) - M| < \varepsilon/2$ when $0<|x-a|<\delta_2$.
 
-    Let $\delta = \min(\delta_1, \delta_2)$, so both hold. By the triangle inequality $|u + v| \leq |u| + |v|$:
+    (We're allowed to ask for $\varepsilon/2$: the definition of "$f \to L$" works for *every* positive tolerance, and $\varepsilon/2$ is one.)
+
+    Let $\delta = \min(\delta_1, \delta_2)$, so both hold. First regroup the error: $(f + g)(x) - (L + M) = \big(f(x) - L\big) + \big(g(x) - M\big)$. Then apply the triangle inequality $|u + v| \leq |u| + |v|$:
 
     $$
     |(f + g)(x) - (L + M)| \leq |f(x) - L| + |g(x) - M| < \tfrac\varepsilon2 + \tfrac\varepsilon2 = \varepsilon.
@@ -136,7 +219,54 @@ You don't want to do ε–δ every time. Instead, prove a few general rules once
 
 Since $\lim_{x \to a} x = a$ and $\lim c = c$ are obvious, the laws immediately give the limit of any polynomial or rational function by plugging in (where the denominator isn't 0).
 
-## 4. The squeeze theorem and $\frac{\sin x}{x}$
+For instance, here is $\lim_{x \to 2}(x^2 + 3x)$ built from the laws, one at a time:
+
+$$
+\lim_{x\to2}(x^2 + 3x) \overset{\text{sum}}{=} \lim x \cdot \lim x + 3 \lim x \overset{\text{product, const.}}{=} 2 \cdot 2 + 3 \cdot 2 = 10.
+$$
+
+That's the same as just plugging in $x = 2$. The laws are what *justify* plugging in.
+
+## 4. Computing limits in practice
+
+When plugging in gives a sensible number, that's the answer. The interesting case is when it gives $\frac{0}{0}$. This is called an **indeterminate form**: it could turn out to be anything, and you need to rewrite the expression first.
+
+The idea behind every technique below: **find a different formula that equals $f(x)$ for all $x \neq a$ and can be plugged into.** Since the limit ignores the value at $a$, the two formulas have the same limit.
+
+**Technique 1: factor and cancel.**
+
+$$
+\lim_{x \to 3}\frac{x^2 - 5x + 6}{x - 3} = \lim_{x \to 3}\frac{(x - 2)(x - 3)}{x - 3} = \lim_{x\to3}(x - 2) = 1.
+$$
+
+If plugging $a$ into a polynomial gives $0$, then $(x - a)$ is a factor. That's how you know what to look for.
+
+**Technique 2: multiply by the conjugate** (for square roots).
+
+$$
+\lim_{x \to 0}\frac{\sqrt{x + 4} - 2}{x}.
+$$
+
+Plugging in gives $\frac00$. Multiply top and bottom by $\sqrt{x+4} + 2$, using $(A - B)(A + B) = A^2 - B^2$:
+
+$$
+\frac{\sqrt{x+4} - 2}{x}\cdot\frac{\sqrt{x+4}+2}{\sqrt{x+4}+2} = \frac{(x + 4) - 4}{x(\sqrt{x+4}+2)} = \frac{1}{\sqrt{x+4}+2} \xrightarrow{x\to0} \frac14.
+$$
+
+**Technique 3: combine fractions.**
+
+$$
+\lim_{x\to0}\frac{1}{x}\left(\frac{1}{2 + x} - \frac12\right) = \lim_{x\to0}\frac1x\cdot\frac{2 - (2 + x)}{2(2+x)} = \lim_{x\to0}\frac{-1}{2(2 + x)} = -\frac14.
+$$
+
+**Technique 4: squeeze**, for expressions you can trap between two simpler ones. That's the next section.
+
+!!! warning "Not every $\frac{\text{nonzero}}{0}$ is indeterminate"
+    If plugging in gives $\frac{5}{0}$, the limit doesn't exist as a number: the expression blows up. Check one-sided limits to see whether it goes to $+\infty$ or $-\infty$.
+
+    Only $\frac00$ (and a few others like $\frac{\infty}{\infty}$, met in [Using derivatives](applications.md)) call for rewriting.
+
+## 5. The squeeze theorem and $\frac{\sin x}{x}$
 
 !!! theorem "Theorem: squeeze"
     If $g(x) \leq f(x) \leq h(x)$ near $a$, and $\lim g = \lim h = L$, then $\lim f = L$.
@@ -149,6 +279,17 @@ Since $\lim_{x \to a} x = a$ and $\lim c = c$ are obvious, the laws immediately 
     $$
 
     So $f$ is too.
+
+Picture: $f$ is trapped between two functions that both funnel into the point $(a, L)$. It has nowhere else to go.
+
+!!! example "Example: $\lim_{x \to 0} x^2\cos(1/x) = 0$"
+    $\cos(1/x)$ oscillates wildly, so the laws don't apply (it has no limit at 0). But it's always between $-1$ and $1$.
+
+    1. Multiply $-1 \leq \cos(1/x) \leq 1$ by $x^2 \geq 0$: $\ -x^2 \leq x^2\cos(1/x) \leq x^2$.
+    2. Both $-x^2$ and $x^2$ tend to $0$.
+    3. By squeeze, so does $x^2 \cos(1/x)$.
+
+    The pattern "(something going to 0) × (something bounded) → 0" comes up constantly.
 
 The most important application:
 
@@ -166,22 +307,30 @@ The most important application:
     | circular sector of angle $x$ | $\frac12 x$ |
     | larger triangle $(0,0), (1, 0), (1, \tan x)$ | $\frac12\tan x$ |
 
+    Where the areas come from:
+
+    - **Small triangle:** base $1$ (along the $x$-axis), height $\sin x$. Area $= \frac12 \cdot 1 \cdot \sin x$.
+    - **Sector:** a full circle of radius 1 has area $\pi$ and angle $2\pi$. A sector of angle $x$ is the fraction $\frac{x}{2\pi}$ of it, so its area is $\frac{x}{2\pi}\cdot\pi = \frac{x}{2}$. (This is where radians are used.)
+    - **Large triangle:** base $1$, height $\tan x$ (the line at angle $x$ meets the vertical line $X = 1$ at height $\tan x$, since $\tan$ is the slope). Area $= \frac12\tan x$.
+
     They are nested, so
 
     $$
     \frac12\sin x \ \leq\ \frac12 x \ \leq\ \frac12\tan x.
     $$
 
-    1. Divide by $\frac12\sin x > 0$: $\ 1 \leq \frac{x}{\sin x} \leq \frac{1}{\cos x}$.
-    2. Take reciprocals (flipping inequalities): $\ \cos x \leq \frac{\sin x}{x} \leq 1$.
+    1. Divide by $\frac12\sin x > 0$: $\ 1 \leq \frac{x}{\sin x} \leq \frac{1}{\cos x}$. (The last term is $\frac{\tan x}{\sin x} = \frac{\sin x / \cos x}{\sin x} = \frac{1}{\cos x}$.)
+    2. Take reciprocals. For positive numbers, $u \leq v$ means $\frac1u \geq \frac1v$ (e.g. $2 \leq 4$ but $\frac12 \geq \frac14$), so every inequality flips: $\ \cos x \leq \frac{\sin x}{x} \leq 1$.
     3. As $x \to 0^+$, $\cos x \to 1$, so by squeeze the limit from the right is 1.
     4. Since $\frac{\sin x}{x}$ is even, the same holds from the left.
+
+Numerically: $\frac{\sin 0.1}{0.1} \approx 0.99833$ and $\frac{\sin 0.01}{0.01} \approx 0.99998$. For small $x$, $\sin x \approx x$.
 
 This is the fact that makes $\frac{d}{dx}\sin x = \cos x$.
 
 It's also why radians are the natural unit: in degrees the limit would be $\pi/180$.
 
-## 5. Limits at infinity and of sequences
+## 6. Limits at infinity and of sequences
 
 $\lim_{x\to\infty} f(x) = L$ means $f(x)$ gets close to $L$ once $x$ is large enough:
 
@@ -195,14 +344,28 @@ $$
 \forall\varepsilon>0\ \exists N:\ n > N \Rightarrow |a_n - L| < \varepsilon.
 $$
 
-Example: $1/n \to 0$. Given $\varepsilon$, take $N = 1/\varepsilon$; then $n > N$ gives $1/n < \varepsilon$.
+The skeptic's game is the same, but your answer is now a threshold $N$ ("far enough out") instead of a window $\delta$ ("close enough in").
+
+Example: $1/n \to 0$. Given $\varepsilon$, take $N = 1/\varepsilon$; then $n > N$ gives $1/n < 1/N = \varepsilon$.
+
+With numbers: if the skeptic says $\varepsilon = 0.01$, you answer $N = 100$. Every term after the 100th, like $\frac{1}{101}$ or $\frac{1}{5000}$, is less than $0.01$ away from $0$.
 
 Useful facts:
 
 - For $k > 0$, $1/x^k \to 0$.
 - For rational functions, divide top and bottom by the highest power: $\frac{3x^2 + 1}{5x^2 - x} = \frac{3 + 1/x^2}{5 - 1/x} \to \frac35$.
 
-## 6. Continuity
+Why divide by the highest power? It turns every lower-order term into something like $\frac{1}{x}$ or $\frac{1}{x^2}$, which goes to $0$, leaving only the leading terms. The three possible outcomes:
+
+| Degrees | Example | Limit as $x \to \infty$ |
+|---|---|---|
+| top < bottom | $\dfrac{4x + 1}{x^2 + 3}$ | $0$ |
+| top = bottom | $\dfrac{3x^2 + 1}{5x^2 - x}$ | ratio of leading coefficients, $\frac35$ |
+| top > bottom | $\dfrac{x^3}{x^2 + 1}$ | $\infty$ |
+
+In each case the answer is set by the **leading terms**. Big-$O$ notation in [Asymptotics](../discrete/asymptotics.md) is built on the same idea.
+
+## 7. Continuity
 
 !!! definition "Definition: continuity"
     $f$ is **continuous at $a$** if $\displaystyle\lim_{x\to a} f(x) = f(a)$.
@@ -218,6 +381,29 @@ The definition packs three requirements:
 Informally: *small changes in input cause small changes in output*.
 
 By the limit laws, sums, products, quotients (where defined) and compositions of continuous functions are continuous. Polynomials, $e^x$, $\ln x$ (on $x>0$), $\sin$, $\cos$ are continuous everywhere they're defined.
+
+For compositions this gives a handy rule: if $g(x) \to b$ and $f$ is continuous at $b$, then
+
+$$
+\lim_{x \to a} f(g(x)) = f\Big(\lim_{x \to a} g(x)\Big).
+$$
+
+You can "move the limit inside" a continuous function. For example, $\lim_{x \to 0} e^{\sin x / x} = e^{\lim \sin x/x} = e^1 = e$.
+
+!!! example "Example: choosing a constant to make a function continuous"
+    For which $c$ is this function continuous at $x = 2$?
+
+    $$
+    f(x) = \begin{cases} x^2 & x < 2 \\ c\,x & x \geq 2 \end{cases}
+    $$
+
+    Check the three requirements:
+
+    1. $f(2) = 2c$ exists.
+    2. Left limit: $\lim_{x\to2^-} x^2 = 4$. Right limit: $\lim_{x \to 2^+} cx = 2c$. These agree only if $2c = 4$, i.e. $c = 2$.
+    3. With $c = 2$, the limit $4$ equals $f(2) = 4$. ✓
+
+    So $c = 2$. For any other $c$, the graph has a jump at $x = 2$.
 
 Typical discontinuities:
 
@@ -259,9 +445,17 @@ Typical discontinuities:
 
     Check the midpoint $1.5$: $f(1.5) = 0.875 > 0$, so the root is in $[1, 1.5]$.
 
+    | Step | Interval | Midpoint $m$ | $f(m)$ | Keep |
+    |---|---|---|---|---|
+    | 1 | $[1, 2]$ | $1.5$ | $+0.875$ | left half $[1, 1.5]$ |
+    | 2 | $[1, 1.5]$ | $1.25$ | $-0.297$ | right half $[1.25, 1.5]$ |
+    | 3 | $[1.25, 1.5]$ | $1.375$ | $+0.225$ | left half $[1.25, 1.375]$ |
+
+    Always keep the half where $f$ changes sign; IVT guarantees a root there. (The root is $\approx 1.3247$.)
+
     Each step halves the interval. This **bisection method** is a guaranteed (if slow) root-finder, and its correctness proof is exactly IVT.
 
-## 7. One more famous limit
+## 8. One more famous limit
 
 !!! theorem "Theorem"
     The sequence $a_n = \left(1 + \frac1n\right)^n$ increases and is bounded above by 3, so it converges. Its limit is called $e \approx 2.71828$.

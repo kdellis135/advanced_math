@@ -26,6 +26,16 @@ The randomness comes from two places:
 1. which training set we happened to get;
 2. the noise in the new $y$.
 
+!!! intuition "The thought experiment behind $\E_D$"
+    Imagine 1000 parallel worlds. In each, a different random training set $D$ is drawn from the same process, and the same learning algorithm is trained on it. That gives 1000 slightly different models $\hat f_D$.
+
+    Now look at one test point $\vv x$:
+
+    - The 1000 predictions $\hat f_D(\vv x)$ form a cloud of numbers. Its **average** is $\E_D[\hat f_D(\vv x)]$, and its **spread** is the variance.
+    - **Bias** is how far that average sits from the truth $f(\vv x)$.
+
+    In real life you only see one world. But this picture tells you what your single model is a sample *from*.
+
 ## 2. The decomposition
 
 !!! theorem "Bias–variance decomposition"
@@ -45,7 +55,31 @@ The randomness comes from two places:
     - the new noise $\epsilon$ is independent of $D$ and has mean 0;
     - $\bar f - \hat f_D$ has mean 0 over $D$.
 
+    Explicitly, writing $a = \epsilon$, $b = f - \bar f$, $c = \bar f - \hat f_D$, the square is $a^2 + b^2 + c^2 + 2ab + 2ac + 2bc$, and:
+
+    | Cross term | Expectation | Why it's zero |
+    |---|---|---|
+    | $2ab$ | $2b\,\E[\epsilon]$ | $b$ is a constant and $\E\epsilon = 0$ |
+    | $2ac$ | $2\E[\epsilon]\E[c]$ | $\epsilon$ is independent of $D$, and $\E\epsilon = 0$ |
+    | $2bc$ | $2b\,\E[c]$ | $\E_D[\bar f - \hat f_D] = \bar f - \bar f = 0$ |
+
     What remains is $\E\epsilon^2 + (f - \bar f)^2 + \E(\bar f - \hat f_D)^2$.
+
+!!! example "Example: a biased estimator that wins"
+    Estimate a mean $\mu = 1$ from data whose sample mean $\bar X$ has variance $\frac{\sigma^2}{n} = 1$ (small, noisy dataset). Consider the shrunken estimator $c\bar X$ for a constant $c$:
+
+    - bias: $\E[c\bar X] - \mu = (c - 1)\mu = c - 1$;
+    - variance: $c^2 \Var\bar X = c^2$;
+    - MSE: $(c - 1)^2 + c^2$.
+
+    | $c$ | bias² | variance | MSE |
+    |---|---|---|---|
+    | $1$ (unbiased $\bar X$) | $0$ | $1$ | $1$ |
+    | $0.75$ | $0.0625$ | $0.5625$ | $0.625$ |
+    | $0.5$ | $0.25$ | $0.25$ | $\mathbf{0.5}$ |
+    | $0$ (always guess 0) | $1$ | $0$ | $1$ |
+
+    Shrinking halfway toward zero halves the error. With little data, a bit of bias buys a big cut in variance. That's precisely what regularization does. (The best $c$ depends on the unknown $\mu$, which is why in practice $\lambda$ is tuned on validation data.)
 
 !!! intuition "Darts"
     - **Bias:** your throws are centered in the wrong place. The model can't represent the truth.
@@ -80,6 +114,16 @@ $$
 $$
 
 (Derived in [Matrix calculus](../multivariable/matrix-calculus.md). It's MAP with a Gaussian prior, from [the previous lesson](estimation.md#regularization-is-a-prior).)
+
+**One feature first.** With a single feature and no intercept, least squares gave $w = \frac{\sum x_iy_i}{\sum x_i^2}$ ([Using derivatives](../calculus/applications.md#4-an-optimization-example-least-squares-in-one-dimension)). Ridge gives
+
+$$
+w_\lambda = \frac{\sum x_iy_i}{\sum x_i^2 + \lambda}.
+$$
+
+The extra $\lambda$ in the denominator shrinks the slope toward 0. With the data $(1, 2), (2, 3), (3, 7)$ from that lesson: $w_0 = \frac{29}{14} \approx 2.07$, $\ w_1 = \frac{29}{15} \approx 1.93$, $\ w_{14} = \frac{29}{28} \approx 1.04$.
+
+The shrinkage matters most when $\sum x_i^2$ is small, i.e. when the data say little about the slope. When $\sum x_i^2$ is huge, adding $\lambda$ barely changes anything. The SVD view below is this same idea, applied direction by direction.
 
 **Why it reduces variance, seen through the SVD.** Write $X = U\Sigma V^\top$ with singular values $\sigma_i$. Then
 
@@ -117,6 +161,19 @@ You can't choose the degree or $\lambda$ by training error, which always prefers
 
 - **Train / validation / test split:** fit on train, tune on validation, report once on test.
 - **$k$-fold cross-validation:** split the data into $k$ folds; train on $k - 1$, evaluate on the remaining one, rotate through all $k$, and average. Uses all the data for both purposes, at $k$ times the cost.
+
+!!! example "Example: 5-fold cross-validation to choose $\lambda$"
+    1000 examples, split into 5 folds of 200.
+
+    1. For each candidate $\lambda \in \{0.01, 0.1, 1, 10\}$:
+        - train on folds 2–5, measure error on fold 1;
+        - train on folds 1, 3–5, measure error on fold 2;
+        - … and so on, 5 times in all;
+        - average the 5 errors.
+    2. Pick the $\lambda$ with the lowest average error.
+    3. Retrain on all 1000 examples with that $\lambda$.
+
+    Every example is used for validation exactly once, and for training 4 times.
 
 Why a held-out estimate is trustworthy:
 

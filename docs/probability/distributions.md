@@ -32,6 +32,25 @@ $$
 - any particular sequence with $k$ successes has probability $p^k(1-p)^{n-k}$;
 - there are $\binom nk$ such sequences.
 
+!!! example "Example: 3 free throws, each made with probability 0.7"
+    The sequences with exactly 2 makes (S = success, F = failure):
+
+    | Sequence | Probability |
+    |---|---|
+    | SSF | $0.7 \cdot 0.7 \cdot 0.3 = 0.147$ |
+    | SFS | $0.7 \cdot 0.3 \cdot 0.7 = 0.147$ |
+    | FSS | $0.3 \cdot 0.7 \cdot 0.7 = 0.147$ |
+
+    Each has two 0.7's and one 0.3 (independence lets us multiply), so they're all equal. There are $\binom32 = 3$ of them. So $P(X = 2) = 3 \times 0.147 = 0.441$.
+
+    The full PMF:
+
+    | $k$ | 0 | 1 | 2 | 3 |
+    |---|---|---|---|---|
+    | $P(X = k)$ | $0.027$ | $0.189$ | $0.441$ | $0.343$ |
+
+    These sum to 1, as they must: by the [binomial theorem](counting.md#3-combinations-and-binomial-coefficients), $\sum_k\binom nk p^k(1-p)^{n-k} = (p + (1 - p))^n = 1$.
+
 $X = \sum_{i=1}^nB_i$ with $B_i$ independent Bernoulli, so:
 
 - $\E X = np$;
@@ -45,6 +64,8 @@ $$
 
 (First $k - 1$ failures, then a success.)
 
+Example: rolling a die until the first 6 ($p = \frac16$). The chance the first 6 comes on roll 3 is $\left(\frac56\right)^2\frac16 \approx 0.116$. On average it takes $\frac{1}{1/6} = 6$ rolls (exercise 5 of the [previous lesson](random-variables.md) derived this with the law of total expectation).
+
 The geometric distribution is **memoryless**: $P(X > m + k\mid X > m) = P(X > k)$.
 
 Past failures don't make success "due." This is the gambler's fallacy, refuted.
@@ -57,6 +78,16 @@ $$
 P(X = k) = e^{-\lambda}\frac{\lambda^k}{k!}, \qquad k = 0, 1, 2, \ldots; \qquad \E X = \Var X = \lambda.
 $$
 
+Here $\lambda$ is the average count. For a help desk that gets $\lambda = 3$ calls per hour on average:
+
+| $k$ calls | 0 | 1 | 2 | 3 | 4 | 5 | 6+ |
+|---|---|---|---|---|---|---|---|
+| $P(X = k)$ | $0.050$ | $0.149$ | $0.224$ | $0.224$ | $0.168$ | $0.101$ | $0.084$ |
+
+(For example, $P(2) = e^{-3}\frac{9}{2} \approx 0.0498 \times 4.5 = 0.224$.)
+
+Why the probabilities sum to 1: $\sum_k\frac{\lambda^k}{k!} = e^\lambda$ is the [exponential series](../calculus/series-taylor.md#the-essential-series), and the $e^{-\lambda}$ in front cancels it.
+
 !!! theorem "Poisson as a limit of binomials"
     If $n\to\infty$ and $p\to0$ with $np = \lambda$ fixed, then $\text{Binomial}(n, p)\to\text{Poisson}(\lambda)$.
 
@@ -65,7 +96,15 @@ $$
     \binom nk p^k(1-p)^{n-k} = \underbrace{\frac{n(n-1)\cdots(n-k+1)}{n^k}}_{\to1}\cdot\frac{\lambda^k}{k!}\cdot\underbrace{\left(1 - \frac\lambda n\right)^n}_{\to e^{-\lambda}}\cdot\underbrace{\left(1 - \frac\lambda n\right)^{-k}}_{\to1}.
     $$
 
+    Where this comes from: substitute $p = \frac{\lambda}{n}$, write $\binom nk = \frac{n(n-1)\cdots(n-k+1)}{k!}$, and regroup. Then each factor's limit:
+
+    - $\frac{n(n-1)\cdots(n-k+1)}{n^k} = 1 \cdot \left(1 - \frac1n\right)\cdots\left(1 - \frac{k-1}{n}\right)$. For fixed $k$, each of these $k$ factors tends to 1.
+    - $\left(1 - \frac\lambda n\right)^n \to e^{-\lambda}$: the compound-interest limit $\left(1 + \frac xn\right)^n \to e^x$ from [Phase 1](../foundations/exp-log-trig.md#2-the-number-e), with $x = -\lambda$.
+    - $\left(1 - \frac\lambda n\right)^{-k} \to 1^{-k} = 1$, since $k$ is fixed.
+
     The story: split an hour into $n$ tiny intervals, each with a tiny chance $\lambda/n$ of an event.
+
+So Poisson is the right model whenever there are **many independent opportunities, each with a small chance**: many emails that *could* arrive, many atoms that *could* decay.
 
 ### Categorical and multinomial
 
@@ -85,6 +124,8 @@ Density $\frac{1}{b - a}$ on the interval.
 - $\E X = \frac{a+b}2$
 - $\Var X = \frac{(b-a)^2}{12}$
 
+(The density is $\frac{1}{b - a}$ so that the rectangle of width $b - a$ has area 1. For $[0, 1]$: $\E X = \frac12$, $\ \E X^2 = \int_0^1 x^2\,dx = \frac13$, so $\Var X = \frac13 - \frac14 = \frac{1}{12}$.)
+
 Every computer random number generator starts from uniform samples and transforms them into other distributions.
 
 ### Exponential: waiting time for a Poisson event
@@ -100,6 +141,10 @@ P(X > s + t\mid X > s) = \frac{e^{-\lambda(s+t)}}{e^{-\lambda s}} = e^{-\lambda 
 $$
 
 A component that fails at a constant rate is "as good as new" at every moment.
+
+Example: light bulbs with an average life of 1000 hours, so $\lambda = \frac{1}{1000}$ per hour. The chance a bulb lasts over 2000 hours is $e^{-2000/1000} = e^{-2} \approx 13.5\%$. And a bulb that has already lasted 5000 hours still has that same 13.5% chance of lasting 2000 more.
+
+($\lambda$ here is a rate: events per unit time. If calls arrive as Poisson with $\lambda = 3$ per hour, the waits between calls are exponential with mean $\frac13$ hour.)
 
 ### Normal (Gaussian)
 
@@ -121,6 +166,16 @@ $$
 
 - **Closed under linear combinations:** if $X, Y$ are independent normals, $aX + bY$ is normal, with mean $a\mu_X + b\mu_Y$ and variance $a^2\sigma_X^2 + b^2\sigma_Y^2$.
 
+**Reading the formula.** The exponent $-\frac{(x - \mu)^2}{2\sigma^2}$ is $0$ at $x = \mu$ (the peak) and becomes more negative the farther $x$ is from $\mu$, measured in units of $\sigma$. So the curve is a symmetric bell centered at $\mu$, whose width is set by $\sigma$. Its steepest points (inflection points) are at $\mu \pm \sigma$.
+
+**Computing normal probabilities.** There's no formula for $\int e^{-x^2/2}$, so we standardize and use a table (or software) for the standard normal CDF, written $\Phi(z) = P(Z \leq z)$.
+
+!!! example "Example: exam scores $\sim\mathcal N(70, 10^2)$. What fraction score between 60 and 85?"
+    1. Standardize both endpoints: $z = \frac{60 - 70}{10} = -1$ and $z = \frac{85 - 70}{10} = 1.5$.
+    2. $P(-1 \leq Z \leq 1.5) = \Phi(1.5) - \Phi(-1) \approx 0.933 - 0.159 = 0.774$.
+
+    About 77%. The key move is step 1: every normal question becomes a question about $\mathcal N(0, 1)$.
+
 !!! intuition "Why the Gaussian is everywhere"
     1. **The central limit theorem:** sums of many small independent effects are approximately normal, whatever the individual distributions ([Limit theorems](limit-theorems.md)).
         - Measurement errors, heights and test scores are such sums.
@@ -140,6 +195,15 @@ Used as a prior belief about an unknown probability (a coin's bias, a conversion
 - $\text{Beta}(1,1)$ is uniform.
 - Larger $\alpha + \beta$ means more concentrated, as if you had already seen $\alpha - 1$ successes and $\beta - 1$ failures.
 
+| Parameters | Shape | Belief it expresses |
+|---|---|---|
+| $\text{Beta}(1, 1)$ | flat | "any bias is equally plausible" |
+| $\text{Beta}(2, 2)$ | gentle hump at $\frac12$ | "probably near fair, but unsure" |
+| $\text{Beta}(20, 20)$ | sharp spike at $\frac12$ | "very confident it's near fair" |
+| $\text{Beta}(8, 2)$ | hump near $0.8$ | "probably biased toward heads" |
+
+$B(\alpha, \beta)$ in the denominator is just the constant that makes the area 1.
+
 See [Estimation](../statistics/estimation.md).
 
 ## 3. Summary table
@@ -154,6 +218,19 @@ See [Estimation](../statistics/estimation.md).
 | Exponential$(\lambda)$ | waiting time | $1/\lambda$ | $1/\lambda^2$ |
 | Normal$(\mu,\sigma^2)$ | sum of many small effects | $\mu$ | $\sigma^2$ |
 | Beta$(\alpha,\beta)$ | belief about a probability | $\frac{\alpha}{\alpha+\beta}$ | $\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ |
+
+**Which one fits?** Ask what the quantity *is*:
+
+| The quantity is… | Use |
+|---|---|
+| yes/no, once | Bernoulli |
+| how many yeses in a fixed number of tries | Binomial |
+| how many tries until the first yes | Geometric |
+| how many events in a fixed time or space, with no fixed upper limit | Poisson |
+| which of $K$ categories | Categorical |
+| a waiting time with a constant rate | Exponential |
+| a sum or average of many small independent effects | Normal |
+| an unknown probability you're uncertain about | Beta |
 
 !!! ml "Where this shows up"
     - **Output layers choose a distribution:**

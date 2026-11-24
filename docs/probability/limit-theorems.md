@@ -33,7 +33,11 @@ These results are why statistics, Monte Carlo methods and stochastic gradient de
 
 If the average income is \$50k, at most 10% of people can earn \$500k or more.
 
+Why: if *more* than 10% earned at least 500k, that group alone would contribute more than $0.1 \times 500\text{k} = 50\text{k}$ to the average, and nobody can earn a negative amount to compensate. So the average would exceed 50k, a contradiction. That's the whole proof, in words.
+
 It's crude, but it uses nothing except non-negativity and the mean.
+
+It can't be improved without more information: if $X = 10$ with probability $0.1$ and $0$ otherwise, then $\E X = 1$ and $P(X \geq 10) = 0.1 = \frac{1}{10}$, exactly Markov's bound.
 
 ## 2. Chebyshev's inequality
 
@@ -43,6 +47,8 @@ It's crude, but it uses nothing except non-negativity and the mean.
     $$
     P(|X - \mu|\geq k\sigma)\leq\frac1{k^2}.
     $$
+
+In words: the probability of landing $k$ or more standard deviations from the mean is at most $\frac{1}{k^2}$. Markov only knew the mean; Chebyshev also knows the spread, and gets a bound on both tails at once.
 
 !!! proof "Proof"
     Apply Markov to the non-negative variable $(X - \mu)^2$ with $a = k^2\sigma^2$:
@@ -79,6 +85,10 @@ Chebyshev is weak but universal.
     P(|\bar X_n - \mu|\geq\varepsilon)\leq\frac{\sigma^2}{n\varepsilon^2}\to0.
     $$
 
+    (Chebyshev applied to $\bar X_n$, whose standard deviation is $\sigma/\sqrt n$, with $k\cdot\frac{\sigma}{\sqrt n} = \varepsilon$. Then $\frac{1}{k^2} = \frac{\sigma^2}{n\varepsilon^2}$.)
+
+The averaging is doing the work: $\bar X_n$ has the same mean as each $X_i$, but its variance shrinks to zero. A distribution with zero spread is concentrated at a single point, $\mu$.
+
 <div class="viz" data-viz="lln"></div>
 
 !!! intuition "The √n law"
@@ -90,6 +100,14 @@ Chebyshev is weak but universal.
     - Monte Carlo integration;
     - the noise in a mini-batch gradient.
 
+    For fair coin flips ($\sigma = 0.5$), the typical error $0.5/\sqrt n$ of the fraction of heads:
+
+    | flips $n$ | 10 | 100 | 1000 | 10,000 | 1,000,000 |
+    |---|---|---|---|---|---|
+    | typical error $\sigma/\sqrt n$ | $0.16$ | $0.05$ | $0.016$ | $0.005$ | $0.0005$ |
+
+    Each 100× more flips buys one more correct decimal place.
+
 The **strong law** says $\bar X_n\to\mu$ with probability 1, a stronger form of convergence. Its proof is harder, and the practical content is the same.
 
 ## 4. The central limit theorem
@@ -97,6 +115,18 @@ The **strong law** says $\bar X_n\to\mu$ with probability 1, a stronger form of 
 The LLN says $\bar X_n - \mu$ shrinks like $1/\sqrt n$. Magnify the error by $\sqrt n$ to see its *shape*.
 
 The astonishing answer: the shape is always the same.
+
+!!! example "Watching the shape appear, with dice"
+    | Number of dice | PMF of the sum (shape) |
+    |---|---|
+    | 1 | flat: each of 1–6 has probability $\frac16$ |
+    | 2 | a triangle peaking at 7 (from the [random variables lesson](random-variables.md)) |
+    | 3 | rounded on top, sloping sides: already bell-like |
+    | 10 | almost indistinguishable from a normal curve |
+
+    Starting from a flat distribution, adding just a few copies produces a bell. Try it with lopsided starting distributions in the figure below.
+
+The formula below standardizes the sum $S_n = X_1 + \cdots + X_n$. By linearity and independence, $S_n$ has mean $n\mu$ and variance $n\sigma^2$, so standard deviation $\sigma\sqrt n$. Subtracting the mean and dividing by the standard deviation gives a variable with mean 0 and variance 1 for every $n$ (as in [standardization](random-variables.md#4-variance)). That keeps the picture from drifting off or spreading out, so we can watch its *shape* settle down.
 
 !!! theorem "Central limit theorem (CLT)"
     Let $X_1, X_2, \ldots$ be independent and identically distributed with mean $\mu$ and variance $\sigma^2 \in (0, \infty)$. Then
@@ -145,12 +175,16 @@ The astonishing answer: the shape is always the same.
 
 With 95% probability, the sample mean is within $1.96\,\sigma/\sqrt n$ of the true mean. That's the basis of **confidence intervals** ([Statistics](../statistics/inference.md)).
 
+(Where 1.96 comes from: for a standard normal, $P(-1.96 \leq Z \leq 1.96) = 0.95$. It's the "2" of the 68–95–99.7 rule, made precise.)
+
 !!! example "Example: polling"
     1000 voters, true support $p = 0.5$.
 
     1. The count of supporters is a sum of 1000 Bernoullis.
     2. So the sample proportion is approximately normal, with standard deviation $\sqrt{0.25/1000}\approx0.0158$.
     3. The 95% margin of error is $\pm1.96\times0.0158\approx\pm3.1\%$.
+
+    Step 2 in detail: each voter is a Bernoulli$(p)$ with variance $p(1 - p) = 0.25$. The sample proportion is the average of 1000 of them, so its variance is $\frac{0.25}{1000}$ and its standard deviation is the square root of that.
 
     That's the "±3 points" quoted with most polls.
 
@@ -170,6 +204,17 @@ For bounded variables, the truth is exponentially better:
 The proof applies Markov to $e^{\lambda(\bar X_n - \mu)}$ and optimizes over $\lambda$. It is outside the scope of this site, and the result is a standard, safe-to-use tool.
 
 Unlike the CLT, this is a guarantee for every $n$, not just an approximation for large $n$.
+
+!!! example "Example: Chebyshev vs Hoeffding for 1000 coin flips"
+    How likely is the fraction of heads to be off by $\varepsilon = 0.05$ or more? Here $a = 0$, $b = 1$.
+
+    | Bound | Computation | Result |
+    |---|---|---|
+    | Chebyshev | $\frac{\sigma^2}{n\varepsilon^2} = \frac{0.25}{1000 \cdot 0.0025}$ | $\leq 0.1$ |
+    | Hoeffding | $2\exp(-2 \cdot 1000 \cdot 0.0025)$ | $\leq 2e^{-5} \approx 0.013$ |
+    | truth (via CLT) | $P(\lvert Z\rvert \geq 3.16)$ | $\approx 0.0016$ |
+
+    Hoeffding's bound shrinks *exponentially* in $n$; Chebyshev's only like $\frac1n$. Double $n$ to 2000 and Chebyshev halves to $0.05$, while Hoeffding drops to about $0.0001$.
 
 !!! ml "Where this shows up"
     - **Generalization bounds.** A model's test error on $n$ held-out examples is an average of bounded losses.

@@ -38,6 +38,15 @@ For $f \geq 0$ it's the **volume** under the surface.
 !!! example "Example"
     $\displaystyle\int_0^1\!\!\int_0^2 xy^2\,dy\,dx = \int_0^1 x\left[\frac{y^3}{3}\right]_0^2dx = \int_0^1\frac{8x}{3}dx = \frac43.$
 
+    Work from the inside out, like nested parentheses:
+
+    1. **Inner integral** (over $y$, from 0 to 2). Treat $x$ as a constant, just like a partial derivative: $\int_0^2 xy^2\,dy = x\left[\frac{y^3}{3}\right]_0^2 = \frac{8x}{3}$. The answer is a function of $x$ alone: the area of the slice at position $x$.
+    2. **Outer integral** (over $x$, from 0 to 1): $\int_0^1 \frac{8x}{3}\,dx = \frac{8}{3}\cdot\frac{1}{2} = \frac43$.
+
+    The other order, $y$ outside: $\int_0^2 y^2\left(\int_0^1 x\,dx\right)dy = \int_0^2 \frac{y^2}{2}\,dy = \frac{8}{6} = \frac43$. ✓
+
+    Read $dy\,dx$ right-to-left as "inner variable first": the innermost $d$ goes with the innermost integral sign.
+
 **Non-rectangular regions:** let the inner limits depend on the outer variable. For the triangle $0 \leq y \leq x \leq 1$:
 
 | Slicing | Integral |
@@ -47,7 +56,26 @@ For $f \geq 0$ it's the **volume** under the surface.
 
 Sketch the region to get the limits right.
 
+!!! example "Example: a triangle, sliced both ways"
+    Integrate $f(x, y) = xy$ over the triangle with corners $(0, 0)$, $(1, 0)$, $(1, 1)$: the region $0 \leq y \leq x \leq 1$, under the diagonal.
+
+    **Vertical slices ($y$ inside).** At a fixed $x$, the slice runs from the bottom edge $y = 0$ up to the diagonal $y = x$:
+
+    $$
+    \int_0^1\!\!\int_0^x xy\,dy\,dx = \int_0^1 x\cdot\frac{x^2}{2}\,dx = \int_0^1\frac{x^3}{2}\,dx = \frac18.
+    $$
+
+    **Horizontal slices ($x$ inside).** At a fixed $y$, the slice runs from the diagonal $x = y$ right to the edge $x = 1$:
+
+    $$
+    \int_0^1\!\!\int_y^1 xy\,dx\,dy = \int_0^1 y\cdot\frac{1 - y^2}{2}\,dy = \frac12\left(\frac12 - \frac14\right) = \frac18. \ ✓
+    $$
+
+    The rule for limits: the **outer** limits are plain numbers (the full range of the outer variable). The **inner** limits may depend on the outer variable (where the slice starts and stops).
+
 **Separable functions:** if $f(x, y) = g(x)h(y)$ on a rectangle, then $\iint f = \left(\int g\right)\left(\int h\right)$.
+
+Why: in the inner integral over $y$, $g(x)$ is a constant and comes out: $\int g(x)h(y)\,dy = g(x)\int h$. Then $\int h$ is a constant in the outer integral and comes out too. The first example above was like this: $\int_0^1 x\,dx \cdot \int_0^2 y^2\,dy = \frac12 \cdot \frac83 = \frac43$.
 
 This is exactly why the joint density of independent random variables is the product of their densities.
 
@@ -85,6 +113,23 @@ Cells far from the origin are bigger, hence the factor $r$.
 !!! example "Example: area of a disk"
     $\iint_{x^2+y^2\leq R^2}1\,dA = \int_0^{2\pi}\int_0^R r\,dr\,d\theta = 2\pi\cdot\frac{R^2}{2} = \pi R^2$.
 
+    In Cartesian coordinates this would be $\int_{-R}^R\int_{-\sqrt{R^2 - x^2}}^{\sqrt{R^2 - x^2}} 1\,dy\,dx$, which needs a trig substitution. In polar coordinates the disk is the simple "rectangle" $0 \leq r \leq R$, $0 \leq \theta \leq 2\pi$, and the integral is separable.
+
+**When to switch to polar:** the region is a disk, ring or sector, or the integrand involves $x^2 + y^2$. The recipe:
+
+1. Replace $x^2 + y^2$ by $r^2$ (and $x$, $y$ by $r\cos\theta$, $r\sin\theta$ if needed).
+2. Replace $dx\,dy$ by $r\,dr\,d\theta$. **Don't forget the $r$.**
+3. Describe the region with ranges of $r$ and $\theta$.
+
+!!! example "Example: $\iint_{\text{disk of radius } R} e^{-(x^2 + y^2)}\,dA$"
+    $$
+    \int_0^{2\pi}\!\!\int_0^R e^{-r^2}\,r\,dr\,d\theta = 2\pi\int_0^R re^{-r^2}\,dr.
+    $$
+
+    Substitute $u = r^2$, $du = 2r\,dr$: $\ \int_0^R re^{-r^2}dr = \frac12\int_0^{R^2}e^{-u}du = \frac12(1 - e^{-R^2})$.
+
+    Total: $\pi(1 - e^{-R^2})$. As $R \to \infty$, this tends to $\pi$. Keep that number in mind for the next section.
+
 ## 3. The Gaussian integral
 
 $e^{-x^2}$ has no elementary antiderivative. Yet:
@@ -101,7 +146,9 @@ $e^{-x^2}$ has no elementary antiderivative. Yet:
     I^2 = \int_{-\infty}^\infty e^{-x^2}dx\int_{-\infty}^\infty e^{-y^2}dy = \iint_{\R^2}e^{-(x^2 + y^2)}\,dx\,dy.
     $$
 
-    The integrand depends only on $r^2 = x^2 + y^2$, so switch to polar coordinates:
+    (The middle step is the separable rule read backwards: a product of two single integrals is a double integral of the product, and $e^{-x^2}e^{-y^2} = e^{-(x^2 + y^2)}$.)
+
+    The integrand depends only on $r^2 = x^2 + y^2$, so switch to polar coordinates. This is the previous example with $R = \infty$:
 
     $$
     I^2 = \int_0^{2\pi}\!\!\int_0^\infty e^{-r^2}\,r\,dr\,d\theta = 2\pi\left[-\tfrac12e^{-r^2}\right]_0^\infty = 2\pi\cdot\tfrac12 = \pi.
@@ -116,6 +163,15 @@ $e^{-x^2}$ has no elementary antiderivative. Yet:
 $$
 \int_{-\infty}^\infty e^{-(t-\mu)^2/(2\sigma^2)}dt = \sqrt{2\sigma^2}\cdot\sqrt\pi = \sqrt{2\pi}\,\sigma.
 $$
+
+The substitution in steps:
+
+1. With $x = \frac{t - \mu}{\sqrt2\sigma}$, we get $x^2 = \frac{(t - \mu)^2}{2\sigma^2}$, so the exponent becomes exactly $-x^2$.
+2. Solving for $t$: $t = \mu + \sqrt2\sigma x$, so $dt = \sqrt2\sigma\,dx$.
+3. As $t$ runs over all of $\R$, so does $x$, so the limits stay $\pm\infty$.
+4. The integral becomes $\int e^{-x^2}\sqrt2\sigma\,dx = \sqrt2\sigma\sqrt\pi = \sqrt{2\pi}\,\sigma$.
+
+Shifting by $\mu$ doesn't change the area. Stretching by $\sigma$ multiplies it by $\sigma$.
 
 So
 
@@ -138,6 +194,10 @@ Suppose $\vv X$ has density $p_X$ and $\vv Y = \vv T(\vv X)$ for an invertible s
 - Probability mass is conserved.
 - Volumes are stretched by $|\det J_{\vv T}|$.
 
+Start with the simplest case to see why. $X$ is uniform on $[0, 1]$ (density $1$), and $Y = 2X + 1$. Then $Y$ is spread over $[1, 3]$, an interval twice as long. The total probability is still 1, so the density must halve: $p_Y = \frac12$ on $[1, 3]$. The "stretch factor" is $\lvert T'\rvert = 2$, and we divided by it.
+
+In general, a small interval of width $dx$ around $x$ maps to a small interval of width $\lvert T'(x)\rvert\,dx$ around $y$. Equal probabilities means $p_Y(y)\,\lvert T'(x)\rvert\,dx = p_X(x)\,dx$. In $n$ dimensions, widths become volumes and $\lvert T'\rvert$ becomes $\lvert\det J\rvert$.
+
 So
 
 $$
@@ -145,7 +205,7 @@ p_Y(\vv y) = p_X\big(\vv T^{-1}(\vv y)\big)\,\left|\det J_{\vv T^{-1}}(\vv y)\ri
 $$
 
 !!! example "Example: log-normal"
-    $X\sim\mathcal N(0,1)$ and $Y = e^X$. Then $T^{-1}(y) = \ln y$ with derivative $1/y$, so
+    $X\sim\mathcal N(0,1)$ (standard normal: $p_X(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}$) and $Y = e^X$. Then $T^{-1}(y) = \ln y$ with derivative $1/y$. Plug $x = \ln y$ into $p_X$ and multiply by $\frac1y$:
 
     $$
     p_Y(y) = \frac{1}{y\sqrt{2\pi}}e^{-(\ln y)^2/2}, \qquad y > 0.

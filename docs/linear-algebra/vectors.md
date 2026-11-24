@@ -35,6 +35,35 @@ The geometric language still applies in 768 dimensions, even though we can't dra
 - **Scalar multiplication:** $c\vv v = (cv_1, \ldots, cv_n)$. This stretches by $c$, and flips the direction if $c < 0$.
 - A **linear combination** of $\vv v_1, \ldots, \vv v_k$ is $c_1\vv v_1 + \cdots + c_k\vv v_k$. This is the most important construction in the subject.
 
+(A **scalar** is just an ordinary number, as opposed to a vector.)
+
+!!! example "Example: the operations with numbers and pictures"
+    Take $\vv u = (2, 1)$ and $\vv v = (1, 3)$ in the plane.
+
+    | Operation | Componentwise | Picture |
+    |---|---|---|
+    | $\vv u + \vv v$ | $(2 + 1, 1 + 3) = (3, 4)$ | walk along $\vv u$, then along $\vv v$; you end at $(3, 4)$ |
+    | $2\vv u$ | $(4, 2)$ | same direction as $\vv u$, twice as long |
+    | $-\vv u$ | $(-2, -1)$ | same length, pointing the opposite way |
+    | $\vv v - \vv u$ | $(1 - 2, 3 - 1) = (-1, 2)$ | the arrow from the tip of $\vv u$ to the tip of $\vv v$ |
+
+    The last row is worth remembering: $\vv v - \vv u$ is "how to get from $\vv u$ to $\vv v$." Check: $\vv u + (\vv v - \vv u) = \vv v$.
+
+    Order doesn't matter for addition: $\vv u + \vv v = \vv v + \vv u$. The two orders trace the two sides of a parallelogram and meet at the same corner.
+
+!!! example "Example: a linear combination"
+    Can we reach $(4, 7)$ using $\vv u = (2, 1)$ and $\vv v = (1, 3)$? We need numbers $a, b$ with $a(2, 1) + b(1, 3) = (4, 7)$, i.e.
+
+    $$
+    2a + b = 4, \qquad a + 3b = 7.
+    $$
+
+    From the first, $b = 4 - 2a$. Substitute: $a + 12 - 6a = 7$, so $a = 1$ and $b = 2$.
+
+    Check: $1 \cdot (2, 1) + 2 \cdot (1, 3) = (2 + 2, 1 + 6) = (4, 7)$. ✓
+
+    Asking "which combination gives this vector?" is solving a linear system, the subject of [lesson 3](linear-systems.md).
+
 The **standard basis** vectors $\vv e_1 = (1, 0, \ldots, 0)$, …, $\vv e_n = (0, \ldots, 0, 1)$ let us write every vector as a combination:
 
 $$
@@ -50,9 +79,19 @@ $$
 
 In 2D this is Pythagoras; in 3D it's Pythagoras twice.
 
+Why "twice" in 3D: to reach $(v_1, v_2, v_3)$, first go across the floor to $(v_1, v_2, 0)$, a distance $\sqrt{v_1^2 + v_2^2}$ by Pythagoras. Then go straight up by $v_3$. That's a second right triangle, with legs $\sqrt{v_1^2 + v_2^2}$ and $v_3$, so the total length is $\sqrt{v_1^2 + v_2^2 + v_3^2}$.
+
 - A **unit vector** has length 1.
 - $\vv v/\norm{\vv v}$ is the unit vector in the direction of $\vv v$ (normalizing).
 - The distance between two points is $\norm{\vv u - \vv v}$.
+
+!!! example "Example: length, normalizing, distance"
+    - $\norm{(3, 4)} = \sqrt{9 + 16} = 5$.
+    - Normalized: $\frac{(3, 4)}{5} = (0.6, 0.8)$. Check: $0.36 + 0.64 = 1$. ✓
+    - $\norm{(1, 2, 2)} = \sqrt{1 + 4 + 4} = 3$.
+    - Distance from $(1, 1)$ to $(4, 5)$: $\ \norm{(4 - 1, 5 - 1)} = \norm{(3, 4)} = 5$.
+
+    Scaling multiplies length: $\norm{c\vv v} = \lvert c\rvert\,\norm{\vv v}$. For example $\norm{(-6, -8)} = 10 = 2 \cdot 5$.
 
 ## 3. The dot product
 
@@ -63,6 +102,18 @@ In 2D this is Pythagoras; in 3D it's Pythagoras twice.
 
     In matrix notation (next lesson), $\vv u\cdot\vv v = \vv u^\top\vv v$.
 
+Multiply matching components, then add. The result is a single **number**, not a vector.
+
+!!! example "Example: dot products by hand"
+    | $\vv u$ | $\vv v$ | $\vv u \cdot \vv v$ | sign |
+    |---|---|---|---|
+    | $(1, 2)$ | $(3, 1)$ | $1\cdot3 + 2\cdot1 = 5$ | positive |
+    | $(1, 2)$ | $(-2, 1)$ | $-2 + 2 = 0$ | zero |
+    | $(1, 2)$ | $(-1, -1)$ | $-1 - 2 = -3$ | negative |
+    | $(1, 2, 3)$ | $(4, 5, 6)$ | $4 + 10 + 18 = 32$ | positive |
+
+    Sketch the first three pairs: $(3, 1)$ points roughly the same way as $(1, 2)$, $(-2, 1)$ is at a right angle to it, and $(-1, -1)$ points roughly backwards. The sign of the dot product tracks this, as the theorem below explains.
+
 Algebraic properties (each is one line from the definition):
 
 | Property | Statement |
@@ -70,6 +121,20 @@ Algebraic properties (each is one line from the definition):
 | symmetric | $\vv u\cdot \vv v = \vv v\cdot\vv u$ |
 | linear in each argument | $(a\vv u + b\vv w)\cdot\vv v = a\,\vv u\cdot\vv v + b\,\vv w\cdot \vv v$ |
 | positive | $\vv v\cdot\vv v = \norm{\vv v}^2 \geq 0$, with equality only for $\vv v = \vv 0$ |
+
+For example, linearity in the first argument, written out in 2D:
+
+$$
+(a\vv u + b\vv w)\cdot\vv v = (au_1 + bw_1)v_1 + (au_2 + bw_2)v_2 = a(u_1v_1 + u_2v_2) + b(w_1v_1 + w_2v_2).
+$$
+
+That's just distributing and regrouping. Together with symmetry, it means **you can expand dot products like ordinary multiplication**:
+
+$$
+(\vv u + \vv v)\cdot(\vv u + \vv v) = \vv u\cdot\vv u + \vv u\cdot\vv v + \vv v\cdot\vv u + \vv v\cdot\vv v = \norm{\vv u}^2 + 2\,\vv u\cdot\vv v + \norm{\vv v}^2.
+$$
+
+This "FOIL for vectors" is used in almost every proof below.
 
 The surprise is that this simple formula measures **angles**:
 
@@ -81,19 +146,32 @@ The surprise is that this simple formula measures **angles**:
     where $\theta$ is the angle between the arrows.
 
 !!! proof "Proof"
-    The vectors $\vv u$, $\vv v$ and $\vv u - \vv v$ form a triangle. The **law of cosines** says
+    The vectors $\vv u$, $\vv v$ and $\vv u - \vv v$ form a triangle: two sides from the origin, and the third side joining their tips.
+
+    The **law of cosines** from high-school geometry says that in a triangle with sides $a$, $b$ and angle $\theta$ between them, the third side $c$ satisfies $c^2 = a^2 + b^2 - 2ab\cos\theta$. (When $\theta = 90°$, $\cos\theta = 0$ and it's Pythagoras.) Here:
 
     $$
     \norm{\vv u - \vv v}^2 = \norm{\vv u}^2 + \norm{\vv v}^2 - 2\norm{\vv u}\norm{\vv v}\cos\theta.
     $$
 
-    Expand the left side using bilinearity:
+    Expand the left side by "FOIL for vectors":
 
     $$
-    \norm{\vv u - \vv v}^2 = (\vv u - \vv v)\cdot(\vv u - \vv v) = \norm{\vv u}^2 - 2\,\vv u\cdot\vv v + \norm{\vv v}^2.
+    \norm{\vv u - \vv v}^2 = (\vv u - \vv v)\cdot(\vv u - \vv v) = \vv u\cdot\vv u - \vv u\cdot\vv v - \vv v\cdot\vv u + \vv v\cdot\vv v = \norm{\vv u}^2 - 2\,\vv u\cdot\vv v + \norm{\vv v}^2.
     $$
 
-    Compare the two expressions: $\vv u\cdot\vv v = \norm{\vv u}\norm{\vv v}\cos\theta$.
+    The two expressions are equal. Cancel $\norm{\vv u}^2 + \norm{\vv v}^2$ from both, then divide by $-2$: $\vv u\cdot\vv v = \norm{\vv u}\norm{\vv v}\cos\theta$.
+
+**Recipe for the angle between two vectors:**
+
+$$
+\cos\theta = \frac{\vv u \cdot \vv v}{\norm{\vv u}\,\norm{\vv v}}, \qquad \theta = \arccos\left(\frac{\vv u \cdot \vv v}{\norm{\vv u}\,\norm{\vv v}}\right).
+$$
+
+!!! example "Example: the angle between $(1, 0)$ and $(1, 1)$"
+    - Dot product: $1 \cdot 1 + 0 \cdot 1 = 1$.
+    - Lengths: $1$ and $\sqrt2$.
+    - $\cos\theta = \frac{1}{\sqrt 2}$, so $\theta = 45°$. That matches the picture: $(1, 1)$ points along the diagonal.
 
 Consequences:
 
@@ -140,17 +218,27 @@ and for that to make sense we need this fraction to lie in $[-1, 1]$. Proving th
     0 \leq \norm{\vv u - t\vv v}^2 = \norm{\vv u}^2 - 2t\,(\vv u\cdot\vv v) + t^2\norm{\vv v}^2.
     $$
 
-    This is a quadratic in $t$ that is never negative. So it has at most one real root, and its discriminant is $\leq 0$:
+    (Expanded by FOIL: $(\vv u - t\vv v)\cdot(\vv u - t\vv v) = \vv u \cdot \vv u - 2t\,\vv u\cdot\vv v + t^2\,\vv v\cdot\vv v$.)
+
+    This is a quadratic $At^2 + Bt + C$ in $t$, with
+
+    $$
+    A = \norm{\vv v}^2, \qquad B = -2(\vv u\cdot\vv v), \qquad C = \norm{\vv u}^2.
+    $$
+
+    It is never negative. Recall the quadratic formula: the roots are $\frac{-B \pm \sqrt{B^2 - 4AC}}{2A}$. If the discriminant $B^2 - 4AC$ were positive, there would be two different roots, and an upward parabola dips below zero between its two roots. That can't happen here. So the discriminant is $\leq 0$:
 
     $$
     4(\vv u\cdot\vv v)^2 - 4\norm{\vv u}^2\norm{\vv v}^2 \leq 0.
     $$
 
-    Rearrange and take square roots.
+    Divide by 4 and rearrange: $(\vv u\cdot\vv v)^2 \leq \norm{\vv u}^2\norm{\vv v}^2$. Take square roots (both sides are non-negative).
 
     Equality means the quadratic touches 0, i.e. $\vv u = t\vv v$ for some $t$.
 
     *One-sentence summary:* a quadratic that's never negative has a non-positive discriminant.
+
+Check it on the first exercise below: $\vv u = (1, 2, 2)$, $\vv v = (3, 0, 4)$ give $\lvert\vv u \cdot \vv v\rvert = 11$ and $\norm{\vv u}\norm{\vv v} = 3 \cdot 5 = 15$. Indeed $11 \leq 15$.
 
 !!! theorem "Theorem: triangle inequality"
     $\norm{\vv u + \vv v} \leq \norm{\vv u} + \norm{\vv v}$.
@@ -173,6 +261,17 @@ The length above is the **$\ell_2$ (Euclidean) norm**. Other useful norms:
 | $\ell_1$ | $\sum_i\lvert v_i\rvert$ | diamond | Lasso (encourages sparsity), robust losses |
 | $\ell_2$ | $\sqrt{\sum_i v_i^2}$ | circle | ridge regression, distances, weight decay |
 | $\ell_\infty$ | $\max_i\lvert v_i\rvert$ | square | adversarial robustness (max per-pixel change) |
+
+!!! example "Example: three norms of the same vector"
+    For $\vv v = (3, -4)$:
+
+    - $\norm{\vv v}_1 = \lvert 3\rvert + \lvert -4\rvert = 7$: the distance walking along a city grid ("taxicab distance").
+    - $\norm{\vv v}_2 = \sqrt{9 + 16} = 5$: the straight-line distance.
+    - $\norm{\vv v}_\infty = \max(3, 4) = 4$: the largest single coordinate.
+
+    Always $\norm{\vv v}_\infty \leq \norm{\vv v}_2 \leq \norm{\vv v}_1$.
+
+The "unit circle" column describes all vectors of norm 1. In $\ell_1$, the points with $\lvert x\rvert + \lvert y\rvert = 1$ form a diamond with corners at $(\pm1, 0)$ and $(0, \pm1)$. In $\ell_\infty$, the points with $\max(\lvert x\rvert, \lvert y\rvert) = 1$ form a square with corners $(\pm1, \pm1)$.
 
 All of them satisfy:
 

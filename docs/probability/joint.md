@@ -47,6 +47,27 @@ Together they give:
     - **Conditional:** $P(Y = 1\mid X = 1) = 0.4/0.6 = \frac23$.
     - **Not independent:** $p(1,1) = 0.4 \neq 0.6\cdot0.5$.
 
+    The whole conditional distribution of $Y$ given $X$, one row at a time (divide each row by its total):
+
+    | | $Y = 0$ | $Y = 1$ |
+    |---|---|---|
+    | given $X = 0$ | $\frac{0.3}{0.4} = 0.75$ | $\frac{0.1}{0.4} = 0.25$ |
+    | given $X = 1$ | $\frac{0.2}{0.6} = \frac13$ | $\frac{0.4}{0.6} = \frac23$ |
+
+    Each row now sums to 1. Learning $X$ changes our prediction for $Y$, which is exactly what "not independent" means.
+
+    For contrast, here's an independent table with the same marginals. Every cell is (row total) × (column total):
+
+    | | $Y=0$ | $Y=1$ | $p_X$ |
+    |---|---|---|---|
+    | $X=0$ | 0.2 | 0.2 | 0.4 |
+    | $X=1$ | 0.3 | 0.3 | 0.6 |
+    | $p_Y$ | 0.5 | 0.5 | |
+
+    Here both conditional rows are $(0.5, 0.5)$: knowing $X$ tells you nothing about $Y$.
+
+**Continuous version.** If $(X, Y)$ is uniform on the unit square, $f(x, y) = 1$ there. The marginal $f_X(x) = \int_0^1 1\,dy = 1$: uniform on $[0, 1]$. And $f(x, y) = 1 = f_X(x)f_Y(y)$, so $X$ and $Y$ are independent. If instead $(X, Y)$ is uniform on the triangle $0 \leq y \leq x \leq 1$ (density 2), they're dependent: knowing $X = 0.1$ forces $Y \leq 0.1$.
+
 **Expectation of a function of several variables:** $\E[g(X, Y)] = \sum_{x,y}g(x,y)p(x,y)$.
 
 For independent $X$ and $Y$, **$\E[XY] = \E[X]\E[Y]$**, because the double sum factorizes.
@@ -67,6 +88,18 @@ As a function of $X$, it's a random variable, $\E[Y\mid X]$.
 
 Average the averages within each group, weighted by group size, and you get the overall average.
 
+!!! example "Example: conditional expectations from the table"
+    Using the conditional rows above:
+
+    - $\E[Y\mid X = 0] = 0 \cdot 0.75 + 1\cdot 0.25 = 0.25$.
+    - $\E[Y\mid X = 1] = 0\cdot\frac13 + 1\cdot\frac23 = \frac23$.
+
+    So $\E[Y\mid X]$ is a random variable: it equals $0.25$ when $X = 0$ (probability 0.4) and $\frac23$ when $X = 1$ (probability 0.6). Its average:
+
+    $$
+    \E\big[\E[Y\mid X]\big] = 0.4 \cdot 0.25 + 0.6\cdot\tfrac23 = 0.1 + 0.4 = 0.5 = \E[Y]. \ ✓
+    $$
+
 The best predictor of $Y$ from $X$ under squared loss is $\E[Y\mid X]$. (That's the conditional version of "the mean minimizes squared error".)
 
 So **regression is the estimation of conditional expectations**.
@@ -83,6 +116,24 @@ So **regression is the estimation of conditional expectations**.
 - $\Cov(X, X) = \Var X$.
 - Covariance is **bilinear**: $\Cov(aX + bY, Z) = a\Cov(X, Z) + b\Cov(Y, Z)$.
 
+Why the sign works: the product $(X - \mu_X)(Y - \mu_Y)$ is positive when both are above their means *or* both below, and negative when they're on opposite sides. Covariance averages that product. Picture a scatter plot cut into four quadrants at the means: points in the top-right and bottom-left push the covariance up; the other two quadrants push it down.
+
+The second formula comes from expanding and using linearity: $\E[XY - \mu_YX - \mu_XY + \mu_X\mu_Y] = \E[XY] - \mu_X\mu_Y - \mu_X\mu_Y + \mu_X\mu_Y = \E[XY] - \mu_X\mu_Y$.
+
+!!! example "Example: covariance step by step"
+    Four equally likely $(x, y)$ pairs: $(1, 2), (2, 3), (3, 5), (4, 6)$. Means: $\mu_X = 2.5$, $\mu_Y = 4$.
+
+    | $x$ | $y$ | $x - 2.5$ | $y - 4$ | product |
+    |---|---|---|---|---|
+    | 1 | 2 | $-1.5$ | $-2$ | $3$ |
+    | 2 | 3 | $-0.5$ | $-1$ | $0.5$ |
+    | 3 | 5 | $0.5$ | $1$ | $0.5$ |
+    | 4 | 6 | $1.5$ | $2$ | $3$ |
+
+    $\Cov(X, Y) = \frac{3 + 0.5 + 0.5 + 3}{4} = 1.75$. Positive: big $x$ goes with big $y$.
+
+    Check with the other formula: $\E[XY] = \frac{2 + 6 + 15 + 24}{4} = 11.75$, and $11.75 - 2.5 \cdot 4 = 1.75$. ✓
+
 !!! theorem "Variance of a sum"
     $$
     \Var(X + Y) = \Var X + \Var Y + 2\Cov(X, Y).
@@ -93,9 +144,16 @@ So **regression is the estimation of conditional expectations**.
 !!! proof "Proof"
     $\Var(X + Y) = \Cov(X + Y, X + Y)$; expand by bilinearity.
 
+    Like FOIL: $\Cov(X + Y, X + Y) = \Cov(X, X) + \Cov(X, Y) + \Cov(Y, X) + \Cov(Y, Y) = \Var X + 2\Cov(X, Y) + \Var Y$.
+
+    It's the same algebra as $(a + b)^2 = a^2 + 2ab + b^2$, and as $\norm{\vv u + \vv v}^2$ in [Vectors](../linear-algebra/vectors.md).
+
 If $X, Y$ are independent, then $\Cov = 0$ (since $\E XY = \E X\E Y$), and **variances add**.
 
 For $n$ independent copies with variance $\sigma^2$:
+
+- **Sum:** all covariances vanish, so $\Var(X_1 + \cdots + X_n) = \sigma^2 + \cdots + \sigma^2 = n\sigma^2$.
+- **Average:** $\bar X$ is the sum times $\frac1n$, and scaling by $\frac1n$ multiplies variance by $\frac{1}{n^2}$. So $\Var\bar X = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}$.
 
 | Quantity | Variance |
 |---|---|
@@ -108,6 +166,24 @@ Averaging reduces noise by a factor of $\sqrt n$ in standard deviation.
     $$
     \rho(X, Y) = \frac{\Cov(X, Y)}{\sigma_X\sigma_Y}.
     $$
+
+Dividing by the standard deviations removes the units. Covariance between height in cm and weight in kg is in "cm·kg" and changes if you switch to inches. Correlation is a pure number.
+
+For the four points above: $\Var X = \frac{2.25 + 0.25 + 0.25 + 2.25}{4} = 1.25$ and $\Var Y = \frac{4 + 1 + 1 + 4}{4} = 2.5$, so
+
+$$
+\rho = \frac{1.75}{\sqrt{1.25}\sqrt{2.5}} = \frac{1.75}{1.768} \approx 0.99.
+$$
+
+Nearly perfectly linear, as the points suggest.
+
+| $\rho$ | scatter plot looks like |
+|---|---|
+| $1$ | points exactly on a rising line |
+| $0.7$ | a rising, cigar-shaped cloud |
+| $0$ | no linear trend (a round blob, or a nonlinear pattern) |
+| $-0.7$ | a falling cigar |
+| $-1$ | points exactly on a falling line |
 
 !!! theorem "Theorem"
     $-1 \leq\rho\leq1$, with $|\rho| = 1$ iff $Y = aX + b$ exactly.
@@ -135,6 +211,14 @@ $$
 \Sigma = \Cov(\vv X) = \E\big[(\vv X - \boldsymbol\mu)(\vv X - \boldsymbol\mu)^\top\big], \qquad \Sigma_{ij} = \Cov(X_i, X_j).
 $$
 
+(The expectation of a matrix means the expectation of each entry. The outer product $(\vv X - \boldsymbol\mu)(\vv X - \boldsymbol\mu)^\top$ has $(i, j)$ entry $(X_i - \mu_i)(X_j - \mu_j)$, whose expectation is $\Cov(X_i, X_j)$.)
+
+So the variances sit on the diagonal and the covariances off it. For the four points above:
+
+$$
+\Sigma = \begin{pmatrix}\Var X & \Cov(X, Y)\\\Cov(Y, X) & \Var Y\end{pmatrix} = \begin{pmatrix}1.25 & 1.75\\1.75 & 2.5\end{pmatrix}.
+$$
+
 !!! theorem "Properties of the covariance matrix"
     1. $\Sigma$ is symmetric and **positive semidefinite**.
     2. For a fixed vector $\vv w$: $\Var(\vv w^\top\vv X) = \vv w^\top\Sigma\vv w$.
@@ -144,6 +228,14 @@ $$
     - **(3):** $A\vv X + \vv b - (A\boldsymbol\mu + \vv b) = A(\vv X - \boldsymbol\mu)$, so by linearity the covariance is $\E[A(\vv X - \boldsymbol\mu)(\vv X - \boldsymbol\mu)^\top A^\top] = A\Sigma A^\top$.
     - **(2)** is (3) with $A = \vv w^\top$.
     - **(1):** symmetric because $\Cov(X_i, X_j) = \Cov(X_j, X_i)$; PSD because $\vv w^\top\Sigma\vv w = \Var(\vv w^\top\vv X)\geq0$.
+
+Property 2 in action: with the $\Sigma$ above, the variance of $X + Y$ (take $\vv w = (1, 1)$) is
+
+$$
+\vv w^\top\Sigma\vv w = 1.25 + 1.75 + 1.75 + 2.5 = 7.25,
+$$
+
+which matches the formula $\Var X + \Var Y + 2\Cov = 1.25 + 2.5 + 3.5$. The quadratic form is the variance-of-a-sum rule for any weights at once.
 
 - The eigenvectors of $\Sigma$ are the directions of maximal and minimal variance: the principal components.
 - Its eigenvalues are those variances.
@@ -168,6 +260,16 @@ That's [PCA](../linear-algebra/svd.md#4-pca-principal-component-analysis) again,
     $$
     f(\vv x) = \frac{1}{\sqrt{(2\pi)^d\det\Sigma}}\exp\!\left(-\tfrac12(\vv x - \boldsymbol\mu)^\top\Sigma^{-1}(\vv x - \boldsymbol\mu)\right).
     $$
+
+With $d = 1$, $\Sigma$ is just the number $\sigma^2$, and the formula is the familiar $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-(x - \mu)^2/(2\sigma^2)}$: the quadratic form $(x - \mu)\frac{1}{\sigma^2}(x - \mu)$ is the old exponent.
+
+**The 2D independent case.** If $\Sigma = \begin{pmatrix}\sigma_1^2 & 0\\0 & \sigma_2^2\end{pmatrix}$, then $\Sigma^{-1}$ is diagonal with entries $\frac{1}{\sigma_1^2}, \frac{1}{\sigma_2^2}$, and $\det\Sigma = \sigma_1^2\sigma_2^2$. The density becomes
+
+$$
+f(x_1, x_2) = \frac{1}{\sqrt{2\pi}\sigma_1}e^{-\frac{(x_1 - \mu_1)^2}{2\sigma_1^2}} \cdot \frac{1}{\sqrt{2\pi}\sigma_2}e^{-\frac{(x_2 - \mu_2)^2}{2\sigma_2^2}},
+$$
+
+a product of two 1D Gaussians. (An exponential of a sum is a product of exponentials.) Off-diagonal entries in $\Sigma$ tilt and stretch the bell into a slanted ellipse.
 
 Read the formula with your linear algebra:
 

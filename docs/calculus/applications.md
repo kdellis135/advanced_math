@@ -22,6 +22,10 @@ This lesson covers all three, with the proofs.
     - Minima are defined likewise.
     - A **critical point** is a $c$ where $f'(c) = 0$ or $f'(c)$ doesn't exist.
 
+Picture a mountain range. Every peak is a local max: it's the highest point *in its neighborhood*. The tallest peak is the global max. A function can have many local maxima but (at most) one global maximum value.
+
+Example: $f(x) = x^3 - 3x$ has a local max at $x = -1$ (value $2$) and a local min at $x = 1$ (value $-2$). Neither is global on all of $\R$, since $f$ goes to $+\infty$ on the right and $-\infty$ on the left.
+
 !!! theorem "Theorem (Fermat): extrema are flat"
     If $f$ has a local max or min at an interior point $c$ and is differentiable there, then $f'(c) = 0$.
 
@@ -33,13 +37,62 @@ This lesson covers all three, with the proofs.
 
     Hence $f'(c) = 0$.
 
+In plain words: at the top of a smooth hill, the ground is level. The proof just checks that the slope can't be positive (you'd go higher by stepping right) or negative (you'd go higher by stepping left).
+
 **Warning:** the converse is false. $f(x) = x^3$ has $f'(0) = 0$ but no extremum at $0$. Critical points are *candidates* only.
+
+Also, an extremum can sit at a point where $f'$ doesn't exist: $|x|$ has its minimum at the corner $x = 0$. That's why critical points include "$f'$ doesn't exist."
+
+### Classifying critical points: the sign chart
+
+The **first derivative test**: look at the sign of $f'$ just left and just right of a critical point $c$.
+
+| $f'$ left of $c$ | $f'$ right of $c$ | $f$ goes | Conclusion |
+|:-:|:-:|---|---|
+| $+$ | $-$ | up, then down | local max |
+| $-$ | $+$ | down, then up | local min |
+| same sign | same sign | keeps going the same way | neither |
+
+!!! example "Example: sign chart for $f(x) = x^3 - 3x$"
+    1. $f'(x) = 3x^2 - 3 = 3(x - 1)(x + 1)$. Critical points: $x = -1$ and $x = 1$.
+    2. They split the line into three intervals. Test one point in each:
+
+    | Interval | test point | $f'$ there | $f$ is |
+    |---|---|---|---|
+    | $x < -1$ | $-2$ | $3(4) - 3 = 9 > 0$ | increasing |
+    | $-1 < x < 1$ | $0$ | $-3 < 0$ | decreasing |
+    | $x > 1$ | $2$ | $9 > 0$ | increasing |
+
+    3. At $-1$: $+$ then $-$, a local max. At $1$: $-$ then $+$, a local min.
+
+    Why can we test just one point per interval? $f'$ is continuous, so by the IVT it can only change sign by passing through $0$, i.e. at a critical point.
 
 **Recipe for the global max/min of a continuous $f$ on $[a, b]$.** The extreme value theorem guarantees they exist, and they occur at critical points or endpoints. So:
 
 1. Find all critical points in $(a, b)$.
 2. Evaluate $f$ at each of them, and at $a$ and $b$.
 3. Pick the largest and smallest values.
+
+(Exercise 1 below works through one.)
+
+### Setting up an optimization problem
+
+Real problems arrive in words. The derivative step is usually the easy part; the setup is where people get stuck.
+
+1. Name the quantity to optimize and the variables.
+2. Use the constraints to write the quantity as a function of **one** variable.
+3. Find the allowed range of that variable.
+4. Find critical points, then compare with the endpoints.
+
+!!! example "Example: the biggest rectangle for a fixed fence"
+    You have 40 m of fence and want to enclose the largest rectangular area.
+
+    1. Sides $x$ and $y$. Maximize the area $A = xy$.
+    2. Constraint: perimeter $2x + 2y = 40$, so $y = 20 - x$. Then $A(x) = x(20 - x) = 20x - x^2$.
+    3. Lengths can't be negative: $0 \leq x \leq 20$.
+    4. $A'(x) = 20 - 2x = 0$ gives $x = 10$. Compare: $A(0) = 0$, $\ A(10) = 100$, $\ A(20) = 0$.
+
+    The best rectangle is a $10 \times 10$ square, with area $100\ \text{m}^2$.
 
 ## 2. The mean value theorem
 
@@ -64,6 +117,14 @@ This lesson covers all three, with the proofs.
 
     If you drove 120 km in 1 hour, at some instant your speedometer read exactly 120 km/h.
 
+!!! example "Example: finding the $c$"
+    $f(x) = x^2$ on $[1, 3]$.
+
+    - Average slope (the chord): $\dfrac{f(3) - f(1)}{3 - 1} = \dfrac{9 - 1}{2} = 4$.
+    - Instantaneous slope: $f'(c) = 2c$. Setting $2c = 4$ gives $c = 2$, which is indeed inside $(1, 3)$. ✓
+
+    In practice we rarely compute $c$. The power of the MVT is knowing it **exists**.
+
 !!! proof "Proof"
     Tilt the picture so the chord becomes horizontal. Let
 
@@ -71,7 +132,12 @@ This lesson covers all three, with the proofs.
     g(x) = f(x) - \frac{f(b)-f(a)}{b-a}(x - a).
     $$
 
-    Then $g(a) = f(a) = g(b)$, so Rolle gives $c$ with $0 = g'(c) = f'(c) - \frac{f(b) - f(a)}{b - a}$.
+    $g$ is $f$ minus the straight line that rises along the chord. Check the endpoints:
+
+    - $g(a) = f(a) - (\text{slope}) \cdot 0 = f(a)$.
+    - $g(b) = f(b) - \frac{f(b) - f(a)}{b - a}(b - a) = f(b) - \big(f(b) - f(a)\big) = f(a)$.
+
+    So $g(a) = g(b)$, and Rolle gives $c$ with $0 = g'(c) = f'(c) - \frac{f(b) - f(a)}{b - a}$.
 
 The MVT turns *local* information (derivatives) into *global* information (values).
 
@@ -99,6 +165,15 @@ Consequences you'll use all the time:
 - $f'' < 0$: bends downward (**concave**).
 - A point where concavity changes is an **inflection point**.
 
+Why "$f'$ increasing" means "bends upward": moving left to right, the tangent slopes go from steep-down to flat to steep-up, like the inside of a bowl.
+
+!!! example "Example: the shape of $x^3 - 3x$"
+    $f''(x) = 6x$.
+
+    - For $x < 0$, $f'' < 0$: concave (an upside-down bowl). The local max at $x = -1$ is in this region.
+    - For $x > 0$, $f'' > 0$: convex (a bowl). The local min at $x = 1$ is here.
+    - At $x = 0$ the concavity switches: an inflection point at $(0, 0)$.
+
 !!! theorem "Second derivative test"
     Suppose $f'(c) = 0$.
 
@@ -115,7 +190,9 @@ Consequences you'll use all the time:
     \frac{f'(c+h) - f'(c)}{h} = \frac{f'(c+h)}{h} \to f''(c) > 0.
     $$
 
-    So for small $h$, $f'(c+h)$ has the same sign as $h$: negative just left of $c$, positive just right. $f$ decreases into $c$ and increases out of it: a local min.
+    (We used $f'(c) = 0$ to drop it from the numerator.)
+
+    If a ratio $\frac{f'(c+h)}{h}$ is positive, the top and bottom have the same sign. So for small $h$, $f'(c+h)$ has the same sign as $h$: negative just left of $c$, positive just right. $f$ decreases into $c$ and increases out of it: a local min, by the sign chart.
 
     Inconclusive case: $x^4$, $-x^4$ and $x^3$ all have $f'(0) = f''(0) = 0$, yet they have a min, a max and neither.
 
@@ -129,9 +206,23 @@ $$
 L(w) = \sum_{i=1}^n (y_i - wx_i)^2.
 $$
 
-Differentiate (chain rule on each term): $L'(w) = \sum_i 2(y_i - wx_i)(-x_i) = -2\sum_i x_iy_i + 2w\sum_i x_i^2$.
+Here $w$ is the unknown, and the $x_i, y_i$ are fixed numbers (the data). Each term $(y_i - wx_i)$ is the vertical miss, or **residual**, for one data point.
 
-Setting $L'(w) = 0$:
+Differentiate one term first. It's (inner)$^2$ with inner $u = y_i - wx_i$, whose derivative with respect to $w$ is $-x_i$. By the chain rule:
+
+$$
+\frac{d}{dw}(y_i - wx_i)^2 = 2(y_i - wx_i)\cdot(-x_i) = -2x_iy_i + 2wx_i^2.
+$$
+
+The derivative of a sum is the sum of derivatives, so
+
+$$
+L'(w) = \sum_i\left(-2x_iy_i + 2wx_i^2\right) = -2\sum_i x_iy_i + 2w\sum_i x_i^2.
+$$
+
+($w$ came out of the sum because it doesn't depend on $i$.)
+
+Setting $L'(w) = 0$ and dividing by 2: $\ w\sum_i x_i^2 = \sum_i x_iy_i$, so
 
 $$
 w^* = \frac{\sum_i x_i y_i}{\sum_i x_i^2}.
@@ -177,6 +268,30 @@ This is linear regression in one variable. [Phase 3](../linear-algebra/orthogona
     - $\displaystyle\lim_{x\to\infty}\frac{\ln x}{x} = \lim\frac{1/x}{1} = 0$: logs grow slower than any line.
     - $\displaystyle\lim_{x\to\infty}\frac{x^k}{e^x} = 0$: apply $k$ times. Exponentials beat polynomials.
 
+    In the first one, check before *each* application: at $x = 0$, $\ e^0 - 1 - 0 = 0$ and $0^2 = 0$, so $\frac00$ ✓. After one step, $\frac{e^0 - 1}{0} = \frac00$ again ✓. After two steps, $\frac{e^0}{2} = \frac12$ is no longer indeterminate, so stop.
+
+!!! warning "Two L'Hôpital mistakes"
+    1. **Using it when the limit isn't $\frac00$ or $\frac\infty\infty$.** $\lim_{x\to0}\frac{x + 1}{x + 2} = \frac12$ by plugging in. L'Hôpital would wrongly give $\frac11 = 1$.
+    2. **Using the quotient rule.** You differentiate top and bottom *separately*: $\frac{f'}{g'}$, not $\left(\frac fg\right)'$.
+
+### Other indeterminate forms
+
+Forms like $0 \cdot \infty$ and $1^\infty$ can be turned into $\frac00$ or $\frac\infty\infty$ first:
+
+| Form | Trick | Example |
+|---|---|---|
+| $0 \cdot \infty$ | rewrite $fg$ as $\dfrac{f}{1/g}$ | $x\ln x$ as $x \to 0^+$ (exercise 4) |
+| $1^\infty$, $0^0$, $\infty^0$ | take $\ln$, which turns the power into a product | below |
+
+!!! example "Example: $\displaystyle\lim_{x \to 0^+}(1 + x)^{1/x} = e$, a $1^\infty$ form"
+    Let $y = (1 + x)^{1/x}$.
+
+    1. Take logs: $\ \ln y = \frac{1}{x}\ln(1 + x) = \frac{\ln(1 + x)}{x}$. At $x = 0$ this is $\frac00$.
+    2. L'Hôpital: $\ \lim\frac{\ln(1 + x)}{x} = \lim\frac{1/(1 + x)}{1} = 1$.
+    3. So $\ln y \to 1$, and since $e^u$ is continuous, $y = e^{\ln y} \to e^1 = e$.
+
+    With $x = 1/n$ this is the compound-interest limit $\left(1 + \frac1n\right)^n \to e$ from [Phase 1](../foundations/exp-log-trig.md).
+
 ## 6. Newton's method
 
 To solve $f(x) = 0$:
@@ -185,11 +300,19 @@ To solve $f(x) = 0$:
 2. Replace $f$ by its tangent line at $x_0$.
 3. Solve *that* (easy) equation.
 
-The tangent line $y = f(x_0) + f'(x_0)(x - x_0)$ hits zero at
+The tangent line $y = f(x_0) + f'(x_0)(x - x_0)$ hits zero where
+
+$$
+0 = f(x_0) + f'(x_0)(x - x_0) \quad\Longrightarrow\quad x - x_0 = -\frac{f(x_0)}{f'(x_0)}.
+$$
+
+So the next guess is
 
 $$
 x_1 = x_0 - \frac{f(x_0)}{f'(x_0)}.
 $$
+
+(This needs $f'(x_0) \neq 0$. A flat tangent never hits the axis.)
 
 Repeat: $x_{k+1} = x_k - f(x_k)/f'(x_k)$.
 
@@ -201,6 +324,10 @@ Repeat: $x_{k+1} = x_k - f(x_k)/f'(x_k)$.
     $$
     x_{k+1} = x_k - \frac{x_k^2 - 2}{2x_k} = \frac12\left(x_k + \frac{2}{x_k}\right).
     $$
+
+    (Simplify: $x_k - \frac{x_k^2}{2x_k} + \frac{2}{2x_k} = x_k - \frac{x_k}{2} + \frac{1}{x_k} = \frac{x_k}{2} + \frac{1}{x_k}$.)
+
+    The first step by hand: $x_1 = \frac12\left(1 + \frac21\right) = 1.5$. The second: $x_2 = \frac12\left(1.5 + \frac{2}{1.5}\right) = \frac12(1.5 + 1.3333) = 1.41667$.
 
     | $k$ | $x_k$ | correct digits |
     |---|---|---|

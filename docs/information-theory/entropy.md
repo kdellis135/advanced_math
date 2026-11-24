@@ -36,6 +36,19 @@ With the first two requirements:
 | one of 8 equally likely outcomes | 3 bits: exactly the three yes/no questions needed to identify it |
 | an event with probability $\frac{1}{1024}$ | 10 bits |
 
+!!! example "Example: twenty questions with 8 cards"
+    A friend picks one of 8 cards, A to H, uniformly at random. You ask yes/no questions:
+
+    1. "Is it in A–D?" No. Now it's one of E–H (4 left).
+    2. "Is it in E–F?" Yes. Now E or F (2 left).
+    3. "Is it E?" No. It's F.
+
+    Each answer halves the possibilities, so $8 \to 4 \to 2 \to 1$ takes $\log_2 8 = 3$ questions. Learning the card gave you 3 bits.
+
+    With probability $p = \frac{1}{2^k}$, you need $k$ halvings, and $k = \log_2\frac1p$. The formula extends this to every $p$. For one of 6 equally likely outcomes, the surprise is $\log_2 6 \approx 2.585$ bits: not a whole number of questions, but it *is* the average number per outcome you'd need if you encoded many outcomes at once (see [Compression and coding](coding.md)).
+
+Check requirement 3: two independent fair coins give 4 equally likely outcomes, each with surprise $\log_2 4 = 2 = 1 + 1$ bits. Information adds.
+
 ## 2. Entropy
 
 !!! definition "Definition: entropy"
@@ -54,6 +67,19 @@ With the first two requirements:
     | biased coin, $p = 0.9$ | $0.9\log_2\frac{1}{0.9} + 0.1\log_2\frac{1}{0.1}\approx0.137 + 0.332 = 0.469$ bits |
     | fair die | $\log_26\approx2.585$ bits |
     | deterministic variable | $0$ |
+
+!!! example "Example: the biased coin, step by step"
+    Heads with probability $0.9$, tails with $0.1$.
+
+    | Outcome | $p$ | surprise $\log_2\frac1p$ | $p \times$ surprise |
+    |---|---|---|---|
+    | heads | $0.9$ | $\log_2 1.111 \approx 0.152$ bits | $0.137$ |
+    | tails | $0.1$ | $\log_2 10 \approx 3.32$ bits | $0.332$ |
+    | | | **entropy** | $\mathbf{0.469}$ |
+
+    Heads is barely surprising but happens almost always. Tails is very surprising but rare. Entropy is the probability-weighted average, so both contribute.
+
+    (To compute $\log_2$ on a calculator: $\log_2 x = \frac{\ln x}{\ln 2}$. For example $\log_2 10 = \frac{2.303}{0.693} \approx 3.32$.)
 
 <div class="viz" data-viz="entropy"></div>
 
@@ -85,6 +111,17 @@ With the first two requirements:
 
     Equality in Jensen (strictly concave $\log$) requires $\frac{1}{p(X)}$ to be constant: all outcomes equally likely.
 
+    (The middle step: $\E\left[\frac{1}{p(X)}\right] = \sum_x p(x)\cdot\frac{1}{p(x)}$, and each term is $1$. So the sum counts the possible outcomes, which is at most $n$.)
+
+Examples with $n = 4$ outcomes, where $\log_2 4 = 2$:
+
+| Distribution | Entropy (bits) |
+|---|---|
+| $(1, 0, 0, 0)$ | $0$ (no uncertainty) |
+| $(0.7, 0.1, 0.1, 0.1)$ | $\approx 1.36$ |
+| $(\frac12, \frac14, \frac18, \frac18)$ | $1.75$ (exercise 1) |
+| $(\frac14, \frac14, \frac14, \frac14)$ | $2$ (the maximum) |
+
 The uniform distribution is the most uncertain, as we also found with [Lagrange multipliers](../multivariable/lagrange.md#4-maximum-entropy-why-the-uniform-distribution).
 
 ## 4. Joint and conditional entropy
@@ -108,6 +145,22 @@ The uniform distribution is the most uncertain, as we also found with [Lagrange 
     3. The first term gives $-\sum_xp(x)\log p(x) = H(X)$ (summing out $y$), and the second gives $H(Y\mid X)$.
 
 The uncertainty of the pair = uncertainty of $X$ + remaining uncertainty of $Y$ given $X$.
+
+!!! example "Example: the chain rule on a table"
+    Use the joint table from [Several random variables](../probability/joint.md):
+
+    | | $Y=0$ | $Y=1$ | $p_X$ |
+    |---|---|---|---|
+    | $X=0$ | 0.3 | 0.1 | 0.4 |
+    | $X=1$ | 0.2 | 0.4 | 0.6 |
+
+    1. $H(X) = H(0.4, 0.6) = 0.4\log_2\frac{1}{0.4} + 0.6\log_2\frac{1}{0.6} \approx 0.529 + 0.442 = 0.971$ bits.
+    2. Given $X = 0$, $Y$ has distribution $(0.75, 0.25)$, entropy $\approx 0.811$. Given $X = 1$, it's $(\frac13, \frac23)$, entropy $\approx 0.918$. Average over $X$: $\ H(Y\mid X) = 0.4(0.811) + 0.6(0.918) \approx 0.875$.
+    3. Directly, $H(X, Y) = H(0.3, 0.1, 0.2, 0.4) \approx 1.846$ bits.
+
+    Check: $0.971 + 0.875 = 1.846$. ✓
+
+    Also $H(Y) = H(0.5, 0.5) = 1$ bit, and $H(Y\mid X) \approx 0.875 < 1$: knowing $X$ removes about 0.125 bits of uncertainty about $Y$. That gap is the mutual information of the [next lesson](kl-divergence.md).
 
 In general,
 
@@ -135,7 +188,9 @@ $$
 It behaves somewhat differently from discrete entropy:
 
 - it can be negative (a uniform density on $[0, \frac12]$ has $h = \log\frac12 < 0$);
-- it changes under rescaling.
+- it changes under rescaling: $h(aX) = h(X) + \log\lvert a\rvert$.
+
+Why: a continuous variable has infinitely many possible values, so pinning it down *exactly* would take infinitely many bits. Differential entropy measures uncertainty *relative to* a unit interval. Squeezing the distribution into a width less than 1 makes it "more certain than uniform on $[0, 1]$," hence negative. Stretching by $a$ spreads the same probability over a region $a$ times wider, adding $\log a$.
 
 But differences of differential entropies, and the KL divergence, behave just like their discrete counterparts.
 

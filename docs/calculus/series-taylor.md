@@ -27,6 +27,24 @@ This lesson makes sense of infinite sums, then builds Taylor series and proves E
 
 An infinite sum is a limit of finite sums, nothing more mysterious.
 
+!!! example "Example: watching partial sums"
+    $\frac12 + \frac14 + \frac18 + \frac1{16} + \cdots$
+
+    | $N$ | $S_N$ | distance from 1 |
+    |---|---|---|
+    | 1 | $0.5$ | $0.5$ |
+    | 2 | $0.75$ | $0.25$ |
+    | 3 | $0.875$ | $0.125$ |
+    | 4 | $0.9375$ | $0.0625$ |
+    | 10 | $0.99902$ | $\approx 0.001$ |
+
+    Each term covers half of the remaining gap to 1. The gap halves forever, so $S_N \to 1$. Picture walking toward a wall, each step going half of the way that's left.
+
+The two questions about any series:
+
+1. **Does it converge?** (Often answerable with a test, even when the sum is unknown.)
+2. **If so, to what?** (Often much harder. Only a few families, like the geometric series, have a simple formula.)
+
 !!! theorem "Theorem: geometric series"
     For $|r| < 1$: $\displaystyle\sum_{n=0}^\infty r^n = \frac{1}{1-r}$. For $|r| \geq 1$ the series diverges.
 
@@ -40,6 +58,14 @@ So:
 
 - $\frac12 + \frac14 + \frac18 + \cdots = 1$;
 - $0.999\ldots = \frac{9}{10}\cdot\frac{1}{1 - 1/10} = 1$.
+
+How the second one works. The decimal $0.999\ldots$ *means* the series $\frac{9}{10} + \frac{9}{100} + \frac{9}{1000} + \cdots$. Factor out the first term: $\frac{9}{10}\left(1 + \frac{1}{10} + \frac{1}{100} + \cdots\right)$. The bracket is geometric with $r = \frac{1}{10}$, so it equals $\frac{1}{1 - 1/10} = \frac{10}{9}$. Then $\frac{9}{10} \cdot \frac{10}{9} = 1$.
+
+**A general shortcut:** a geometric series that starts at a term $a$ and has ratio $r$ (with $\lvert r\rvert < 1$) sums to
+
+$$
+a + ar + ar^2 + \cdots = \frac{a}{1 - r} = \frac{\text{first term}}{1 - \text{ratio}}.
+$$
 
 !!! theorem "Theorem: the harmonic series diverges"
     $1 + \frac12 + \frac13 + \frac14 + \cdots = \infty$, even though the terms tend to 0.
@@ -64,6 +90,14 @@ In fact $\sum_{n=1}^N \frac1n \approx \ln N + 0.577$: it grows without bound, bu
 
 (Partial sums of $\sum a_n$ increase and are bounded by $\sum b_n$, and an increasing bounded sequence converges.)
 
+In words: a series of positive terms smaller than a convergent one converges; one bigger than a divergent one diverges.
+
+!!! example "Example: comparison"
+    - $\sum \frac{1}{n^2 + 1}$: since $n^2 + 1 > n^2$, we have $\frac{1}{n^2+1} < \frac{1}{n^2}$. And $\sum \frac{1}{n^2}$ converges (shown below). So $\sum\frac{1}{n^2+1}$ converges.
+    - $\sum \frac{1}{\sqrt n}$: since $\sqrt n \leq n$, we have $\frac{1}{\sqrt n} \geq \frac1n$. The harmonic series diverges, so this one does too.
+
+    The skill is choosing what to compare with. Usually: keep only the dominant part of the term ($n^2 + 1 \approx n^2$).
+
 !!! theorem "Ratio test"
     Suppose $\left|\frac{a_{n+1}}{a_n}\right| \to L$.
 
@@ -76,6 +110,26 @@ In fact $\sum_{n=1}^N \frac1n \approx \ln N + 0.577$: it grows without bound, bu
 !!! proof "Proof idea"
     If $L < 1$, pick $r$ with $L < r < 1$. Eventually $|a_{n+1}| \leq r|a_n|$, so the terms are bounded by a geometric series $C r^n$, which converges. Apply comparison.
 
+The ratio test asks: "eventually, does each term shrink by a fixed factor?" If so, the series behaves like a geometric series.
+
+!!! example "Example: ratio test on $\sum \frac{1}{n!}$"
+    Recall $n! = 1 \cdot 2 \cdots n$, so $(n+1)! = (n+1) \cdot n!$.
+
+    $$
+    \frac{a_{n+1}}{a_n} = \frac{1/(n+1)!}{1/n!} = \frac{n!}{(n+1)!} = \frac{1}{n+1} \to 0 < 1.
+    $$
+
+    Converges. (We'll see below that the sum is $e - 1$, or $e$ if we start at $n = 0$.)
+
+!!! warning "Why $L = 1$ tells you nothing"
+    Both $\sum\frac1n$ and $\sum\frac{1}{n^2}$ have ratio $\to 1$:
+
+    $$
+    \frac{1/(n+1)}{1/n} = \frac{n}{n+1} \to 1, \qquad \frac{1/(n+1)^2}{1/n^2} = \left(\frac{n}{n+1}\right)^2 \to 1.
+    $$
+
+    But the first diverges and the second converges. So $L = 1$ can't decide.
+
 Also useful:
 
 - $\sum\frac{1}{n^p}$ converges iff $p > 1$ (compare with $\int_1^\infty x^{-p}dx$ from the previous lesson).
@@ -83,9 +137,17 @@ Also useful:
     - Absolute convergence implies convergence.
     - Absolutely convergent series can be rearranged freely.
 
+Why the integral comparison works: the sum $\frac{1}{2^p} + \frac{1}{3^p} + \cdots$ is the total area of rectangles of width 1 that fit *under* the curve $y = x^{-p}$ from $x = 1$ onward. If the area under the curve is finite ($p > 1$), so is the sum. In particular $\sum\frac{1}{n^2}$ converges. (Its sum is famously $\frac{\pi^2}{6}$.)
+
+**Alternating series** like $1 - \frac12 + \frac13 - \frac14 + \cdots$ can converge even when $\sum\lvert a_n\rvert$ doesn't. Each new term partly cancels the previous one. This one converges (to $\ln 2$, exercise 6) but not absolutely, since $\sum\frac1n$ diverges.
+
 ## 2. Power series
 
 A **power series** is an "infinite polynomial" $\sum_{n=0}^\infty c_n(x - a)^n$.
+
+Written out: $c_0 + c_1(x - a) + c_2(x-a)^2 + \cdots$. The $c_n$ are fixed numbers (coefficients), $a$ is the **center**, and $x$ is the variable.
+
+For each value of $x$ you get an ordinary series of numbers, which may or may not converge. So the question becomes: **for which $x$ does it converge?**
 
 !!! theorem "Radius of convergence"
     For every power series there is an $R \in [0, \infty]$ such that the series:
@@ -95,10 +157,31 @@ A **power series** is an "infinite polynomial" $\sum_{n=0}^\infty c_n(x - a)^n$.
 
     Inside this interval, it can be differentiated and integrated term by term.
 
+So the set where it converges is an interval centered at $a$, of half-width $R$ (plus possibly its endpoints, which need separate checking).
+
 Examples:
 
 - $\sum x^n = \frac{1}{1-x}$ has $R = 1$.
 - The ratio test on $\sum\frac{x^n}{n!}$ gives $\left|\frac{x}{n+1}\right| \to 0 < 1$ for every $x$, so $R = \infty$.
+
+!!! example "Example: finding $R$ with the ratio test"
+    $\displaystyle\sum_{n=1}^\infty \frac{x^n}{n}$. Treat $x$ as a fixed number and compute the ratio of consecutive terms:
+
+    $$
+    \left\lvert\frac{x^{n+1}/(n+1)}{x^n/n}\right\rvert = \lvert x\rvert\cdot\frac{n}{n+1} \to \lvert x\rvert.
+    $$
+
+    The ratio test says: converges if $\lvert x\rvert < 1$, diverges if $\lvert x\rvert > 1$. So $R = 1$.
+
+    The endpoints need their own check. At $x = 1$ it's the harmonic series (diverges). At $x = -1$ it's alternating, $-1 + \frac12 - \frac13 + \cdots$ (converges). So it converges exactly on $[-1, 1)$.
+
+**Term-by-term differentiation** is what makes power series so useful. For example, differentiating $\sum_{n\ge0}\frac{x^n}{n!}$ term by term:
+
+$$
+\frac{d}{dx}\left(1 + x + \frac{x^2}{2} + \frac{x^3}{6} + \cdots\right) = 0 + 1 + x + \frac{x^2}{2} + \cdots
+$$
+
+The series reproduces itself, exactly as $e^x$ should. (Each $\frac{x^n}{n!}$ differentiates to $\frac{n x^{n-1}}{n!} = \frac{x^{n-1}}{(n-1)!}$, the previous term.)
 
 ## 3. Taylor polynomials
 
@@ -107,6 +190,19 @@ Which polynomial best imitates $f$ near $a$? Ask it to **match $f$ and its first
 - Write $T(x) = \sum_{k=0}^n c_k(x-a)^k$.
 - Differentiating $k$ times and setting $x = a$ kills every term except $k!\,c_k$.
 - So matching $T^{(k)}(a) = f^{(k)}(a)$ forces $c_k = \frac{f^{(k)}(a)}{k!}$.
+
+See the "kills every term" step with a cubic at $a = 0$: $T(x) = c_0 + c_1 x + c_2 x^2 + c_3x^3$.
+
+| Derivative | Formula | At $x = 0$ |
+|---|---|---|
+| $T(x)$ | $c_0 + c_1x + c_2x^2 + c_3x^3$ | $c_0$ |
+| $T'(x)$ | $c_1 + 2c_2x + 3c_3x^2$ | $c_1$ |
+| $T''(x)$ | $2c_2 + 6c_3x$ | $2c_2$ |
+| $T'''(x)$ | $6c_3$ | $6c_3 = 3!\,c_3$ |
+
+Each derivative strips the lowest term, and setting $x = 0$ wipes out everything that still has an $x$. What's left is $k!\,c_k$.
+
+To make $T^{(k)}(0) = f^{(k)}(0)$, we need $k!\,c_k = f^{(k)}(0)$, i.e. $c_k = \frac{f^{(k)}(0)}{k!}$.
 
 !!! definition "Definition: Taylor polynomial and series"
     The degree-$n$ **Taylor polynomial** of $f$ at $a$ is
@@ -122,6 +218,25 @@ Which polynomial best imitates $f$ near $a$? Ask it to **match $f$ and its first
 - Each extra term corrects the previous approximation more and more finely near $a$.
 
 <div class="viz" data-viz="taylor"></div>
+
+!!! example "Example: building Taylor polynomials of $e^x$ at $0$, and watching them improve"
+    Every derivative of $e^x$ is $e^x$, which equals $1$ at $x = 0$. So $c_k = \frac{1}{k!}$:
+
+    $$
+    T_0 = 1, \quad T_1 = 1 + x, \quad T_2 = 1 + x + \frac{x^2}{2}, \quad T_3 = 1 + x + \frac{x^2}{2} + \frac{x^3}{6}.
+    $$
+
+    Evaluate at $x = 0.5$, where the true value is $e^{0.5} = 1.648721\ldots$:
+
+    | $n$ | $T_n(0.5)$ | error |
+    |---|---|---|
+    | 0 | $1$ | $0.649$ |
+    | 1 | $1.5$ | $0.149$ |
+    | 2 | $1.625$ | $0.024$ |
+    | 3 | $1.645833$ | $0.0029$ |
+    | 4 | $1.648438$ | $0.00028$ |
+
+    Each extra term shrinks the error roughly tenfold here. Try the same at $x = 3$ and you'll need many more terms: the approximation is best near the center.
 
 ### The essential series
 
@@ -142,6 +257,25 @@ Where the coefficients come from:
 - **$\sin$:** the derivatives cycle $\sin, \cos, -\sin, -\cos$, giving values $0, 1, 0, -1$ at 0.
 - **$\ln(1 + x)$:** integrate $\frac{1}{1+x} = 1 - x + x^2 - \cdots$ term by term.
 
+The sine case in full:
+
+| $k$ | $f^{(k)}(x)$ | $f^{(k)}(0)$ | $c_k = f^{(k)}(0)/k!$ |
+|---|---|---|---|
+| 0 | $\sin x$ | $0$ | $0$ |
+| 1 | $\cos x$ | $1$ | $1$ |
+| 2 | $-\sin x$ | $0$ | $0$ |
+| 3 | $-\cos x$ | $-1$ | $-\frac{1}{3!}$ |
+| 4 | $\sin x$ | $0$ | $0$ (and the cycle repeats) |
+
+Only odd powers survive, with alternating signs. That matches $\sin$ being an odd function. Cosine works the same way and keeps only even powers.
+
+The $\ln(1 + x)$ case in full:
+
+1. $\frac{1}{1 + x} = \frac{1}{1 - (-x)}$ is a geometric series with ratio $-x$: $\ 1 - x + x^2 - x^3 + \cdots$ for $\lvert x\rvert < 1$.
+2. $\ln(1 + x)$ is the antiderivative of $\frac{1}{1+x}$ that equals $0$ at $x = 0$. Integrate each term: $x - \frac{x^2}{2} + \frac{x^3}{3} - \cdots$
+
+The binomial series $(1 + x)^\alpha$ comes from the derivatives $\alpha(1+x)^{\alpha-1}$, $\ \alpha(\alpha-1)(1+x)^{\alpha-2}$, $\dots$, which equal $\alpha$, $\alpha(\alpha - 1)$, $\dots$ at $0$. When $\alpha$ is a positive integer the series stops, and you get the ordinary binomial theorem.
+
 ## 4. How good is the approximation? Taylor's theorem
 
 !!! theorem "Taylor's theorem (Lagrange remainder)"
@@ -160,6 +294,19 @@ If $|f^{(n+1)}| \leq M$ between $a$ and $x$, then
 $$
 |R_n(x)| \leq \frac{M|x - a|^{n+1}}{(n+1)!}.
 $$
+
+For $n = 0$ this is just the mean value theorem: $f(x) = f(a) + f'(\xi)(x - a)$. Taylor's theorem is the MVT extended to higher degrees.
+
+!!! example "Example: how accurate is $\sin x \approx x$?"
+    $T_1(x) = x$ for $\sin$ at $0$. But $T_2$ is also just $x$ (the $x^2$ coefficient is $0$), so we may use the remainder of $T_2$, which involves $f''' = -\cos$, bounded by $M = 1$:
+
+    $$
+    \lvert\sin x - x\rvert \leq \frac{\lvert x\rvert^3}{3!} = \frac{\lvert x\rvert^3}{6}.
+    $$
+
+    At $x = 0.1$ (about 5.7°): the error is at most $\frac{0.001}{6} \approx 0.00017$. Indeed $\sin 0.1 = 0.0998334$, off by $0.0001666$.
+
+    So the "small-angle approximation" in physics is accurate to better than 0.2% for angles under 6°.
 
 ??? proof "Proof (deeper)"
     Fix $x \neq a$. Define
@@ -216,12 +363,22 @@ Common ones to know by heart:
 | $\sqrt{1 + h}$ | $1 + \tfrac h2 + O(h^2)$ |
 | $\tfrac{1}{1 - h}$ | $1 + h + O(h^2)$ |
 
+Each is just the first terms of a series from the table above. For example, $\sqrt{1 + h} = (1 + h)^{1/2}$ is the binomial series with $\alpha = \frac12$: $\ 1 + \frac12 h + \cdots$
+
+Big-O terms combine by simple rules: $O(h^2) + O(h^3) = O(h^2)$ (the bigger one wins for small $h$), and $h \cdot O(h^2) = O(h^3)$.
+
 ## 5. Euler's formula
 
 Now we can prove the formula previewed in [Complex numbers](../foundations/complex-numbers.md).
 
 1. **Define** $e^z$ for complex $z$ by the same series $\sum\frac{z^n}{n!}$. It converges for every complex $z$, by the ratio test.
-2. Put $z = i\theta$ and use $i^2 = -1$, $i^3 = -i$, $i^4 = 1$:
+2. Put $z = i\theta$ and use $i^2 = -1$, $i^3 = -i$, $i^4 = 1$. The powers of $i\theta$ are:
+
+| $n$ | $0$ | $1$ | $2$ | $3$ | $4$ | $5$ |
+|---|---|---|---|---|---|---|
+| $(i\theta)^n$ | $1$ | $i\theta$ | $-\theta^2$ | $-i\theta^3$ | $\theta^4$ | $i\theta^5$ |
+
+The pattern of signs and $i$'s repeats every four steps. Divide each by $n!$ and add:
 
 $$
 \begin{aligned}

@@ -14,6 +14,24 @@ Once you see this, matrix multiplication stops being arbitrary: it's composition
 
 An $m\times n$ matrix $A$ has $m$ rows and $n$ columns. It multiplies a vector $\vv x \in \R^n$ to give $A\vv x \in \R^m$.
 
+**Notation.** $A_{ij}$ (or $a_{ij}$) is the entry in **row $i$, column $j$**. Rows first, always. For
+
+$$
+A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6\end{pmatrix},
+$$
+
+$A$ is $3 \times 2$, $\ A_{12} = 2$ (row 1, column 2), $\ A_{31} = 5$, and the columns are $\vv a_1 = (1, 3, 5)$ and $\vv a_2 = (2, 4, 6)$.
+
+**Adding and scaling matrices** works entry by entry, exactly like vectors (only for matrices of the same size):
+
+$$
+\begin{pmatrix}1 & 2\\3 & 4\end{pmatrix} + \begin{pmatrix}0 & 1\\1 & 0\end{pmatrix} = \begin{pmatrix}1 & 3\\4 & 4\end{pmatrix}, \qquad 3\begin{pmatrix}1 & 2\\3 & 4\end{pmatrix} = \begin{pmatrix}3 & 6\\9 & 12\end{pmatrix}.
+$$
+
+Multiplication is the interesting operation. Start with a matrix times a vector.
+
+The size rule: $A\vv x$ needs $\vv x$ to have as many entries as $A$ has **columns**. The answer has as many entries as $A$ has **rows**.
+
 **Row picture:** each entry of $A\vv x$ is a dot product of a row of $A$ with $\vv x$:
 
 $$
@@ -27,6 +45,24 @@ A\vv x = x_1\begin{pmatrix}1\\3\\5\end{pmatrix} + x_2\begin{pmatrix}2\\4\\6\end{
 $$
 
 Same numbers, different grouping.
+
+!!! example "Example: one product, both pictures"
+    $$
+    \begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}\begin{pmatrix} 1 \\ 2\end{pmatrix}
+    $$
+
+    **Row picture.** Dot each row with $(1, 2)$:
+
+    - Row 1: $(2, 1)\cdot(1, 2) = 2 + 2 = 4$.
+    - Row 2: $(1, 3)\cdot(1, 2) = 1 + 6 = 7$.
+
+    **Column picture.** Take 1 copy of column 1 plus 2 copies of column 2:
+
+    $$
+    1\begin{pmatrix}2\\1\end{pmatrix} + 2\begin{pmatrix}1\\3\end{pmatrix} = \begin{pmatrix}2 + 2\\1 + 6\end{pmatrix} = \begin{pmatrix}4\\7\end{pmatrix}.
+    $$
+
+    Both give $(4, 7)$. (Compare the linear-combination example in the [last lesson](vectors.md): it was this same calculation, run backwards.)
 
 The column picture answers deep questions directly. "Which outputs can $A$ produce?" becomes "which combinations of its columns are there?"
 
@@ -48,6 +84,10 @@ Geometrically: grid lines stay parallel and evenly spaced, and the origin stays 
 
 Every matrix gives a linear map $\vv x \mapsto A\vv x$ (check the two conditions from the column picture). The converse is the key theorem:
 
+(The check, in the column picture: $A(\vv u + \vv v) = \sum_j (u_j + v_j)\vv a_j = \sum_j u_j\vv a_j + \sum_j v_j \vv a_j = A\vv u + A\vv v$, and similarly $A(c\vv u) = cA\vv u$.)
+
+A consequence worth noticing: **every linear map sends $\vv 0$ to $\vv 0$**, because $T(\vv 0) = T(0 \cdot \vv 0) = 0 \cdot T(\vv 0) = \vv 0$. That's a one-second test for non-linearity.
+
 !!! theorem "Theorem: every linear map is a matrix"
     If $T : \R^n \to \R^m$ is linear, then $T(\vv x) = A\vv x$ for the matrix whose $j$-th column is $T(\vv e_j)$:
 
@@ -63,11 +103,29 @@ Every matrix gives a linear map $\vv x \mapsto A\vv x$ (check the two conditions
 
 <div class="viz" data-viz="lintrans"></div>
 
+### A gallery of 2×2 transformations
+
+Each matrix below was built by deciding where $\vv e_1 = (1, 0)$ and $\vv e_2 = (0, 1)$ should go, and writing those as the columns.
+
+| Matrix | $\vv e_1 \mapsto$ | $\vv e_2 \mapsto$ | What it does |
+|---|---|---|---|
+| $\begin{pmatrix}2 & 0\\0 & 3\end{pmatrix}$ | $(2, 0)$ | $(0, 3)$ | stretch $x$ by 2, $y$ by 3 |
+| $\begin{pmatrix}1 & 0\\0 & -1\end{pmatrix}$ | $(1, 0)$ | $(0, -1)$ | reflect across the $x$-axis |
+| $\begin{pmatrix}0 & -1\\1 & 0\end{pmatrix}$ | $(0, 1)$ | $(-1, 0)$ | rotate 90° counterclockwise |
+| $\begin{pmatrix}1 & 1\\0 & 1\end{pmatrix}$ | $(1, 0)$ | $(1, 1)$ | shear: slide each row sideways by its height |
+| $\begin{pmatrix}1 & 0\\0 & 0\end{pmatrix}$ | $(1, 0)$ | $(0, 0)$ | project onto the $x$-axis (flatten) |
+
+Try one on a specific vector. The shear sends $(2, 3)$ to $2(1, 0) + 3(1, 1) = (5, 3)$: the height stays $3$, and the point slides right by $3$.
+
 !!! example "Example: rotation by θ"
     Rotation sends:
 
     - $\vv e_1 = (1,0)$ to $(\cos\theta, \sin\theta)$;
     - $\vv e_2 = (0,1)$ to $(-\sin\theta, \cos\theta)$.
+
+    The first is the definition of $\cos$ and $\sin$: $\vv e_1$ sits at angle $0$, and rotating it lands at angle $\theta$ on the unit circle.
+
+    For the second: $\vv e_2$ sits at angle $90°$, so it lands at angle $\theta + 90°$, the point $(\cos(\theta + 90°), \sin(\theta + 90°))$. The angle-addition formulas simplify this to $(-\sin\theta, \cos\theta)$. (Sanity check with $\theta = 90°$: $\vv e_2$ goes to $(-1, 0)$, a quarter-turn. ✓)
 
     So
 
@@ -95,6 +153,42 @@ So $(AB)\vv x = A(B\vv x)$ by construction.
 
 **The strange multiplication rule is forced by wanting products to mean composition.**
 
+Why the inner sizes must match: $B$ outputs vectors in $\R^m$, and $A$ must accept them as inputs. "Do $B$, then $A$" only makes sense if $B$'s outputs fit into $A$.
+
+Note the order: $AB$ means **$B$ first**, then $A$, just like $g \circ f$ means $f$ first. The matrix nearest the vector acts first.
+
+!!! example "Example: a product, entry by entry and column by column"
+    $$
+    A = \begin{pmatrix}1 & 2\\3 & 4\end{pmatrix}, \qquad B = \begin{pmatrix}5 & 6\\7 & 8\end{pmatrix}.
+    $$
+
+    **Entry by entry** (row of $A$ dotted with column of $B$):
+
+    | Entry | Row of $A$ · column of $B$ | Value |
+    |---|---|---|
+    | $(1,1)$ | $(1, 2)\cdot(5, 7)$ | $5 + 14 = 19$ |
+    | $(1,2)$ | $(1, 2)\cdot(6, 8)$ | $6 + 16 = 22$ |
+    | $(2,1)$ | $(3, 4)\cdot(5, 7)$ | $15 + 28 = 43$ |
+    | $(2,2)$ | $(3, 4)\cdot(6, 8)$ | $18 + 32 = 50$ |
+
+    $$
+    AB = \begin{pmatrix}19 & 22\\43 & 50\end{pmatrix}.
+    $$
+
+    **Column by column:** the first column of $AB$ is $A$ times the first column of $B$:
+
+    $$
+    A\begin{pmatrix}5\\7\end{pmatrix} = 5\begin{pmatrix}1\\3\end{pmatrix} + 7\begin{pmatrix}2\\4\end{pmatrix} = \begin{pmatrix}19\\43\end{pmatrix}. \ ✓
+    $$
+
+!!! example "Example: composing two geometric maps, in both orders"
+    Let $R = \begin{pmatrix}0 & -1\\1 & 0\end{pmatrix}$ (rotate 90°) and $F = \begin{pmatrix}1 & 0\\0 & -1\end{pmatrix}$ (reflect across the $x$-axis).
+
+    - $FR$ (rotate, then reflect): $\ FR = \begin{pmatrix}0 & -1\\-1 & 0\end{pmatrix}$. It sends $\vv e_1 \to (0, 1) \to (0, -1)$.
+    - $RF$ (reflect, then rotate): $\ RF = \begin{pmatrix}0 & 1\\1 & 0\end{pmatrix}$. It sends $\vv e_1 \to (1, 0) \to (0, 1)$.
+
+    Different results: $FR \neq RF$. Follow $\vv e_1$ with your finger to see it. ($RF$ is the reflection across the line $y = x$, and $FR$ the reflection across $y = -x$.)
+
 Consequences:
 
 - **Associative:** $(AB)C = A(BC)$.
@@ -104,6 +198,8 @@ Consequences:
     - Example: $A = \begin{pmatrix}0&1\\0&0\end{pmatrix}$, $B = \begin{pmatrix}0&0\\1&0\end{pmatrix}$ give $AB = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ but $BA = \begin{pmatrix}0&0\\0&1\end{pmatrix}$.
 - **Distributive:** $A(B + C) = AB + AC$.
 - **Identity:** $I$ (ones on the diagonal) does nothing: $AI = IA = A$.
+    - Its columns are $\vv e_1, \dots, \vv e_n$, so it sends each basis vector to itself. For example $I_2 = \begin{pmatrix}1 & 0\\0 & 1\end{pmatrix}$.
+- **Powers:** $A^2 = AA$ means "apply $A$ twice." For the 90° rotation, $R^2$ is a 180° rotation, $R^2 = -I$, and $R^4 = I$.
 
 ### Four ways to see a product
 
@@ -117,12 +213,28 @@ Consequences:
 !!! definition "Definition: transpose"
     $A^\top$ is $A$ flipped over its diagonal: $(A^\top)_{ij} = A_{ji}$. An $m\times n$ matrix becomes $n\times m$.
 
+In practice: **the rows of $A$ become the columns of $A^\top$.**
+
+$$
+A = \begin{pmatrix}1 & 2 & 3\\4 & 5 & 6\end{pmatrix} \quad\Longrightarrow\quad A^\top = \begin{pmatrix}1 & 4\\2 & 5\\3 & 6\end{pmatrix}.
+$$
+
+Transposing twice gets you back: $(A^\top)^\top = A$.
+
 A vector is an $n\times1$ matrix, so:
 
 | Expression | Shapes | Result |
 |---|---|---|
 | $\vv u^\top\vv v$ | $(1\times n)(n\times1)$ | a number: the dot product |
 | $\vv u\vv v^\top$ | $(n\times1)(1\times n)$ | an $n\times n$ matrix: the **outer product** |
+
+With numbers, $\vv u = (1, 2)$ and $\vv v = (3, 4)$:
+
+$$
+\vv u^\top\vv v = \begin{pmatrix}1 & 2\end{pmatrix}\begin{pmatrix}3\\4\end{pmatrix} = 11, \qquad \vv u\vv v^\top = \begin{pmatrix}1\\2\end{pmatrix}\begin{pmatrix}3 & 4\end{pmatrix} = \begin{pmatrix}3 & 4\\6 & 8\end{pmatrix}.
+$$
+
+Each entry of the outer product is $u_iv_j$. Notice every row is a multiple of $(3, 4)$ and every column a multiple of $(1, 2)$.
 
 !!! theorem "Theorem"
     $(AB)^\top = B^\top A^\top$.
@@ -149,6 +261,14 @@ $$
 | Orthogonal | $Q^\top Q = I$ | rotation or reflection: preserves lengths and angles |
 | Triangular | zeros below (or above) the diagonal | arises from elimination |
 | Projection | $P^2 = P$ | flattening onto a subspace: doing it twice = once |
+
+Examples of each, from this lesson:
+
+- **Diagonal:** $\begin{pmatrix}2 & 0\\0 & 3\end{pmatrix}$, the stretch.
+- **Symmetric:** $\begin{pmatrix}2 & 1\\1 & 3\end{pmatrix}$. The entry above the diagonal mirrors the one below.
+- **Orthogonal:** the rotation $R_\theta$. Its columns are unit vectors at right angles to each other, which is exactly what $Q^\top Q = I$ says (entry $(i, j)$ of $Q^\top Q$ is column $i$ dotted with column $j$).
+- **Triangular:** $\begin{pmatrix}1 & 1\\0 & 1\end{pmatrix}$, the shear.
+- **Projection:** $\begin{pmatrix}1 & 0\\0 & 0\end{pmatrix}$. Flattening onto the $x$-axis twice is the same as once.
 
 !!! ml "Where this shows up"
     - **A dense neural network layer** is $\vv h = \sigma(W\vv x + \vv b)$: a linear map, a shift, then a nonlinearity.

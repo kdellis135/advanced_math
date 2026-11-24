@@ -29,6 +29,20 @@ The subspaces of $\R^3$ are:
 
 A line *not* through the origin is not a subspace.
 
+Think of a subspace as a "flat" set through the origin that you can never leave by adding or scaling. Checking the two conditions on examples in $\R^2$ and $\R^3$:
+
+!!! example "Example: subspace or not?"
+    | Set | Contains $\vv 0$? | Closed under combinations? | Subspace? |
+    |---|---|---|---|
+    | the plane $x + y + z = 0$ in $\R^3$ | yes | yes (below) | **yes** |
+    | the line $y = x + 1$ in $\R^2$ | no: $(0, 0)$ gives $0 = 1$ | | **no** |
+    | the first quadrant $x \geq 0, y \geq 0$ | yes | no: $(1, 1)$ is in it, but $-1 \cdot (1, 1) = (-1, -1)$ isn't | **no** |
+    | the two axes together | yes | no: $(1, 0) + (0, 1) = (1, 1)$ is on neither axis | **no** |
+
+    Why the plane passes: take $\vv u, \vv v$ with $u_1 + u_2 + u_3 = 0$ and $v_1 + v_2 + v_3 = 0$. The coordinates of $a\vv u + b\vv v$ add up to $a(u_1 + u_2 + u_3) + b(v_1 + v_2 + v_3) = a \cdot 0 + b \cdot 0 = 0$. So it's in the plane too.
+
+    In general: the solutions of $A\vv x = \vv 0$ always form a subspace (by the same argument). The solutions of $A\vv x = \vv b$ with $\vv b \neq \vv 0$ never do, since $\vv 0$ isn't one of them.
+
 More generally, a **vector space** is any set where addition and scaling make sense and obey the usual rules: polynomials, functions, matrices. All the ideas in this lesson carry over. For example, the space of polynomials of degree $\leq 2$ has basis $1, x, x^2$.
 
 !!! definition "Definition: span"
@@ -39,6 +53,24 @@ More generally, a **vector space** is any set where addition and scaling make se
     $$
 
     It is always a subspace.
+
+The span is "everywhere you can reach" using those vectors as building blocks.
+
+| Vectors | Span |
+|---|---|
+| $(1, 2)$ | the line through the origin in direction $(1, 2)$ |
+| $(1, 0)$ and $(0, 1)$ | all of $\R^2$ |
+| $(1, 2)$ and $(2, 4)$ | still just the line through $(1, 2)$: the second vector is parallel |
+| $(1, 0, 0)$ and $(0, 1, 0)$ | the $xy$-plane in $\R^3$ |
+
+**Is $\vv b$ in the span of $\vv v_1, \dots, \vv v_k$?** Put the $\vv v_i$ as the columns of a matrix $A$. Then the question is whether $A\vv c = \vv b$ has a solution, which elimination answers.
+
+!!! example "Example: testing span membership"
+    Is $(1, 1, 2)$ in the span of $(1, 0, 1)$ and $(0, 1, 1)$?
+
+    We need $c_1(1, 0, 1) + c_2(0, 1, 1) = (1, 1, 2)$. The first coordinate forces $c_1 = 1$, the second forces $c_2 = 1$, and then the third is $1 + 1 = 2$. ✓ Yes.
+
+    And $(1, 1, 3)$? The same $c_1 = c_2 = 1$ would give third coordinate $2 \neq 3$. No.
 
 ## 2. Linear independence
 
@@ -55,6 +87,8 @@ In $(1,0), (0,1), (1,1)$, the third is the sum of the first two, and adds nothin
 
     Otherwise they are **dependent**: some $\vv v_i$ is a combination of the others.
 
+Why "a nontrivial combination gives zero" means "one vector is a combination of the others": for $(1,0), (0,1), (1,1)$ we have $1\cdot(1,0) + 1\cdot(0,1) - 1\cdot(1,1) = \vv 0$. Solve for any vector with a nonzero coefficient: $(1,1) = (1,0) + (0,1)$.
+
 In matrix language, these are equivalent:
 
 - the columns of $A$ are independent;
@@ -68,6 +102,21 @@ In matrix language, these are equivalent:
     - Three vectors in $\R^3$ are independent iff they don't lie in a common plane.
     - Any 4 vectors in $\R^3$ are dependent: there's no room.
 
+!!! example "Example: testing independence by elimination"
+    Are $(1, 1, 0)$, $(0, 1, 1)$, $(1, 2, 1)$ independent? Put them as columns and eliminate:
+
+    $$
+    \begin{pmatrix}1 & 0 & 1\\1 & 1 & 2\\0 & 1 & 1\end{pmatrix}
+    \xrightarrow{R_2 - R_1}
+    \begin{pmatrix}1 & 0 & 1\\0 & 1 & 1\\0 & 1 & 1\end{pmatrix}
+    \xrightarrow{R_3 - R_2}
+    \begin{pmatrix}1 & 0 & 1\\0 & 1 & 1\\0 & 0 & 0\end{pmatrix}.
+    $$
+
+    Only 2 pivots for 3 columns, so they're **dependent**. Column 3 has no pivot, so the third vector is a combination of the first two. Indeed $(1, 2, 1) = (1, 1, 0) + (0, 1, 1)$.
+
+    Change the third vector to $(1, 0, 1)$ and the same steps give pivots in all three columns: independent.
+
 ## 3. Basis and dimension
 
 !!! definition "Definition: basis"
@@ -80,6 +129,25 @@ Each vector in $V$ then has a **unique** representation $\vv v = c_1\vv b_1 + \c
 
 The numbers $c_i$ are the **coordinates** of $\vv v$ in that basis.
 
+!!! example "Example: the same vector, two coordinate systems"
+    In the standard basis, $\vv v = (3, 1)$ has coordinates $3$ and $1$: $\ \vv v = 3\vv e_1 + 1\vv e_2$.
+
+    Now use the basis $\vv b_1 = (1, 1)$, $\vv b_2 = (1, -1)$ (two perpendicular diagonal directions). We need $c_1(1, 1) + c_2(1, -1) = (3, 1)$:
+
+    $$
+    c_1 + c_2 = 3, \qquad c_1 - c_2 = 1 \quad\Longrightarrow\quad c_1 = 2,\ c_2 = 1.
+    $$
+
+    So in this basis, $\vv v$ has coordinates $(2, 1)$. Same arrow, different description: "2 steps along $\vv b_1$, 1 step along $\vv b_2$."
+
+    Choosing a good basis is a recurring theme: eigenvectors, the SVD and Fourier series are all clever choices of basis that make a problem simple.
+
+**Examples of bases:**
+
+- $\R^n$: the standard basis $\vv e_1, \dots, \vv e_n$.
+- The line through $(1, 2)$: the single vector $(1, 2)$ (or any nonzero multiple of it).
+- The plane $x + y + z = 0$: for example $(1, -1, 0)$ and $(1, 0, -1)$. Both lie in the plane, they aren't parallel, and two independent vectors fill out a plane.
+
 !!! theorem "Theorem: dimension is well defined"
     Every basis of a subspace $V$ has the same number of vectors. That number is the **dimension** $\dim V$.
 
@@ -88,7 +156,7 @@ The numbers $c_i$ are the **coordinates** of $\vv v$ in that basis.
 
     *Proof of the lemma:*
 
-    1. Write each $\vv w_j = \sum_i a_{ij}\vv v_i$, so $W = VA$ where $A$ is $k\times m$.
+    1. Write each $\vv w_j = \sum_i a_{ij}\vv v_i$, so $W = VA$ where $A$ is $k\times m$. (Here $V$ is the matrix with columns $\vv v_i$ and $W$ the matrix with columns $\vv w_j$. The column picture says column $j$ of $VA$ is $V$ times column $j$ of $A$, i.e. $\sum_i a_{ij}\vv v_i = \vv w_j$.)
     2. $A$ has more columns than rows, so elimination leaves a free variable: $A\vv c = \vv 0$ for some $\vv c \neq \vv 0$.
     3. Then $W\vv c = VA\vv c = \vv 0$: a nontrivial dependency.
 
@@ -116,6 +184,30 @@ For an $m\times n$ matrix $A$ (a map $\R^n \to \R^m$):
 
 !!! definition "Definition: rank"
     The **rank** of $A$ is $\dim C(A)$, the number of independent columns. It equals the number of pivots.
+
+!!! example "Example: all four subspaces of a small matrix"
+    $$
+    A = \begin{pmatrix}1 & 2\\2 & 4\end{pmatrix}.
+    $$
+
+    The second column is twice the first, and the second row is twice the first. Elimination ($R_2 - 2R_1$) leaves one pivot, so $\rank A = 1$.
+
+    | Subspace | How to find it | Answer |
+    |---|---|---|
+    | column space | span of the columns $(1, 2)$, $(2, 4)$ | the line through $(1, 2)$ |
+    | null space | solve $x + 2y = 0$ | the line through $(-2, 1)$ |
+    | row space | span of the rows $(1, 2)$, $(2, 4)$ | the line through $(1, 2)$ |
+    | left null space | solve $A^\top\vv y = \vv 0$, i.e. $y_1 + 2y_2 = 0$ | the line through $(-2, 1)$ |
+
+    Every output $A\vv x = x_1(1, 2) + x_2(2, 4) = (x_1 + 2x_2)(1, 2)$ is a multiple of $(1, 2)$. So $A$ squashes the whole plane onto one line, and the direction $(-2, 1)$ is crushed to zero: $A(-2, 1) = (-2 + 2, -4 + 4) = (0, 0)$.
+
+    Notice $(1, 2) \cdot (-2, 1) = 0$: the null space is perpendicular to the row space. Section 7 explains why that always happens.
+
+**How to find bases in general:**
+
+- **Column space:** eliminate, see which columns have pivots, then take *those columns of the original $A$* (not of the eliminated matrix, since row operations change the columns).
+- **Null space:** the special solutions (see the proof of rank–nullity below, and exercise 2).
+- **Row space:** the nonzero rows of the eliminated matrix.
 
 !!! theorem "Theorem: row rank = column rank"
     $\dim C(A) = \dim C(A^\top)$: the number of independent columns equals the number of independent rows.
@@ -150,6 +242,15 @@ For an $m\times n$ matrix $A$ (a map $\R^n \to \R^m$):
 
     Nothing else can happen to a dimension.
 
+Check it on examples:
+
+| Matrix | $n$ (inputs) | rank | $\dim N(A)$ | |
+|---|---|---|---|---|
+| $\begin{pmatrix}1 & 2\\2 & 4\end{pmatrix}$ above | 2 | 1 | 1 | $1 + 1 = 2$ ✓ |
+| the $2 \times 2$ identity | 2 | 2 | 0 | nothing destroyed |
+| projection onto the $x$-axis in $\R^3$ | 3 | 1 | 2 | the $y$ and $z$ directions are crushed |
+| exercise 2 below ($2 \times 4$) | 4 | 2 | 2 | |
+
 !!! proof "Proof"
     Elimination on $A\vv x = \vv 0$ gives $r = \rank A$ pivot variables and $n - r$ free variables.
 
@@ -173,6 +274,17 @@ For an $m\times n$ matrix $A$ (a map $\R^n \to \R^m$):
     - Conversely, $A(\vv x_p + \vv x_n) = \vv b + \vv 0 = \vv b$.
 
 So the solution set is the null space shifted to pass through $\vv x_p$: a point, a line, a plane…
+
+You already saw this in [the last lesson](linear-systems.md): the line of solutions $(2, 0, 2) + t(-2, 1, 0)$ was a particular solution plus multiples of a null space vector.
+
+!!! example "Example: complete solution"
+    Solve $\begin{pmatrix}1 & 2\\2 & 4\end{pmatrix}\vv x = \begin{pmatrix}3\\6\end{pmatrix}$.
+
+    1. Particular solution: guess $\vv x_p = (3, 0)$. Check: $(3 + 0, 6 + 0) = (3, 6)$. ✓
+    2. Null space: multiples of $(-2, 1)$, found above.
+    3. All solutions: $\vv x = (3, 0) + t(-2, 1)$.
+
+    Geometrically, it's the line $x + 2y = 3$: a copy of the null-space line, shifted to pass through $(3, 0)$.
 
 The same structure appears in differential equations: general solution = particular + homogeneous.
 

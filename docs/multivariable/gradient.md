@@ -24,6 +24,21 @@ A function $f : \R^n \to \R$ takes a vector and returns a number. For $n = 2$ we
 
 Closely spaced contours mean steep terrain.
 
+!!! example "Example: two functions, as surfaces and as contour maps"
+    | Function | Surface | Contours $f = c$ |
+    |---|---|---|
+    | $f(x, y) = x + 2y$ | a tilted flat plane | parallel straight lines $x + 2y = c$ |
+    | $f(x, y) = x^2 + y^2$ | a round bowl, lowest at the origin | circles of radius $\sqrt c$ |
+    | $f(x, y) = x^2 + 4y^2$ | a bowl, steeper in $y$ | ellipses, squashed in the $y$-direction |
+
+    Some values of the bowl $x^2 + y^2$, to see the circles:
+
+    | Point | $(1, 0)$ | $(0, 1)$ | $(0.6, 0.8)$ | $(2, 0)$ | $(1.2, 1.6)$ |
+    |---|---|---|---|---|---|
+    | $f$ | $1$ | $1$ | $1$ | $4$ | $4$ |
+
+    The first three points sit on the level-1 circle, the last two on the level-4 circle (radius 2). The circles for $c = 1, 4, 9, 16$ have radii $1, 2, 3, 4$: evenly spaced radii, but the height grows faster and faster, so the bowl gets steeper as you move out.
+
 ## 2. Partial derivatives
 
 The simplest way to probe $f$: freeze all variables except one, and differentiate in that one.
@@ -35,11 +50,30 @@ The simplest way to probe $f$: freeze all variables except one, and differentiat
 
     It's the slope of $f$ when you walk in the direction of the $i$-th axis.
 
+    Other notations: $f_{x_i}$, $\ \partial_i f$, $\ \partial_{x_i} f$. The curly $\partial$ (read "partial") signals that other variables exist and are being held fixed.
+
+**Picture it as a slice.** Fix $y = 1$ in the bowl $f(x, y) = x^2 + y^2$. What's left is the ordinary one-variable function $g(x) = x^2 + 1$: the curve where the vertical plane $y = 1$ cuts the bowl. Its slope is $g'(x) = 2x$. That's $\frac{\partial f}{\partial x}$.
+
+So you already know how to compute partial derivatives: **treat every other variable as a constant number, and use the ordinary rules.**
+
 !!! example "Example"
     $f(x, y) = x^2y + \sin y$.
 
     - Treat $y$ as a constant: $\frac{\partial f}{\partial x} = 2xy$.
     - Treat $x$ as a constant: $\frac{\partial f}{\partial y} = x^2 + \cos y$.
+
+    In the first, $x^2 y$ is "a constant times $x^2$," so its derivative is that constant times $2x$. And $\sin y$ doesn't involve $x$ at all, so it's a constant with derivative $0$.
+
+!!! example "Example: more partial derivatives"
+    | $f(x, y)$ | $\partial f/\partial x$ | $\partial f/\partial y$ |
+    |---|---|---|
+    | $3x + 5y$ | $3$ | $5$ |
+    | $x^2 + 2y^2$ | $2x$ | $4y$ |
+    | $xy$ | $y$ | $x$ |
+    | $e^{xy}$ | $y\,e^{xy}$ (chain rule) | $x\,e^{xy}$ |
+    | $\dfrac{x}{y}$ | $\dfrac1y$ | $-\dfrac{x}{y^2}$ |
+
+    At a specific point, plug in after differentiating. For $xy$ at $(2, 3)$: $\frac{\partial f}{\partial x} = 3$ (moving in $x$, $f$ grows 3 times as fast) and $\frac{\partial f}{\partial y} = 2$.
 
 ## 3. The gradient
 
@@ -51,6 +85,20 @@ The simplest way to probe $f$: freeze all variables except one, and differentiat
     $$
 
 For $f(x, y) = x^2 + 2y^2$: $\nabla f = (2x, 4y)$. At $(1, 1)$ it's $(2, 4)$.
+
+($\nabla$ is read "nabla" or "del," and $\nabla f$ "grad $f$." The gradient is a **vector field**: at every point it's a different arrow.)
+
+!!! example "Example: drawing the gradient of the bowl $x^2 + y^2$"
+    $\nabla f = (2x, 2y) = 2(x, y)$.
+
+    | Point | $\nabla f$ | Direction | Length |
+    |---|---|---|---|
+    | $(1, 0)$ | $(2, 0)$ | straight away from the origin | $2$ |
+    | $(0, 1)$ | $(0, 2)$ | straight away from the origin | $2$ |
+    | $(2, 2)$ | $(4, 4)$ | straight away from the origin | $\approx 5.66$ |
+    | $(0, 0)$ | $(0, 0)$ | none: the bottom of the bowl | $0$ |
+
+    Every arrow points directly uphill (away from the bottom), and gets longer where the bowl is steeper. Sections 5 and 6 explain why that's always true.
 
 ## 4. Differentiability: the real definition
 
@@ -73,6 +121,22 @@ Partial derivatives only look along the axes. What about other directions? The r
     $$
 
     The gradient is the "slope vector" of that plane.
+
+In words: **change in $f$ ≈ gradient · (change in input).** Each coordinate change $h_i$ gets multiplied by its own slope $\frac{\partial f}{\partial x_i}$, and the effects add up:
+
+$$
+\Delta f \approx \frac{\partial f}{\partial x_1}h_1 + \cdots + \frac{\partial f}{\partial x_n}h_n.
+$$
+
+!!! example "Example: estimating a value with the gradient"
+    Estimate $f(1.1, 0.9)$ for $f(x, y) = x^2 + 2y^2$, starting from $(1, 1)$.
+
+    - $f(1, 1) = 3$ and $\nabla f(1, 1) = (2, 4)$.
+    - The step is $\vv h = (0.1, -0.1)$.
+    - $\nabla f\cdot\vv h = 2(0.1) + 4(-0.1) = -0.2$.
+    - Estimate: $f(1.1, 0.9) \approx 3 - 0.2 = 2.8$.
+
+    The true value is $1.21 + 1.62 = 2.83$. The small difference is the error term $r(\vv h)$, which shrinks faster than the step.
 
 !!! theorem "Theorem"
     If all partial derivatives exist and are continuous near $\vv x$, then $f$ is differentiable at $\vv x$.
@@ -107,6 +171,18 @@ Mere existence of partials is *not* enough. Take $f(x,y) = \frac{xy}{x^2 + y^2}$
 
 So the gradient knows the slope in *every* direction: just dot it with the direction.
 
+!!! example "Example: slopes in several directions"
+    $f(x, y) = x^2 + 2y^2$ at $(1, 1)$, where $\nabla f = (2, 4)$.
+
+    | Direction | Unit vector $\vv u$ | Slope $\nabla f\cdot\vv u$ |
+    |---|---|---|
+    | east | $(1, 0)$ | $2$ (that's $\partial f/\partial x$) |
+    | north | $(0, 1)$ | $4$ (that's $\partial f/\partial y$) |
+    | northeast | $\frac{1}{\sqrt2}(1, 1)$ | $\frac{6}{\sqrt2} \approx 4.24$ |
+    | southeast | $\frac{1}{\sqrt2}(1, -1)$ | $\frac{-2}{\sqrt2} \approx -1.41$ (downhill) |
+
+    Remember to **normalize** the direction first. Using $(1, 1)$ instead of $\frac{1}{\sqrt2}(1, 1)$ would give $6$, which is the slope times the length of the step.
+
 ## 6. The three facts about the gradient
 
 !!! theorem "The gradient points in the direction of steepest ascent"
@@ -127,6 +203,8 @@ So the gradient knows the slope in *every* direction: just dot it with the direc
     Differentiate $f(\vv r(t)) = c$ using the multivariable chain rule ([next lesson](chain-rule.md)): $\nabla f\cdot\vv r'(t) = 0$. The velocity $\vv r'$ is tangent to the contour, so the gradient is perpendicular to it.
 
     Intuitively: walking along a contour, $f$ doesn't change, so the slope in that direction, $\nabla f\cdot\vv u$, is zero.
+
+Check it on the bowl $x^2 + y^2$. The contour through $(x, y)$ is a circle around the origin, whose tangent direction is $(-y, x)$. The gradient is $(2x, 2y)$. Their dot product is $-2xy + 2xy = 0$. ✓ The gradient points along the radius, the contour runs around the circle, and those are perpendicular.
 
 The third fact: **at a local minimum or maximum, $\nabla f = \vv 0$.** Each partial derivative is a 1D derivative at an extremum, so Fermat's theorem applies.
 
@@ -149,6 +227,19 @@ f(\vv x - \eta\nabla f) = f(\vv x) - \eta\norm{\nabla f}^2 + o(\eta),
 $$
 
 so for small enough $\eta$ the function decreases (unless $\nabla f = 0$, in which case we're at a critical point).
+
+(Plug $\vv h = -\eta\nabla f$ into the linear approximation: $\nabla f\cdot\vv h = -\eta\,\nabla f\cdot\nabla f = -\eta\norm{\nabla f}^2$. The notation $o(\eta)$, "little-o of $\eta$," means an error that is small *even compared to $\eta$*: $o(\eta)/\eta \to 0$. So for small $\eta$, the negative term $-\eta\norm{\nabla f}^2$ wins.)
+
+!!! example "Example: two steps of gradient descent by hand"
+    Minimize $f(x, y) = x^2 + 2y^2$ from $(2, 1)$ with $\eta = 0.1$. The gradient is $(2x, 4y)$.
+
+    | Step | Point | $f$ | $\nabla f$ | Next point $= \text{point} - 0.1\nabla f$ |
+    |---|---|---|---|---|
+    | 0 | $(2, 1)$ | $6$ | $(4, 4)$ | $(1.6, 0.6)$ |
+    | 1 | $(1.6, 0.6)$ | $3.28$ | $(3.2, 2.4)$ | $(1.28, 0.36)$ |
+    | 2 | $(1.28, 0.36)$ | $1.897$ | | |
+
+    The value drops each step, toward the minimum $0$ at the origin. Notice $y$ shrinks faster than $x$ (by factors $0.6$ vs $0.8$): the bowl is steeper in $y$, so the gradient pushes harder there.
 
 How small $\eta$ must be, and how fast it converges, are covered in [Phase 7](../optimization/gradient-descent.md).
 

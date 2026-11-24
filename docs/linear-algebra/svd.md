@@ -32,6 +32,16 @@ It's the most useful factorization in applied math. From one formula it gives:
 
     Equivalently: $A\vv v_i = \sigma_i\vv u_i$ for $i \leq r$, and $A\vv v_i = \vv 0$ for $i > r$.
 
+The shapes, for a $3 \times 2$ matrix (3 outputs, 2 inputs) of rank 2:
+
+$$
+\underbrace{A}_{3\times 2} = \underbrace{U}_{3 \times 3}\ \underbrace{\begin{pmatrix}\sigma_1 & 0\\0 & \sigma_2\\0 & 0\end{pmatrix}}_{\Sigma,\ 3 \times 2}\ \underbrace{V^\top}_{2\times 2}.
+$$
+
+$\Sigma$ has the same shape as $A$. Its extra row of zeros is how a 2D input gets placed into a 3D output space.
+
+**Compare with the eigen-decomposition.** An eigenvector satisfies $A\vv v = \lambda\vv v$: the output points the *same* way as the input. A singular vector pair satisfies $A\vv v = \sigma\vv u$: input direction $\vv v$, output direction $\vv u$, which may differ (and may even live in a different space). Giving up "same direction" is what lets *every* matrix have an SVD, and in return we get perpendicular directions on both sides.
+
 !!! intuition "Rotate, stretch, rotate"
     Read $A\vv x = U\Sigma V^\top\vv x$ right to left:
 
@@ -53,6 +63,14 @@ It's the most useful factorization in applied math. From one formula it gives:
 
 The trick is to apply the spectral theorem to the symmetric PSD matrix $A^\top A$.
 
+Why $A^\top A$? We want to know how much $A$ stretches each direction. The squared stretch of a unit vector $\vv x$ is
+
+$$
+\norm{A\vv x}^2 = (A\vv x)^\top(A\vv x) = \vv x^\top (A^\top A)\vv x,
+$$
+
+a quadratic form with the symmetric matrix $A^\top A$. The [last lesson](spectral.md) showed that the directions where a quadratic form is largest and smallest are its eigenvectors. So the eigenvectors of $A^\top A$ are the directions of greatest and least stretch, and the eigenvalues are the squared stretches.
+
 !!! proof "Proof (construction)"
     **Step 1: the $\vv v_i$.** $A^\top A$ is $n\times n$, symmetric, and positive semidefinite. By the spectral theorem it has an orthonormal eigenbasis $\vv v_1, \ldots, \vv v_n$ with eigenvalues $\lambda_1 \geq \cdots \geq \lambda_n \geq 0$. Define $\sigma_i = \sqrt{\lambda_i}$.
 
@@ -72,6 +90,19 @@ The trick is to apply the spectral theorem to the symmetric PSD matrix $A^\top A
     - Extend $\vv u_1, \ldots, \vv u_r$ to an orthonormal basis of $\R^m$ arbitrarily.
 
     **Step 4.** Now $AV = U\Sigma$ column by column. Multiplying on the right by $V^\top$ gives $A = U\Sigma V^\top$.
+
+    (Same column-by-column check as for $AV = V\Lambda$ in [Eigenvalues](eigen.md): column $i$ of $AV$ is $A\vv v_i$, and column $i$ of $U\Sigma$ is $\sigma_i\vv u_i$. And $V^{-1} = V^\top$ because $V$ is orthogonal.)
+
+!!! example "Example: the SVD of a rank-one matrix, step by step"
+    $A = \begin{pmatrix}1 & 1\\0 & 0\end{pmatrix}$. It sends $(x, y)$ to $(x + y, 0)$: everything lands on the $x$-axis.
+
+    1. $A^\top A = \begin{pmatrix}1 & 0\\1 & 0\end{pmatrix}\begin{pmatrix}1 & 1\\0 & 0\end{pmatrix} = \begin{pmatrix}1 & 1\\1 & 1\end{pmatrix}$.
+    2. Its eigenvalues: $\tr = 2$, $\det = 0$, so $\lambda = 2, 0$. Eigenvectors: $\vv v_1 = \frac{1}{\sqrt2}(1, 1)$, $\ \vv v_2 = \frac{1}{\sqrt2}(1, -1)$.
+    3. Singular values: $\sigma_1 = \sqrt2$, $\sigma_2 = 0$. So the rank is 1.
+    4. $\vv u_1 = \frac{A\vv v_1}{\sigma_1} = \frac{1}{\sqrt2}\cdot\frac{1}{\sqrt2}(2, 0) = (1, 0)$. Choose $\vv u_2 = (0, 1)$ to complete the basis.
+    5. Check the sum form: $\sigma_1\vv u_1\vv v_1^\top = \sqrt2\begin{pmatrix}1\\0\end{pmatrix}\frac{1}{\sqrt2}\begin{pmatrix}1 & 1\end{pmatrix} = \begin{pmatrix}1 & 1\\0 & 0\end{pmatrix} = A$. ✓
+
+    In words: $A$ takes the diagonal direction $\vv v_1$, stretches it by $\sqrt2$, and lays it along the $x$-axis $\vv u_1$. The anti-diagonal $\vv v_2$ is crushed to zero: it spans the null space.
 
 Facts that fall out of the proof:
 
@@ -99,6 +130,17 @@ Keep only the first $k$:
 $$
 A_k = \sum_{i=1}^k\sigma_i\,\vv u_i\vv v_i^\top.
 $$
+
+!!! example "Example: rank-one approximation of a $2 \times 2$"
+    For $A = \begin{pmatrix}3 & 0\\4 & 5\end{pmatrix}$ (exercise 1 below), $\sigma_1 = 3\sqrt5 \approx 6.71$ with $\vv u_1 = \frac{1}{\sqrt{10}}(1, 3)$, $\vv v_1 = \frac{1}{\sqrt2}(1, 1)$, and $\sigma_2 = \sqrt 5 \approx 2.24$.
+
+    $$
+    A_1 = \sigma_1\vv u_1\vv v_1^\top = 3\sqrt5\cdot\frac{1}{\sqrt{20}}\begin{pmatrix}1\\3\end{pmatrix}\begin{pmatrix}1 & 1\end{pmatrix} = 1.5\begin{pmatrix}1 & 1\\3 & 3\end{pmatrix} = \begin{pmatrix}1.5 & 1.5\\4.5 & 4.5\end{pmatrix}.
+    $$
+
+    (Using $\frac{3\sqrt5}{\sqrt{20}} = \frac{3\sqrt5}{2\sqrt5} = 1.5$.)
+
+    The error is $A - A_1 = \begin{pmatrix}1.5 & -1.5\\-0.5 & 0.5\end{pmatrix}$, which is exactly $\sigma_2\vv u_2\vv v_2^\top$, the piece we dropped. Its largest stretch is $\sigma_2 \approx 2.24$, as the theorem below says.
 
 !!! theorem "Eckart–Young theorem"
     $A_k$ is the best rank-$k$ approximation of $A$: for every matrix $B$ of rank at most $k$,
@@ -152,6 +194,12 @@ $$
 \frac1n\norm{X\vv w}^2 = \vv w^\top\Big(\underbrace{\tfrac1nX^\top X}_{C}\Big)\vv w,
 $$
 
+Why each step holds:
+
+- Row $i$ of $X\vv w$ is (row $i$ of $X$) $\cdot\ \vv w = \vv x_i \cdot \vv w$: the position of point $i$ along the line through $\vv w$ (the unit-vector projection from [Orthogonality](orthogonality.md)).
+- The projected values have mean zero, because the data are centered. So their variance is just the average of their squares, $\frac1n\sum_i(\vv x_i\cdot\vv w)^2 = \frac1n\norm{X\vv w}^2$.
+- Then $\norm{X\vv w}^2 = \vv w^\top X^\top X\vv w$, as in Section 2.
+
 where $C$ is the **covariance matrix**.
 
 Maximizing $\vv w^\top C\vv w$ over unit vectors is the Rayleigh quotient problem. The answer is the top eigenvector of $C$.
@@ -163,6 +211,23 @@ Maximizing $\vv w^\top C\vv w$ over unit vectors is the Rayleigh quotient proble
     - Equivalently, the components are the right singular vectors $\vv v_i$ of the centered data matrix $X$, with $\lambda_i = \sigma_i^2/n$.
 
 <div class="viz" data-viz="gaussian2d"></div>
+
+**PCA, step by step:**
+
+1. **Center:** subtract each feature's mean from that column.
+2. **Covariance:** $C = \frac1n X^\top X$ ($d \times d$).
+3. **Eigen-decompose** $C$ (or take the SVD of $X$). Sort by eigenvalue, largest first.
+4. **Project:** the new coordinates of point $i$ are $\vv x_i\cdot\vv v_1, \ \vv x_i \cdot \vv v_2, \dots$ Keep the first $k$.
+
+!!! example "Example: PCA on four points"
+    Points $(3, 4), (-1, 0), (2, 1), (0, 3)$.
+
+    1. **Center.** The means are $x$: $\frac{3 - 1 + 2 + 0}{4} = 1$ and $y$: $\frac{4 + 0 + 1 + 3}{4} = 2$. Subtract: $(2, 2), (-2, -2), (1, -1), (-1, 1)$.
+    2. **Covariance.** These are the points of exercise 5, so $C = \begin{pmatrix}2.5 & 1.5\\1.5 & 2.5\end{pmatrix}$.
+    3. **Eigen-decompose.** $\lambda_1 = 4$ along $\vv v_1 = \frac{1}{\sqrt2}(1, 1)$, and $\lambda_2 = 1$ along $\vv v_2 = \frac{1}{\sqrt2}(1, -1)$.
+    4. **Project onto PC1:** $(2, 2)\cdot\vv v_1 = 2\sqrt2$, $\ (-2,-2)\cdot\vv v_1 = -2\sqrt2$, $\ (1, -1)\cdot\vv v_1 = 0$, $\ (-1, 1)\cdot\vv v_1 = 0$.
+
+    The 1D summary keeps $\frac{4}{4 + 1} = 80\%$ of the variance. Check: the projected values $\pm 2\sqrt2, 0, 0$ have variance $\frac{8 + 8 + 0 + 0}{4} = 4 = \lambda_1$. ✓
 
 **PCA as compression.** Projecting onto the top $k$ components, $X \approx XV_kV_k^\top$, is the best rank-$k$ approximation of $X$ (Eckart–Young). So PCA simultaneously:
 
@@ -183,6 +248,10 @@ $$
 ## 5. The pseudoinverse
 
 For any $A = U\Sigma V^\top$, the **pseudoinverse** is $A^+ = V\Sigma^+U^\top$, where $\Sigma^+$ inverts the nonzero singular values (and transposes the shape).
+
+The idea: an inverse would undo "rotate, stretch, rotate" by un-rotating, un-stretching (dividing by $\sigma_i$), and un-rotating. Zero stretches can't be undone, so we leave those at zero.
+
+For example, $\Sigma = \begin{pmatrix}2 & 0\\0 & 0\end{pmatrix}$ has no inverse, but $\Sigma^+ = \begin{pmatrix}\frac12 & 0\\0 & 0\end{pmatrix}$. It undoes the stretch along the first axis and gives up on the second.
 
 It inverts $A$ wherever that's possible:
 

@@ -24,11 +24,30 @@ For $\vv f : \R^n \to \R^m$ (with components $f_1, \ldots, f_m$), each output ha
 
     Size: $m\times n$ (outputs × inputs). Row $i$ is $\nabla f_i^\top$.
 
+Memory aid: **rows go with outputs, columns with inputs.** Column $j$ says how *all* the outputs respond when you nudge input $j$.
+
+!!! example "Example: a Jacobian, entry by entry"
+    $\vv f(x, y) = (x + y,\ xy)$, a map from $\R^2$ to $\R^2$. So $f_1 = x + y$ and $f_2 = xy$.
+
+    | | $\partial/\partial x$ | $\partial/\partial y$ |
+    |---|---|---|
+    | $f_1 = x + y$ | $1$ | $1$ |
+    | $f_2 = xy$ | $y$ | $x$ |
+
+    $$
+    J_{\vv f}(x, y) = \begin{pmatrix}1 & 1\\y & x\end{pmatrix}, \qquad J_{\vv f}(2, 3) = \begin{pmatrix}1 & 1\\3 & 2\end{pmatrix}.
+    $$
+
 Differentiability means exactly what it meant before: near $\vv x$, $\vv f$ is approximately linear, and the Jacobian is that linear map:
 
 $$
 \vv f(\vv x + \vv h) \approx \vv f(\vv x) + J_{\vv f}(\vv x)\,\vv h.
 $$
+
+Check with the example at $(2, 3)$ and a small step $\vv h = (0.1, 0)$:
+
+- Exact: $\vv f(2.1, 3) = (5.1, 6.3)$.
+- Approximation: $\vv f(2, 3) + J\vv h = (5, 6) + (0.1, 0.3) = (5.1, 6.3)$. ✓ (Exact here, because each component is linear in $x$ alone. Try $\vv h = (0.1, 0.1)$: the approximation gives $(5.2, 6.5)$, the truth $(5.2, 6.51)$.)
 
 !!! intuition "The Jacobian is the local matrix"
     A smooth nonlinear map, viewed under a microscope at one point, is a linear map. That linear map is the Jacobian.
@@ -39,6 +58,8 @@ $$
 !!! example "Examples"
     - $\vv f(\vv x) = A\vv x$: $J = A$ everywhere (a linear map is its own linearization).
     - Polar to Cartesian, $(r, \theta) \mapsto (r\cos\theta, r\sin\theta)$: $J = \begin{pmatrix}\cos\theta & -r\sin\theta\\ \sin\theta & r\cos\theta\end{pmatrix}$, with $\det J = r$.
+        - Row 1 differentiates $x = r\cos\theta$: by $r$ gives $\cos\theta$, by $\theta$ gives $-r\sin\theta$. Row 2 does the same for $y = r\sin\theta$.
+        - $\det J = r\cos^2\theta + r\sin^2\theta = r$.
     - Elementwise activation $\vv f(\vv z) = (\sigma(z_1), \ldots, \sigma(z_n))$: $J = \diag(\sigma'(z_1), \ldots, \sigma'(z_n))$.
         - Each output depends only on its own input, so $J$ is diagonal.
 
@@ -62,13 +83,46 @@ $$
 
     (Making the error terms rigorous follows the same pattern as the [1D proof](../calculus/derivatives.md#4-the-rules-with-proofs).)
 
+Notice the shapes line up just like the matrix sizes in a product: $(p \times m)(m \times n) = p \times n$. And with $n = m = p = 1$, it's the ordinary chain rule $(f\circ g)' = f'(g(x))\,g'(x)$.
+
+!!! example "Example: chain rule two ways"
+    Let $\vv g(x, y) = (u, v) = (xy,\ x + y)$ and $f(u, v) = u^2 + v$. Find $\nabla(f \circ \vv g)$ at $(x, y) = (1, 2)$.
+
+    **Way 1: substitute first.** $f(\vv g(x, y)) = x^2y^2 + x + y$. Partial derivatives: $(2xy^2 + 1,\ 2x^2y + 1)$. At $(1, 2)$: $(9, 5)$.
+
+    **Way 2: multiply Jacobians.** At $(1, 2)$, $(u, v) = (2, 3)$.
+
+    - $J_f = \begin{pmatrix}2u & 1\end{pmatrix} = \begin{pmatrix}4 & 1\end{pmatrix}$ (a $1 \times 2$ row, since $f$ has one output).
+    - $J_{\vv g} = \begin{pmatrix}y & x\\1 & 1\end{pmatrix} = \begin{pmatrix}2 & 1\\1 & 1\end{pmatrix}$.
+    - Product: $\begin{pmatrix}4 & 1\end{pmatrix}\begin{pmatrix}2 & 1\\1 & 1\end{pmatrix} = \begin{pmatrix}8 + 1 & 4 + 1\end{pmatrix} = \begin{pmatrix}9 & 5\end{pmatrix}$. ✓
+
+    For small examples, substituting is easier. For a neural network with millions of intermediate values, you can't write out the substituted formula, and Way 2 is the only option.
+
 In components this is the familiar "sum over paths" form:
 
 $$
 \frac{\partial f_i}{\partial x_j} = \sum_{k=1}^m\frac{\partial f_i}{\partial g_k}\frac{\partial g_k}{\partial x_j}.
 $$
 
+!!! intuition "Sum over paths"
+    Changing $x_j$ affects $f_i$ through every intermediate variable $g_k$ that depends on $x_j$. Each route contributes (rate along the first leg) × (rate along the second leg), and the effects of the routes add up.
+
+    In the example, $x$ reaches $f$ by two routes:
+
+    - through $u = xy$: $\ \frac{\partial f}{\partial u}\frac{\partial u}{\partial x} = 4 \cdot 2 = 8$;
+    - through $v = x + y$: $\ \frac{\partial f}{\partial v}\frac{\partial v}{\partial x} = 1 \cdot 1 = 1$.
+
+    Total: $8 + 1 = 9$. Same answer, read as a sum instead of a matrix product.
+
 **Special case to remember:** if $\vv x(t)$ is a path and $f$ is scalar, then $\frac{d}{dt}f(\vv x(t)) = \nabla f(\vv x(t))\cdot\vv x'(t)$.
+
+For example, walk around the unit circle, $\vv x(t) = (\cos t, \sin t)$, on the landscape $f(x, y) = x^2 y$. Then $\nabla f = (2xy, x^2)$ and $\vv x'(t) = (-\sin t, \cos t)$, so
+
+$$
+\frac{d}{dt}f = 2\cos t\sin t\cdot(-\sin t) + \cos^2 t\cdot\cos t = \cos^3 t - 2\cos t\sin^2 t.
+$$
+
+(You can confirm by differentiating $f(\vv x(t)) = \cos^2 t\sin t$ directly with the product rule.)
 
 ## 3. Computational graphs
 
@@ -99,6 +153,17 @@ The rule at every node:
 
 If a variable feeds into several nodes, add up the gradients flowing back from each. (That's the sum in the chain rule.)
 
+!!! example "Example: a variable used twice"
+    $f = x \cdot y + x$ at $x = 3$, $y = 4$. Break it up: $p = xy$, then $f = p + x$. Here $x$ feeds two nodes.
+
+    - Forward: $p = 12$, $f = 15$.
+    - Backward: $\frac{\partial f}{\partial p} = 1$. Then:
+        - via $p$: $\ \frac{\partial f}{\partial p}\cdot\frac{\partial p}{\partial x} = 1 \cdot y = 4$;
+        - directly: $\ \frac{\partial f}{\partial x}\big\rvert_{\text{direct}} = 1$.
+    - Total: $\frac{\partial f}{\partial x} = 4 + 1 = 5$.
+
+    Check by ordinary calculus: $\frac{\partial}{\partial x}(xy + x) = y + 1 = 5$. ✓ Forgetting to add the two contributions is the most common hand-backprop mistake.
+
 ## 4. Forward mode vs reverse mode
 
 For a chain $\vv x \xrightarrow{g_1} \vv h_1\xrightarrow{g_2}\vv h_2 \to \cdots\xrightarrow{g_L} L$, with scalar loss $L$, the chain rule gives
@@ -107,7 +172,16 @@ $$
 \nabla_{\vv x}L^\top = \underbrace{J_L}_{1\times d}\;J_{L-1}\;\cdots\;J_2\;J_1.
 $$
 
-Matrix multiplication is associative, so we can evaluate this product in any order. But the costs differ enormously:
+(The transpose is there because $\nabla_{\vv x} L$ is a column vector, while the Jacobian of a scalar function is a row: $J_L = \nabla L^\top$.)
+
+Matrix multiplication is associative, so we can evaluate this product in any order. But the costs differ enormously.
+
+A concrete count: suppose every layer has width $d = 1000$, so each $J_k$ is $1000 \times 1000$, except the last, $J_L$, which is $1 \times 1000$.
+
+- **Right to left:** $J_2J_1$ is a matrix–matrix product, about $d^3 = 10^9$ operations, and every later step is another one.
+- **Left to right:** $J_L J_{L-1}$ is a row times a matrix, about $d^2 = 10^6$ operations, and the result is again a row. Every step stays this cheap.
+
+That's a factor of $d = 1000$ per layer.
 
 | Mode | Order | Each step | Efficient when |
 |---|---|---|---|
@@ -145,7 +219,19 @@ Matrix multiplication is associative, so we can evaluate this product in any ord
 | $a = \sigma(0.1)$ | $0.524979$ |
 | $L = \frac12(a - 1)^2$ | $0.112822$ |
 
-**Backward** (each line = previous line × local derivative):
+**Backward.** The chain of dependence is $\vv w \to z \to a \to L$, so the chain rule says
+
+$$
+\frac{\partial L}{\partial w_j} = \frac{\partial L}{\partial a}\cdot\frac{\partial a}{\partial z}\cdot\frac{\partial z}{\partial w_j}.
+$$
+
+The three local derivatives:
+
+- $L = \frac12(a - y)^2$, so $\frac{\partial L}{\partial a} = a - y$ (the $\frac12$ cancels the 2 from the power rule; that's why it's there).
+- $a = \sigma(z)$, so $\frac{\partial a}{\partial z} = \sigma'(z) = a(1 - a)$ (from [Derivatives](../calculus/derivatives.md#6-worked-examples-from-ml)).
+- $z = w_1x_1 + w_2x_2 + b$, so $\frac{\partial z}{\partial w_j} = x_j$ and $\frac{\partial z}{\partial b} = 1$.
+
+Compute from the loss backward, each line = previous line × local derivative:
 
 | gradient | formula | value |
 |---|---|---|
@@ -192,6 +278,14 @@ Write $\boldsymbol\delta_2 = \nabla_{\vv z_2}L$, the "error signal" at the outpu
     - Hence $\frac{\partial L}{\partial(W_2)_{ij}} = \delta_{2,i}h_j$, the $(i,j)$ entry of $\boldsymbol\delta_2\vv h^\top$.
 
     **Passing back through the linear map.** The Jacobian of $\vv z_2$ with respect to $\vv h$ is $W_2$. By the chain rule, $\nabla_{\vv h}L^\top = \boldsymbol\delta_2^\top W_2$, i.e. $\nabla_{\vv h}L = W_2^\top\boldsymbol\delta_2$.
+
+    In components, using "sum over paths": $h_j$ affects *every* output $z_{2,i}$, with $\frac{\partial z_{2,i}}{\partial h_j} = (W_2)_{ij}$. So
+
+    $$
+    \frac{\partial L}{\partial h_j} = \sum_i \frac{\partial L}{\partial z_{2,i}}\frac{\partial z_{2,i}}{\partial h_j} = \sum_i \delta_{2,i}(W_2)_{ij} = \big(W_2^\top\boldsymbol\delta_2\big)_j.
+    $$
+
+    The sum runs down column $j$ of $W_2$, which is row $j$ of $W_2^\top$.
 
     **Going backward through a linear layer multiplies by the transpose.**
 

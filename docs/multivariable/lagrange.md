@@ -14,6 +14,18 @@ Lagrange multipliers turn a constrained problem into an unconstrained one, with 
 
 The idea comes from one picture: **at the optimum, the level curve of the objective just touches the constraint.**
 
+## 0. The old way, and why it isn't enough
+
+You already solved one constrained problem in [Using derivatives](../calculus/applications.md#setting-up-an-optimization-problem): the biggest rectangle with 40 m of fence. The method was **substitution**: solve the constraint $2x + 2y = 40$ for $y = 20 - x$, plug it in, and optimize a function of one variable.
+
+That works when the constraint is easy to solve. It gets painful or impossible when:
+
+- the constraint is curved, like the ellipse $\frac{x^2}{4} + y^2 = 1$. Solving gives $y = \pm\sqrt{1 - x^2/4}$: two branches, square roots, and endpoints to check;
+- there are many variables and constraints, like "a probability vector of length 1000 that sums to 1";
+- the constraint can't be solved in closed form at all.
+
+Lagrange multipliers avoid solving the constraint. They treat all variables symmetrically, using only gradients.
+
 ## 1. The picture
 
 Maximize $f(x, y)$ subject to $g(x, y) = c$. Walk along the constraint curve and watch $f$.
@@ -22,6 +34,8 @@ Maximize $f(x, y)$ subject to $g(x, y) = c$. Walk along the constraint curve and
 2. At the optimum, $\nabla f$ must have no component along the curve: it must be **perpendicular to the curve**.
 3. But $\nabla g$ is also perpendicular to the curve (it's a level set of $g$).
 4. So the two gradients are parallel.
+
+**Another way to see it:** draw the level lines of $f$. For $f = x + y$ they're the parallel lines $x + y = c$. Slide the line toward larger $c$. As long as it crosses the constraint curve, there are allowed points with that value. The largest allowed $c$ is the last line that still touches the curve, and there it **just grazes** it: tangent to it. Tangent curves have parallel normals, and the normals are the gradients.
 
 <div class="viz" data-viz="lagrange"></div>
 
@@ -52,11 +66,27 @@ That's the tangency condition plus the constraint: $n + 1$ equations in $n + 1$ 
 
 Solve them, then compare $f$ at the candidates.
 
+The recipe:
+
+1. Write the constraint as $g(\vv x) = c$, and compute $\nabla f$ and $\nabla g$.
+2. Write out $\nabla f = \lambda\nabla g$ component by component.
+3. Use those equations to relate the variables to each other (often by eliminating $\lambda$).
+4. Substitute into the constraint to pin down the actual points.
+5. Evaluate $f$ at every candidate; the largest is the max, the smallest the min.
+
+(Some books write $\mathcal L = f + \lambda(g - c)$ instead. That just flips the sign of $\lambda$; the points found are the same.)
+
 !!! example "Example (the figure)"
     Maximize $f = x + y$ on the ellipse $\frac{x^2}{4} + y^2 = 1$.
 
+    Gradients: $\nabla f = (1, 1)$ and $\nabla g = \left(\frac{2x}{4}, 2y\right) = \left(\frac x2, 2y\right)$.
+
     1. $\nabla f = (1, 1) = \lambda\left(\frac x2, 2y\right)$ gives $x = \frac2\lambda$ and $y = \frac{1}{2\lambda}$, so $x = 4y$.
     2. Substituting: $4y^2 + y^2 = 1$, so $y = \pm\frac{1}{\sqrt5}$ and $x = \pm\frac{4}{\sqrt5}$.
+
+    In step 1, the components read $1 = \lambda\frac{x}{2}$ and $1 = 2\lambda y$. Neither can hold with $\lambda = 0$, so we may divide by $\lambda$. Dividing the two expressions: $\frac{x}{y} = \frac{2/\lambda}{1/(2\lambda)} = 4$.
+
+    In step 2, "substituting" means putting $x = 4y$ into the constraint: $\frac{(4y)^2}{4} + y^2 = 4y^2 + y^2 = 5y^2 = 1$.
 
     - **Max** $f = \frac{5}{\sqrt5} = \sqrt5$ at $\left(\frac4{\sqrt5}, \frac1{\sqrt5}\right)$.
     - **Min** $-\sqrt5$ at the opposite point.
@@ -65,6 +95,8 @@ Solve them, then compare $f$ at the candidates.
     Maximize $A = xy$ subject to $2x + 2y = P$.
 
     $\nabla A = (y, x) = \lambda(2, 2)$, so $x = y$: a square, with area $P^2/16$.
+
+    (Both components equal $2\lambda$, so $y = 2\lambda = x$. Then $4x = P$ gives $x = y = P/4$.) The same answer as the substitution method, with no solving for $y$.
 
 ## 3. Eigenvectors are Lagrange solutions
 
@@ -92,7 +124,11 @@ $$
 \frac{\partial}{\partial p_i}\Big[-\sum_j p_j\log p_j - \lambda\big(\textstyle\sum_jp_j - 1\big)\Big] = -\log p_i - 1 - \lambda = 0 \implies p_i = e^{-1-\lambda}.
 $$
 
-All $p_i$ are equal, so $p_i = \frac1n$: **the uniform distribution maximizes entropy** (with $H = \log n$).
+The derivative step: only the $j = i$ terms involve $p_i$. By the product rule, $\frac{d}{dp}(p\log p) = \log p + p\cdot\frac1p = \log p + 1$, so $-p_i\log p_i$ contributes $-\log p_i - 1$. The constraint term $-\lambda p_i$ contributes $-\lambda$.
+
+All $p_i$ are equal (each equals the same number $e^{-1-\lambda}$, whatever $\lambda$ turns out to be), so the constraint $\sum p_i = 1$ forces $p_i = \frac1n$: **the uniform distribution maximizes entropy** (with $H = \log n$).
+
+That matches intuition: a fair die is the least predictable die.
 
 Add more constraints and the same computation gives the famous distributions:
 
@@ -114,6 +150,8 @@ $$
 
 At the optimum, $\nabla f$ lies in the span of the constraint gradients.
 
+Same reasoning as before: the allowed directions are those perpendicular to *every* $\nabla g_k$ (moving along them keeps every constraint satisfied). If $\nabla f$ had any component along an allowed direction, you could improve. So $\nabla f$ is built only from the constraint normals.
+
 **The multiplier is a price.** If $f^*(c)$ is the optimal value as a function of the constraint level, then
 
 $$
@@ -121,6 +159,13 @@ $$
 $$
 
 The multiplier says how much the optimum improves per unit of relaxation of the constraint.
+
+!!! example "Example: checking $\frac{df^*}{dc} = \lambda$"
+    In the rectangle problem with perimeter $P$, the best area is $A^*(P) = \frac{P^2}{16}$. So $\frac{dA^*}{dP} = \frac{P}{8}$.
+
+    The multiplier: $y = 2\lambda$ and $y = \frac{P}{4}$, so $\lambda = \frac{P}{8}$. They match.
+
+    With $P = 40$: $\lambda = 5$. One extra meter of fence buys about $5\ \text{m}^2$ more area. (Check: $\frac{41^2}{16} - \frac{40^2}{16} \approx 105.06 - 100 = 5.06$.)
 
 - In economics it's a "shadow price".
 - In physics, constraint forces (like the tension in a pendulum rod) are Lagrange multipliers.
