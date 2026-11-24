@@ -2,9 +2,19 @@
 
 **Goal:** see matrices the way experts do, as **transformations of space**, and understand the decompositions (eigen, spectral, SVD) that power data science.
 
-**Why it matters most:** if you could learn only one area of math for machine learning, it would be this one. Data is stored as matrices, a neural network layer is a matrix multiplication, embeddings are vectors, attention is dot products, and PCA, least squares and low-rank adaptation (LoRA) are pure linear algebra.
+**Why it matters most:** if you could learn only one area of math for machine learning, it would be this one.
 
-**The one big idea:** *a matrix is a function that moves vectors, and its columns tell you where the basis vectors go.* Choose a clever basis (eigenvectors, singular vectors) and the function becomes simple scaling.
+| ML object | Linear algebra |
+|---|---|
+| a dataset | a matrix |
+| a neural network layer | a matrix multiplication |
+| an embedding | a vector |
+| attention | dot products |
+| PCA, least squares, LoRA | pure linear algebra |
+
+**The one big idea:** *a matrix is a function that moves vectors, and its columns tell you where the basis vectors go.*
+
+Choose a clever basis (eigenvectors, singular vectors) and the function becomes simple scaling.
 
 **Time:** about 25–30 hours. This is the longest phase, and it's worth it.
 

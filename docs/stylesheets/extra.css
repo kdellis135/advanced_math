@@ -86,3 +86,38 @@
 .md-typeset .grid.cards > ul > li { transition: border-color .2s, box-shadow .2s; }
 .md-typeset table:not([class]) { font-size: .72rem; }
 .md-typeset .katex-display { overflow-x: auto; overflow-y: hidden; padding: .2rem 0; }
+
+/* ---------- Readability: breathing room for math-heavy prose ---------- */
+.md-typeset { line-height: 1.75; }
+.md-typeset p { margin: 0 0 1.15em; }
+.md-typeset h2 {
+  margin-top: 2.6em; padding-top: 1.1em;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-typeset h3 { margin-top: 1.9em; }
+.md-typeset h2 + p, .md-typeset h3 + p { margin-top: .6em; }
+
+/* Lists: space between items so each idea stands alone */
+.md-typeset ul li, .md-typeset ol li { margin-bottom: .55em; }
+.md-typeset ul li > p, .md-typeset ol li > p { margin-bottom: .4em; }
+.md-typeset li ul, .md-typeset li ol { margin-top: .45em; }
+
+/* Display math gets its own vertical space */
+.md-typeset .katex-display { margin: 1.1em 0; }
+
+/* Callout boxes: roomier inside, clearer gap between consecutive boxes */
+.md-typeset .admonition, .md-typeset details { margin: 1.6em 0; font-size: .78rem; }
+.md-typeset .admonition > :not(.admonition-title):not(summary),
+.md-typeset details > :not(summary) { margin-left: .2rem; margin-right: .2rem; }
+.md-typeset .admonition > p, .md-typeset details > p { margin: .8em 0; }
+.md-typeset .admonition > ul, .md-typeset details > ul,
+.md-typeset .admonition > ol, .md-typeset details > ol { margin-top: .6em; }
+
+/* Tables: readable size and comfortable cells */
+.md-typeset table:not([class]) { font-size: .76rem; line-height: 1.6; }
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td { padding: .7em 1em; vertical-align: top; }
+.md-typeset table:not([class]) th { font-weight: 700; }
+
+/* Exercises: each "Check yourself" question gets a little separation */
+.md-typeset details.success { margin-top: .6em; margin-bottom: 1.8em; }

@@ -1,10 +1,21 @@
 # Phase 9 · Discrete Math & Algorithms
 
-**Goal:** the math of computation. Measure how running time grows (Big-O), solve the recurrences that describe recursive algorithms, reason about graphs, and handle the modular arithmetic behind hashing and cryptography.
+**Goal:** the math of computation.
 
-**Why it matters:** every algorithm you write or read comes with a cost analysis, and the language of that analysis is this phase. Graphs model networks, dependencies, computational graphs and knowledge graphs. Number theory secures every HTTPS connection.
+- Measure how running time grows (Big-O).
+- Solve the recurrences that describe recursive algorithms.
+- Reason about graphs.
+- Handle the modular arithmetic behind hashing and cryptography.
 
-**Time:** about 10–12 hours. This phase depends only on [Phase 1](../foundations/index.md), so you can start it at any time, and it's a good change of pace between the heavier phases.
+**Why it matters:**
+
+- Every algorithm you write or read comes with a cost analysis, and the language of that analysis is this phase.
+- Graphs model networks, dependencies, computational graphs and knowledge graphs.
+- Number theory secures every HTTPS connection.
+
+**Time:** about 10–12 hours.
+
+This phase depends only on [Phase 1](../foundations/index.md), so you can start it at any time. It's a good change of pace between the heavier phases.
 
 <div class="progress-list" markdown>
 

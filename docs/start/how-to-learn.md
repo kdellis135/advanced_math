@@ -1,6 +1,14 @@
 # How to learn this without losing again
 
-You didn't struggle with university math because you can't do math. You were good at high-school math, and the skills are the same. What changed is the *format*. University math moves at the pace of a lecture, assumes you'll fill gaps on your own, and is written in proofs nobody taught you to read. That's a fixable problem.
+You didn't struggle with university math because you can't do math. You were good at high-school math, and the skills are the same.
+
+What changed is the *format*. University math:
+
+- moves at the pace of a lecture;
+- assumes you'll fill gaps on your own;
+- is written in proofs nobody taught you to read.
+
+That's a fixable problem.
 
 ## 1. Use the three-pass method
 
@@ -24,7 +32,9 @@ A proof is not something you read; it's something you *re-do*. For every proof:
 4. **Summarize the proof in one sentence.** For example: "Cauchy–Schwarz: a quadratic in $t$ that is never negative has a non-positive discriminant." If you can do this, you'll remember the proof forever.
 
 !!! intuition "Proofs are compressed explanations"
-    A proof is the reason something is true, written as tightly as possible. Your job is to decompress it. That's why it feels slow, and that's normal. A professional mathematician reads one page of a proof in 20 minutes, not 2.
+    A proof is the reason something is true, written as tightly as possible. Your job is to decompress it.
+
+    That's why it feels slow, and that's normal. A professional mathematician reads one page of a proof in 20 minutes, not 2.
 
 ## 3. Keep a confusion log
 
@@ -32,7 +42,10 @@ Keep a notebook (or a text file) with one line per confusion:
 
 > *2026-11-24, Derivatives: why does the chain rule proof need $g(x+h) \neq g(x)$?*
 
-Half of these resolve themselves a lesson or two later. The rest are exactly the questions to ask an AI assistant or look up. Re-reading the log a month later is a great confidence boost: everything in it will look obvious.
+- Half of these resolve themselves a lesson or two later.
+- The rest are exactly the questions to ask an AI assistant or look up.
+
+Re-reading the log a month later is a great confidence boost: everything in it will look obvious.
 
 ## 4. Use AI as a tutor, not as a crutch
 
@@ -64,7 +77,12 @@ Sustainable beats intense. Some suggested rhythms:
 
 ## 7. Review with spacing
 
-Two days after finishing a lesson, redo two of its exercises from memory. Do it again two weeks later. This takes 15 minutes and is the single most effective way to make knowledge permanent. The "Mark lesson complete" button is a good moment to plan your first review.
+1. Two days after finishing a lesson, redo two of its exercises from memory.
+2. Do it again two weeks later.
+
+This takes 15 minutes, and is the single most effective way to make knowledge permanent.
+
+The "Mark lesson complete" button is a good moment to plan your first review.
 
 ## 8. Remember what "understanding" means
 

@@ -1,10 +1,23 @@
 # Phase 8 · Information Theory
 
-**Goal:** measure information. Learn what entropy is and why it's defined with a logarithm, what cross-entropy and KL divergence measure, what mutual information captures, and why entropy is the hard limit on compression.
+**Goal:** measure information. Learn:
 
-**Why it matters:** the loss function of nearly every classifier and every language model is a cross-entropy. VAEs and diffusion models optimize bounds involving KL divergences. Perplexity, bits-per-byte, distillation, the information bottleneck and contrastive learning (InfoNCE) are all information-theoretic. Claude Shannon's 1948 theory is the language these ideas are written in.
+- what entropy is, and why it's defined with a logarithm;
+- what cross-entropy and KL divergence measure;
+- what mutual information captures;
+- why entropy is the hard limit on compression.
 
-**The one big idea:** *the information in an event is the log of how surprising it is,* $\log\frac{1}{p}$. Entropy is the average surprise. Everything else is built from comparing surprises.
+**Why it matters:**
+
+- The loss function of nearly every classifier and every language model is a cross-entropy.
+- VAEs and diffusion models optimize bounds involving KL divergences.
+- Perplexity, bits-per-byte, distillation, the information bottleneck and contrastive learning (InfoNCE) are all information-theoretic.
+
+Claude Shannon's 1948 theory is the language these ideas are written in.
+
+**The one big idea:** *the information in an event is the log of how surprising it is,* $\log\frac{1}{p}$.
+
+Entropy is the average surprise. Everything else is built from comparing surprises.
 
 **Time:** about 8–10 hours.
 

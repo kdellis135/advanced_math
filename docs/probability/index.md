@@ -1,10 +1,24 @@
 # Phase 5 · Probability
 
-**Goal:** reason precisely about uncertainty: conditional probability and Bayes, random variables and their averages, the standard distributions, how variables relate, and why averages of many random things are so predictable.
+**Goal:** reason precisely about uncertainty:
 
-**Why it matters:** modern ML is probabilistic at its core. A classifier outputs a probability distribution, a language model is a probability distribution over text, training maximizes likelihood, generative models sample from learned distributions, and generalization guarantees are probability inequalities.
+- conditional probability and Bayes;
+- random variables and their averages;
+- the standard distributions;
+- how variables relate;
+- why averages of many random things are so predictable.
 
-**The one big idea:** *probability is weighted counting, and expectation is a weighted average.* Almost every result in this phase comes down to linearity of expectation plus a clever choice of what to average.
+**Why it matters:** modern ML is probabilistic at its core.
+
+- A classifier outputs a probability distribution.
+- A language model is a probability distribution over text.
+- Training maximizes likelihood.
+- Generative models sample from learned distributions.
+- Generalization guarantees are probability inequalities.
+
+**The one big idea:** *probability is weighted counting, and expectation is a weighted average.*
+
+Almost every result in this phase comes down to linearity of expectation plus a clever choice of what to average.
 
 **Time:** about 18–22 hours.
 

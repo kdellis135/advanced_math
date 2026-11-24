@@ -1,8 +1,14 @@
 # Phase 1 · Foundations
 
-**Goal:** learn the *language* of advanced math (logic, proof, sets, functions, notation) and refresh the high-school functions that show up everywhere (exponentials, logarithms, trigonometry), then extend numbers to the complex plane.
+**Goal:**
 
-**Why it matters:** this is where most people got lost the first time. University courses assume you can read a proof and parse $\forall \varepsilon > 0\ \exists \delta > 0$, and almost nobody is taught to. Two weeks here pays back for the rest of the site.
+- Learn the *language* of advanced math: logic, proof, sets, functions, notation.
+- Refresh the high-school functions that show up everywhere: exponentials, logarithms, trigonometry.
+- Extend numbers to the complex plane.
+
+**Why it matters:** this is where most people got lost the first time.
+
+University courses assume you can read a proof and parse $\forall \varepsilon > 0\ \exists \delta > 0$, and almost nobody is taught to. Two weeks here pays back for the rest of the site.
 
 **Time:** about 8–12 hours.
 

@@ -6,9 +6,19 @@ hide:
 
 # Advanced Math, Properly
 
-**The math behind machine learning, algorithms, information theory and physics, rebuilt from the ground up.** Each idea comes with the intuition first, then a precise definition, a proof you can actually follow, worked examples, and an interactive figure you can play with.
+**The math behind machine learning, algorithms, information theory and physics, rebuilt from the ground up.**
 
-This site is for people who were good at high-school math, drifted through university math, and now want to *really* understand it. No hand-waving, and no detours into material you will never use.
+Each idea comes with:
+
+1. the intuition first;
+2. then a precise definition;
+3. a proof you can actually follow;
+4. worked examples;
+5. an interactive figure you can play with.
+
+This site is for people who were good at high-school math, drifted through university math, and now want to *really* understand it.
+
+No hand-waving, and no detours into material you will never use.
 
 [Start here :material-arrow-right:](start/index.md){ .md-button .md-button--primary }
 [See the roadmap](start/roadmap.md){ .md-button }
@@ -19,10 +29,12 @@ This site is for people who were good at high-school math, drifted through unive
 
 Most advanced math is three or four big ideas used over and over:
 
-- **Linear approximation**: near any point, a smooth function looks like a linear one. (Derivatives, gradients, Jacobians, backprop, Newton's method.)
-- **Linear structure**: matrices are transformations, and the right basis makes them simple. (Eigenvectors, SVD, PCA, least squares, Fourier.)
-- **Averages under uncertainty**: probability is just weighted counting, and averages concentrate. (Expectation, LLN, CLT, MLE.)
-- **Measuring information**: surprise is a logarithm. (Entropy, cross-entropy loss, KL divergence, compression.)
+| Big idea | In one line | Where it appears |
+|---|---|---|
+| **Linear approximation** | near any point, a smooth function looks like a linear one | derivatives, gradients, Jacobians, backprop, Newton's method |
+| **Linear structure** | matrices are transformations, and the right basis makes them simple | eigenvectors, SVD, PCA, least squares, Fourier |
+| **Averages under uncertainty** | probability is just weighted counting, and averages concentrate | expectation, LLN, CLT, MLE |
+| **Measuring information** | surprise is a logarithm | entropy, cross-entropy loss, KL divergence, compression |
 
 Every lesson tells you which of these ideas it is using, so the pieces connect instead of piling up.
 

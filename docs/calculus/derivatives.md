@@ -4,7 +4,11 @@
 **Phase 2 · Lesson 2** · ⏱ ~4 hours · Needs: [Limits and continuity](limits.md)
 </div>
 
-You probably remember the derivative rules. This lesson proves them, and, more importantly, gives you the definition of the derivative that **generalizes to many dimensions**: the derivative is the *best linear approximation*. Gradients, Jacobians and backpropagation are all this one idea applied to functions of many variables.
+You probably remember the derivative rules. This lesson proves them.
+
+More importantly, it gives you the definition of the derivative that **generalizes to many dimensions**: the derivative is the *best linear approximation*.
+
+Gradients, Jacobians and backpropagation are all this one idea, applied to functions of many variables.
 
 ## 1. Slope of a curve
 
@@ -42,7 +46,14 @@ f(x + h) = f(x) + f'(x)\,h + r(h), \qquad \text{where } \frac{r(h)}{h} \to 0.
 $$
 
 !!! intuition "This is the definition to remember"
-    Near $x$, $f$ looks like the linear function $h \mapsto f(x) + f'(x)h$, and the error shrinks *faster than $h$ itself*. Zoom in on any differentiable function and it becomes a straight line. In $n$ dimensions, $f'(x)$ becomes a vector (the gradient) or a matrix (the Jacobian), and "$f'(x)\,h$" becomes a dot product or matrix–vector product. The definition doesn't otherwise change.
+    Near $x$, $f$ looks like the linear function $h \mapsto f(x) + f'(x)h$, and the error shrinks *faster than $h$ itself*. Zoom in on any differentiable function and it becomes a straight line.
+
+    In $n$ dimensions only the shapes change:
+
+    - $f'(x)$ becomes a vector (the gradient) or a matrix (the Jacobian).
+    - "$f'(x)\,h$" becomes a dot product or a matrix–vector product.
+
+    The definition itself stays the same.
 
 !!! theorem "Theorem: differentiable implies continuous"
     If $f$ is differentiable at $x$, it is continuous at $x$.
@@ -50,7 +61,14 @@ $$
 !!! proof "Proof"
     $f(x+h) - f(x) = \frac{f(x+h)-f(x)}{h}\cdot h \to f'(x)\cdot 0 = 0$ as $h \to 0$.
 
-The converse is false: $|x|$ is continuous at 0, but the difference quotient $\frac{|h|}{h}$ is $+1$ for $h>0$ and $-1$ for $h<0$, so no limit exists. The graph has a corner, and no single line approximates it. ReLU, $\max(0, x)$, has the same corner; in practice frameworks just pick a value (0) for the derivative there.
+The converse is false. $|x|$ is continuous at 0, but its difference quotient $\frac{|h|}{h}$ is:
+
+- $+1$ for $h>0$,
+- $-1$ for $h<0$,
+
+so no limit exists. The graph has a corner, and no single line approximates it.
+
+ReLU, $\max(0, x)$, has the same corner. In practice, frameworks just pick a value (0) for the derivative there.
 
 ## 3. Derivatives from the definition
 
@@ -74,10 +92,18 @@ $$
 \frac{e^{x+h} - e^x}{h} = e^x\cdot\frac{e^h - 1}{h}.
 $$
 
-So the derivative of $e^x$ is $e^x$ times the constant $\lim_{h\to0}\frac{e^h-1}{h}$. For a general base $b$ the same computation gives $(b^x)' = b^x\cdot\lim_{h \to 0}\frac{b^h - 1}{h}$. That constant is exactly 1 when $b = e$. This is the cleanest way to see why $e$ is the natural base.
+So the derivative of $e^x$ is $e^x$ times the constant $\lim_{h\to0}\frac{e^h-1}{h}$.
+
+For a general base $b$, the same computation gives $(b^x)' = b^x\cdot\lim_{h \to 0}\frac{b^h - 1}{h}$.
+
+That constant is exactly 1 when $b = e$. This is the cleanest way to see why $e$ is the natural base.
 
 ??? proof "Why $\lim_{h\to0}\frac{e^h - 1}{h} = 1$ (deeper)"
-    With $e = \lim(1 + 1/n)^n$, one can show $1 + h \leq e^h \leq \frac{1}{1-h}$ for small $|h|$ (for $h<1$). These follow from Bernoulli's inequality applied to $(1 + h/n)^n$. Then for $0<h<1$: $1 \leq \frac{e^h - 1}{h} \leq \frac{1}{1-h}$, and squeeze gives the limit 1 from the right; the left side is similar. Alternatively, many textbooks *define* $\exp$ as the solution of $y' = y, y(0) = 1$, or by its power series, and prove $\exp(x) = e^x$ afterwards. All routes lead to the same function.
+    With $e = \lim(1 + 1/n)^n$, one can show $1 + h \leq e^h \leq \frac{1}{1-h}$ for small $|h|$ (for $h<1$). These follow from Bernoulli's inequality applied to $(1 + h/n)^n$.
+
+    Then for $0<h<1$: $1 \leq \frac{e^h - 1}{h} \leq \frac{1}{1-h}$, and the squeeze theorem gives the limit 1 from the right. The left side is similar.
+
+    Alternatively, many textbooks *define* $\exp$ as the solution of $y' = y,\ y(0) = 1$, or by its power series, and prove $\exp(x) = e^x$ afterwards. All routes lead to the same function.
 
 ## 4. The rules, with proofs
 
@@ -104,6 +130,7 @@ So the derivative of $e^x$ is $e^x$ times the constant $\lim_{h\to0}\frac{e^h-1}
 
 !!! theorem "Theorem: chain rule"
     If $g$ is differentiable at $x$ and $f$ is differentiable at $g(x)$, then
+
     $$
     (f \circ g)'(x) = f'\big(g(x)\big)\cdot g'(x).
     $$
@@ -162,18 +189,30 @@ Every entry is derived above or follows from the rules (try $\tan = \sin/\cos$ a
     \sigma'(x) = -(1 + e^{-x})^{-2}\cdot(-e^{-x}) = \frac{e^{-x}}{(1 + e^{-x})^2} = \frac{1}{1 + e^{-x}}\cdot\frac{e^{-x}}{1 + e^{-x}} = \sigma(x)\big(1 - \sigma(x)\big).
     $$
 
-    The last step uses $1 - \sigma = \frac{e^{-x}}{1 + e^{-x}}$. The derivative is expressed through the function's own value, so the backward pass can reuse the forward pass. Also, $\sigma' \leq \frac14$ everywhere, which is one reason deep sigmoid networks suffer from **vanishing gradients**: chain-ruling through many layers multiplies many factors $\leq \frac14$.
+    The last step uses $1 - \sigma = \frac{e^{-x}}{1 + e^{-x}}$. Two things to notice:
+
+    - The derivative is written in terms of the function's own value, so the backward pass can reuse the forward pass.
+    - $\sigma' \leq \frac14$ everywhere. This is one reason deep sigmoid networks suffer from **vanishing gradients**: chain-ruling through many layers multiplies many factors $\leq \frac14$.
 
 !!! example "Softplus and tanh"
-    $\operatorname{softplus}(x) = \ln(1 + e^x)$ has derivative $\frac{e^x}{1 + e^x} = \sigma(x)$.
-    $\tanh x = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ has derivative $1 - \tanh^2 x$ (quotient rule; try it).
+    - $\operatorname{softplus}(x) = \ln(1 + e^x)$ has derivative $\frac{e^x}{1 + e^x} = \sigma(x)$.
+    - $\tanh x = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ has derivative $1 - \tanh^2 x$ (quotient rule; try it).
 
 !!! example "Logarithmic differentiation"
-    $f(x) = x^x$. Take logs: $\ln f = x\ln x$. Differentiate both sides (chain rule on the left): $\frac{f'}{f} = \ln x + 1$, so $f'(x) = x^x(\ln x + 1)$.
+    $f(x) = x^x$.
+
+    1. Take logs: $\ln f = x\ln x$.
+    2. Differentiate both sides (chain rule on the left): $\frac{f'}{f} = \ln x + 1$.
+    3. Multiply by $f$: $f'(x) = x^x(\ln x + 1)$.
 
 ## 7. Higher derivatives
 
-$f''$ is the derivative of $f'$, and so on; $f^{(n)}$ is the $n$-th derivative. In physics, $s''(t)$ is acceleration. Geometrically, $f''$ measures **curvature**: how fast the slope changes. The next lesson uses it to classify maxima and minima, and the [Taylor lesson](series-taylor.md) uses all the derivatives at once.
+$f''$ is the derivative of $f'$, and so on; $f^{(n)}$ is the $n$-th derivative.
+
+- **Physics:** $s''(t)$ is acceleration.
+- **Geometry:** $f''$ measures **curvature**, how fast the slope changes.
+
+The next lesson uses $f''$ to classify maxima and minima. The [Taylor lesson](series-taylor.md) uses all the derivatives at once.
 
 !!! ml "Where this shows up"
     - **Gradient descent** updates $\theta \leftarrow \theta - \eta f'(\theta)$: move against the slope. The linear approximation $f(\theta - \eta f') \approx f(\theta) - \eta f'(\theta)^2$ shows this decreases $f$ for small $\eta$.
@@ -191,7 +230,10 @@ $f''$ is the derivative of $f'$, and so on; $f^{(n)}$ is the $n$-th derivative. 
 **2.** Differentiate: (a) $x^2e^{3x}$ (b) $\ln(x^2 + 1)$ (c) $\sin(e^{x})$ (d) $\dfrac{x}{1 + x^2}$.
 
 ??? success "Solution"
-    (a) $2xe^{3x} + 3x^2e^{3x}$. (b) $\frac{2x}{x^2+1}$. (c) $e^x\cos(e^x)$. (d) $\frac{(1 + x^2) - x\cdot2x}{(1+x^2)^2} = \frac{1 - x^2}{(1+x^2)^2}$.
+    - **(a)** $2xe^{3x} + 3x^2e^{3x}$
+    - **(b)** $\frac{2x}{x^2+1}$
+    - **(c)** $e^x\cos(e^x)$
+    - **(d)** $\frac{(1 + x^2) - x\cdot2x}{(1+x^2)^2} = \frac{1 - x^2}{(1+x^2)^2}$
 
 **3.** Show $\frac{d}{dx}\tanh x = 1 - \tanh^2 x$.
 
@@ -211,9 +253,17 @@ $f''$ is the derivative of $f'$, and so on; $f^{(n)}$ is the $n$-th derivative. 
 **6.** A two-layer "network" computes $y = \sigma(w_2\,\sigma(w_1 x))$. Find $\frac{\partial y}{\partial w_1}$ in terms of $h = \sigma(w_1x)$ and $y$.
 
 ??? success "Solution"
-    Chain rule outward-in: $\frac{dy}{dw_1} = \sigma'(w_2h)\cdot w_2\cdot\sigma'(w_1x)\cdot x = y(1-y)\cdot w_2\cdot h(1-h)\cdot x$. Note every factor reuses forward-pass values $h$ and $y$. That is backpropagation in miniature.
+    Chain rule, outside in:
+
+    $$
+    \frac{dy}{dw_1} = \sigma'(w_2h)\cdot w_2\cdot\sigma'(w_1x)\cdot x = y(1-y)\cdot w_2\cdot h(1-h)\cdot x.
+    $$
+
+    Every factor reuses the forward-pass values $h$ and $y$. That is backpropagation in miniature.
 
 **7.** Where is $f(x) = |x^2 - 1|$ not differentiable? Why?
 
 ??? success "Solution"
-    At $x = \pm1$, where $x^2 - 1$ changes sign. At $x = 1$ the left slope is $\frac{d}{dx}(1 - x^2) = -2$ and the right slope is $+2$, so there's a corner. Similarly at $-1$.
+    At $x = \pm1$, where $x^2 - 1$ changes sign.
+
+    At $x = 1$, the left slope is $\frac{d}{dx}(1 - x^2) = -2$ and the right slope is $+2$, so there's a corner. The same happens at $-1$.

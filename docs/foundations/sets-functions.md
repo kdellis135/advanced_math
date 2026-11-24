@@ -4,11 +4,16 @@
 **Phase 1 · Lesson 2** · ⏱ ~2.5 hours · Needs: [Logic and proofs](logic-and-proofs.md)
 </div>
 
-Sets and functions are the nouns and verbs of mathematics. You already know them informally. This lesson makes them precise and introduces the notation (especially $\sum$) that every ML paper uses on page one.
+Sets and functions are the nouns and verbs of mathematics. You already know them informally.
+
+This lesson makes them precise, and introduces the notation (especially $\sum$) that every ML paper uses on page one.
 
 ## 1. Sets
 
-A **set** is an unordered collection of distinct objects, its **elements**. $x \in A$ means "$x$ is an element of $A$"; $x \notin A$ means it isn't.
+A **set** is an unordered collection of distinct objects, its **elements**.
+
+- $x \in A$ means "$x$ is an element of $A$".
+- $x \notin A$ means it isn't.
 
 Ways to describe a set:
 
@@ -27,7 +32,13 @@ The standard number sets:
 
 $\N \subset \Z \subset \Q \subset \R \subset \C$, and we proved in the last lesson that $\sqrt2 \in \R \setminus \Q$.
 
-**Intervals:** $[a, b] = \{x : a \leq x \leq b\}$ (closed), $(a, b) = \{x : a < x < b\}$ (open), and the half-open $[a, b)$ and $(a, b]$.
+**Intervals:**
+
+| Notation | Set | Name |
+|---|---|---|
+| $[a, b]$ | $\{x : a \leq x \leq b\}$ | closed |
+| $(a, b)$ | $\{x : a < x < b\}$ | open |
+| $[a, b)$, $(a, b]$ | one endpoint included | half-open |
 
 ### Operations on sets
 
@@ -47,12 +58,27 @@ $\N \subset \Z \subset \Q \subset \R \subset \C$, and we proved in the last less
 
 !!! proof "Proof"
     We show two sets are equal by showing they have the same elements:
-    $x \in (A \cup B)^c \iff \neg(x \in A \lor x \in B) \iff (x \notin A) \land (x \notin B) \iff x \in A^c \cap B^c$.
+
+    $$
+    x \in (A \cup B)^c \iff \neg(x \in A \lor x \in B) \iff (x \notin A) \land (x \notin B) \iff x \in A^c \cap B^c.
+    $$
+
     The middle step is De Morgan's law for logic. The second identity is proved the same way.
 
-Notice the pattern: **set operations are logic in disguise.** $\cup$ is "or", $\cap$ is "and", complement is "not". This is exactly the language of probability: events are sets, and $P(A \cup B)$ is the probability of "$A$ or $B$."
+Notice the pattern: **set operations are logic in disguise.**
 
-**Size:** $|A|$ is the number of elements of a finite set. $|A \times B| = |A|\cdot|B|$, and the **power set** $\mathcal P(A)$ (the set of all subsets of $A$) has $2^{|A|}$ elements, since each element is either in or out of a subset: two choices, $|A|$ times.
+| Set | Logic |
+|---|---|
+| $\cup$ | or |
+| $\cap$ | and |
+| complement | not |
+
+This is exactly the language of probability: events are sets, and $P(A \cup B)$ is the probability of "$A$ or $B$."
+
+**Size:** $|A|$ is the number of elements of a finite set.
+
+- $|A \times B| = |A|\cdot|B|$.
+- The **power set** $\mathcal P(A)$, the set of all subsets of $A$, has $2^{|A|}$ elements. Each element is either in or out of a subset: two choices, $|A|$ times.
 
 ## 2. Functions
 
@@ -60,7 +86,12 @@ Notice the pattern: **set operations are logic in disguise.** $\cup$ is "or", $\
     A **function** $f : A \to B$ assigns to *every* element $a$ of the **domain** $A$ *exactly one* element $f(a)$ of the **codomain** $B$.
     The **image** (or range) is the set of values actually hit: $f(A) = \{f(a) : a \in A\} \subseteq B$.
 
-The two key requirements: *every* input gets an output, and each input gets *only one*. A circle $x^2 + y^2 = 1$ is not the graph of a function $y = f(x)$, because $x = 0$ would need two outputs, $y = \pm 1$.
+The two key requirements:
+
+1. *Every* input gets an output.
+2. Each input gets *only one*.
+
+A circle $x^2 + y^2 = 1$ is not the graph of a function $y = f(x)$, because $x = 0$ would need two outputs, $y = \pm 1$.
 
 ### Injective, surjective, bijective
 
@@ -77,14 +108,21 @@ Examples with $f : \R \to \R$:
 - $f(x) = x^2$ is neither: $f(-1) = f(1)$ (not injective), and $-1$ is never hit (not surjective).
 - $f(x) = e^x$ is injective but not surjective onto $\R$ (it never hits $0$ or negatives). It *is* a bijection $\R \to (0, \infty)$, and that's why $\ln$ exists.
 
-So whether a function is injective or surjective depends on the domain and codomain, not just the formula. $x^2$ is a bijection from $[0, \infty)$ to $[0, \infty)$.
+So whether a function is injective or surjective depends on the domain and codomain, not just the formula.
+
+For example, $x^2$ *is* a bijection from $[0, \infty)$ to $[0, \infty)$.
 
 ### Composition and inverses
 
-The **composition** $g \circ f$ means "do $f$, then $g$": $(g \circ f)(x) = g(f(x))$. Composition is associative, $h \circ (g \circ f) = (h \circ g) \circ f$, but usually not commutative: with $f(x) = x + 1$ and $g(x) = x^2$, $g(f(x)) = (x+1)^2$ while $f(g(x)) = x^2 + 1$.
+The **composition** $g \circ f$ means "do $f$, then $g$": $(g \circ f)(x) = g(f(x))$.
+
+- Composition is **associative**: $h \circ (g \circ f) = (h \circ g) \circ f$.
+- It is usually **not commutative**. With $f(x) = x + 1$ and $g(x) = x^2$: $g(f(x)) = (x+1)^2$, while $f(g(x)) = x^2 + 1$.
 
 !!! intuition "Deep networks are compositions"
-    A neural network is $f = f_L \circ f_{L-1} \circ \cdots \circ f_1$: each layer is a function applied to the previous layer's output. Differentiating a composition is the chain rule, and the chain rule applied to this composition is backpropagation.
+    A neural network is $f = f_L \circ f_{L-1} \circ \cdots \circ f_1$: each layer is a function applied to the previous layer's output.
+
+    Differentiating a composition is the chain rule. The chain rule applied to this composition is backpropagation.
 
 !!! definition "Definition: inverse function"
     $g : B \to A$ is an **inverse** of $f : A \to B$ if $g(f(a)) = a$ for all $a \in A$ and $f(g(b)) = b$ for all $b \in B$. We write $g = f^{-1}$.
@@ -93,9 +131,15 @@ The **composition** $g \circ f$ means "do $f$, then $g$": $(g \circ f)(x) = g(f(
     $f$ has an inverse if and only if $f$ is bijective.
 
 !!! proof "Proof"
-    ($\Rightarrow$) Suppose $g$ is an inverse. *Injective:* if $f(a_1) = f(a_2)$, apply $g$: $a_1 = g(f(a_1)) = g(f(a_2)) = a_2$. *Surjective:* any $b \in B$ equals $f(g(b))$, so it is hit by $a = g(b)$.
+    **($\Rightarrow$)** Suppose $g$ is an inverse.
 
-    ($\Leftarrow$) Suppose $f$ is bijective. For each $b \in B$, surjectivity gives at least one $a$ with $f(a) = b$, and injectivity says there's only one. Define $g(b)$ to be that $a$. Then $f(g(b)) = b$ by construction, and $g(f(a)) = a$ because $a$ is the unique preimage of $f(a)$.
+    - *Injective:* if $f(a_1) = f(a_2)$, apply $g$: $a_1 = g(f(a_1)) = g(f(a_2)) = a_2$.
+    - *Surjective:* any $b \in B$ equals $f(g(b))$, so it is hit by $a = g(b)$.
+
+    **($\Leftarrow$)** Suppose $f$ is bijective. For each $b \in B$, surjectivity gives at least one $a$ with $f(a) = b$, and injectivity says there's only one. Define $g(b)$ to be that $a$.
+
+    - $f(g(b)) = b$ by construction.
+    - $g(f(a)) = a$ because $a$ is the unique preimage of $f(a)$.
 
 ## 3. Summation and product notation
 
@@ -103,7 +147,15 @@ $$
 \sum_{i=1}^{n} a_i = a_1 + a_2 + \cdots + a_n, \qquad \prod_{i=1}^{n} a_i = a_1 \cdot a_2 \cdots a_n.
 $$
 
-The index $i$ is a **dummy variable**: $\sum_{i=1}^n a_i = \sum_{k=1}^n a_k$. Read $\sum_{i=1}^n$ as a `for` loop: `total = 0; for i in 1..n: total += a[i]`.
+The index $i$ is a **dummy variable**: $\sum_{i=1}^n a_i = \sum_{k=1}^n a_k$.
+
+Read $\sum_{i=1}^n$ as a `for` loop:
+
+```python
+total = 0
+for i in range(1, n + 1):
+    total += a[i]
+```
 
 ### The rules (each is just rearranging a finite sum)
 
@@ -119,12 +171,20 @@ The index $i$ is a **dummy variable**: $\sum_{i=1}^n a_i = \sum_{k=1}^n a_k$. Re
     - $\left(\sum_i a_i\right)^2 = \sum_i \sum_j a_i a_j$, which includes cross terms $a_i a_j$ with $i \neq j$. It is not $\sum_i a_i^2$.
 
 !!! example "Example: telescoping"
-    $\displaystyle\sum_{i=1}^n \frac{1}{i(i+1)} = \sum_{i=1}^n \left(\frac1i - \frac{1}{i+1}\right) = 1 - \frac{1}{n+1}.$
-    (Partial fractions: $\frac{1}{i(i+1)} = \frac1i - \frac1{i+1}$, then everything cancels in pairs.)
+    $$
+    \sum_{i=1}^n \frac{1}{i(i+1)} = \sum_{i=1}^n \left(\frac1i - \frac{1}{i+1}\right) = 1 - \frac{1}{n+1}.
+    $$
+
+    Partial fractions give $\frac{1}{i(i+1)} = \frac1i - \frac1{i+1}$, and then everything cancels in pairs.
 
 !!! example "Example: Gauss's trick, again"
     $S = \sum_{i=1}^n i$. Write the sum forwards and backwards and add:
-    $2S = \sum_{i=1}^n \big(i + (n + 1 - i)\big) = \sum_{i=1}^n (n+1) = n(n+1)$. So $S = \frac{n(n+1)}{2}$.
+
+    $$
+    2S = \sum_{i=1}^n \big(i + (n + 1 - i)\big) = \sum_{i=1}^n (n+1) = n(n+1).
+    $$
+
+    So $S = \frac{n(n+1)}{2}$.
 
 ### Logs turn products into sums
 
@@ -134,7 +194,10 @@ $$
 \log \prod_{i=1}^n a_i = \sum_{i=1}^n \log a_i.
 $$
 
-This one identity is why ML works with **log-likelihoods**. The likelihood of $n$ independent data points is a product of $n$ probabilities, which is numerically tiny and awkward to differentiate. Its log is a sum, which is easy to handle.
+This one identity is why ML works with **log-likelihoods**:
+
+- The likelihood of $n$ independent data points is a *product* of $n$ probabilities. It is numerically tiny and awkward to differentiate.
+- Its log is a *sum*, which is easy to handle.
 
 ## 4. Notation you'll meet in ML papers
 
@@ -156,24 +219,44 @@ This one identity is why ML works with **log-likelihoods**. The likelihood of $n
     \hat\theta = \argmin_\theta \ \frac1n \sum_{i=1}^n \ell\big(f_\theta(x_i), y_i\big).
     $$
 
-    You can now read every symbol: the dataset has $n$ pairs; $f_\theta$ is the model; $\ell$ measures the error on one example; we average the errors and pick the parameters that make the average smallest.
+    You can now read every symbol:
+
+    - the dataset has $n$ pairs;
+    - $f_\theta$ is the model;
+    - $\ell$ measures the error on one example;
+    - we average the errors, and pick the parameters that make the average smallest.
 
 ## Check yourself
 
 **1.** Let $A = \{1,2,3,4\}$, $B = \{3,4,5\}$. Compute $A \cup B$, $A \cap B$, $A \setminus B$, $|A \times B|$, $|\mathcal P(B)|$.
 
 ??? success "Solution"
-    $A \cup B = \{1,2,3,4,5\}$, $A \cap B = \{3,4\}$, $A \setminus B = \{1,2\}$, $|A\times B| = 4 \cdot 3 = 12$, $|\mathcal P(B)| = 2^3 = 8$.
+    | Expression | Value |
+    |---|---|
+    | $A \cup B$ | $\{1,2,3,4,5\}$ |
+    | $A \cap B$ | $\{3,4\}$ |
+    | $A \setminus B$ | $\{1,2\}$ |
+    | $\lvert A\times B\rvert$ | $4 \cdot 3 = 12$ |
+    | $\lvert\mathcal P(B)\rvert$ | $2^3 = 8$ |
 
 **2.** Prove: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
 
 ??? success "Solution"
-    $x \in A \cap (B \cup C) \iff x \in A \land (x \in B \lor x \in C) \iff (x \in A \land x \in B) \lor (x \in A \land x \in C) \iff x \in (A\cap B) \cup (A \cap C)$. The middle step is the distributive law of "and" over "or", which you can check with a truth table.
+    $$
+    \begin{aligned}
+    x \in A \cap (B \cup C) &\iff x \in A \land (x \in B \lor x \in C) \\
+    &\iff (x \in A \land x \in B) \lor (x \in A \land x \in C) \\
+    &\iff x \in (A\cap B) \cup (A \cap C).
+    \end{aligned}
+    $$
+
+    The middle step is the distributive law of "and" over "or", which you can check with a truth table.
 
 **3.** Is $f : \R \to \R$, $f(x) = x^3 - x$ injective? Surjective?
 
 ??? success "Solution"
-    Not injective: $f(0) = f(1) = f(-1) = 0$. Surjective: yes. $f$ is continuous and $f(x) \to \pm\infty$ as $x \to \pm\infty$, so by the intermediate value theorem ([Limits](../calculus/limits.md)) it hits every real value.
+    - **Not injective:** $f(0) = f(1) = f(-1) = 0$.
+    - **Surjective: yes.** $f$ is continuous and $f(x) \to \pm\infty$ as $x \to \pm\infty$, so by the intermediate value theorem ([Limits](../calculus/limits.md)) it hits every real value.
 
 **4.** Prove that if $f : A \to B$ and $g : B \to C$ are both injective, so is $g \circ f$.
 
@@ -188,4 +271,10 @@ This one identity is why ML works with **log-likelihoods**. The likelihood of $n
 **6.** Show that $\left(\sum_{i=1}^n a_i\right)^2 = \sum_{i=1}^n a_i^2 + 2\sum_{i<j} a_i a_j$.
 
 ??? success "Solution"
-    $\left(\sum_i a_i\right)^2 = \sum_i\sum_j a_i a_j$. Split the pairs $(i, j)$ into $i = j$ (giving $\sum_i a_i^2$), $i < j$, and $i > j$. The last two groups have the same sum by symmetry ($a_i a_j = a_j a_i$), giving $2\sum_{i<j} a_i a_j$.
+    $\left(\sum_i a_i\right)^2 = \sum_i\sum_j a_i a_j$. Split the pairs $(i, j)$ into three groups:
+
+    - $i = j$, giving $\sum_i a_i^2$;
+    - $i < j$;
+    - $i > j$.
+
+    The last two groups have the same sum by symmetry ($a_i a_j = a_j a_i$), giving $2\sum_{i<j} a_i a_j$.

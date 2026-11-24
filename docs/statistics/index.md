@@ -1,8 +1,20 @@
 # Phase 6 · Statistics
 
-**Goal:** go from data back to the process that generated it. Estimate parameters (MLE, MAP, Bayesian posteriors), understand why models generalize or overfit (bias–variance, regularization), and quantify uncertainty (confidence intervals, tests).
+**Goal:** go from data back to the process that generated it.
 
-**Why it matters:** *training a model is statistical estimation.* Minimizing cross-entropy is maximum likelihood, weight decay is a Gaussian prior, and overfitting is variance. Once you see this, deep learning's design choices stop looking like arbitrary tricks.
+- **Estimate parameters:** MLE, MAP, Bayesian posteriors.
+- **Understand generalization:** why models generalize or overfit (bias–variance, regularization).
+- **Quantify uncertainty:** confidence intervals, tests.
+
+**Why it matters:** *training a model is statistical estimation.*
+
+| Deep learning practice | Statistics behind it |
+|---|---|
+| minimizing cross-entropy | maximum likelihood |
+| weight decay | a Gaussian prior |
+| overfitting | variance |
+
+Once you see this, deep learning's design choices stop looking like arbitrary tricks.
 
 **Time:** about 10–12 hours.
 

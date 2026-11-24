@@ -34,7 +34,14 @@ You don't have to do everything in order. Pick the track that matches your goal.
 === "Machine learning / deep learning"
 
     Phases **1 → 2 → 3 → 4 → 5 → 6 → 7 → 8**.
-    You may skip: complex numbers (until Phase 10), *Solving linear systems* §LU, *Multiple integrals* (on a first pass), *Confidence intervals and tests*, and *Constraints, KKT and duality* (until you meet SVMs).
+
+    You may skip:
+
+    - complex numbers (until Phase 10);
+    - *Solving linear systems* §LU;
+    - *Multiple integrals* (on a first pass);
+    - *Confidence intervals and tests*;
+    - *Constraints, KKT and duality* (until you meet SVMs).
 
 === "Algorithms / CS theory"
 

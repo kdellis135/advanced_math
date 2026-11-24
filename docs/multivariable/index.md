@@ -2,7 +2,15 @@
 
 **Goal:** extend calculus to functions of many variables, which is the setting of every ML model, since a loss is a function of millions of parameters.
 
-**The one big idea (again):** *zoom in and every smooth function looks linear.* In one variable the "linear part" is a number $f'(x)$. With many inputs it's a vector (the **gradient**); with many inputs *and* outputs it's a matrix (the **Jacobian**). The chain rule becomes matrix multiplication, and applied to a neural network it becomes **backpropagation**.
+**The one big idea (again):** *zoom in and every smooth function looks linear.* The "linear part" changes shape:
+
+| Function | Linear part |
+|---|---|
+| one input, one output | a number $f'(x)$ |
+| many inputs, one output | a vector: the **gradient** |
+| many inputs, many outputs | a matrix: the **Jacobian** |
+
+The chain rule becomes matrix multiplication. Applied to a neural network, it becomes **backpropagation**.
 
 **Time:** about 18–22 hours.
 

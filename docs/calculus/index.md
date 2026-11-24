@@ -1,8 +1,15 @@
 # Phase 2 · Calculus
 
-**Goal:** understand single-variable calculus *properly*: what a limit really is, why the derivative rules are true, why integration undoes differentiation, and how any smooth function can be approximated by polynomials.
+**Goal:** understand single-variable calculus *properly*:
 
-**The one big idea:** *zoom in far enough and every smooth curve looks like a straight line.* The derivative is the slope of that line. Nearly everything in this phase, and in Phase 4, is a consequence of taking this idea seriously.
+- what a limit really is;
+- why the derivative rules are true;
+- why integration undoes differentiation;
+- how any smooth function can be approximated by polynomials.
+
+**The one big idea:** *zoom in far enough and every smooth curve looks like a straight line.*
+
+The derivative is the slope of that line. Nearly everything in this phase, and in Phase 4, is a consequence of taking this idea seriously.
 
 **Time:** about 14–18 hours.
 

@@ -4,7 +4,11 @@
 **Phase 3 · Lesson 2** · ⏱ ~3 hours · Needs: [Vectors and the dot product](vectors.md), [Sets, functions](../foundations/sets-functions.md) (composition)
 </div>
 
-At school a matrix is a grid of numbers with a strange multiplication rule. That's the bookkeeping, not the idea. The idea: **a matrix is a function that moves vectors around, in a way that keeps straight lines straight and the origin fixed.** Once you see this, matrix multiplication stops being arbitrary: it's composition of functions.
+At school a matrix is a grid of numbers with a strange multiplication rule. That's the bookkeeping, not the idea.
+
+The idea: **a matrix is a function that moves vectors around, in a way that keeps straight lines straight and the origin fixed.**
+
+Once you see this, matrix multiplication stops being arbitrary: it's composition of functions.
 
 ## 1. Matrix times vector: two pictures
 
@@ -22,7 +26,9 @@ $$
 A\vv x = x_1\begin{pmatrix}1\\3\\5\end{pmatrix} + x_2\begin{pmatrix}2\\4\\6\end{pmatrix} = x_1\vv a_1 + x_2\vv a_2.
 $$
 
-Same numbers, different grouping. The column picture answers deep questions directly: "which outputs can $A$ produce?" is "which combinations of its columns are there?"
+Same numbers, different grouping.
+
+The column picture answers deep questions directly. "Which outputs can $A$ produce?" becomes "which combinations of its columns are there?"
 
 ## 2. Linear transformations
 
@@ -35,7 +41,10 @@ Same numbers, different grouping. The column picture answers deep questions dire
 
     Equivalently, $T$ preserves linear combinations: $T(a\vv u + b\vv v) = aT(\vv u) + bT(\vv v)$.
 
-Geometrically: grid lines stay parallel and evenly spaced, and the origin stays put. Rotations, reflections, stretches, shears and projections are linear. Translations ($\vv x \mapsto \vv x + \vv b$) are not, because they move the origin.
+Geometrically: grid lines stay parallel and evenly spaced, and the origin stays put.
+
+- **Linear:** rotations, reflections, stretches, shears and projections.
+- **Not linear:** translations $\vv x \mapsto \vv x + \vv b$, because they move the origin.
 
 Every matrix gives a linear map $\vv x \mapsto A\vv x$ (check the two conditions from the column picture). The converse is the key theorem:
 
@@ -55,7 +64,12 @@ Every matrix gives a linear map $\vv x \mapsto A\vv x$ (check the two conditions
 <div class="viz" data-viz="lintrans"></div>
 
 !!! example "Example: rotation by θ"
-    Rotation sends $\vv e_1 = (1,0)$ to $(\cos\theta, \sin\theta)$ and $\vv e_2 = (0,1)$ to $(-\sin\theta, \cos\theta)$. So
+    Rotation sends:
+
+    - $\vv e_1 = (1,0)$ to $(\cos\theta, \sin\theta)$;
+    - $\vv e_2 = (0,1)$ to $(-\sin\theta, \cos\theta)$.
+
+    So
 
     $$
     R_\theta = \begin{pmatrix}\cos\theta & -\sin\theta\\ \sin\theta & \cos\theta\end{pmatrix}.
@@ -65,21 +79,29 @@ Every matrix gives a linear map $\vv x \mapsto A\vv x$ (check the two conditions
 
 ## 3. Matrix multiplication is composition
 
-If $B$ is $m\times n$ and $A$ is $p\times m$, then "do $B$, then $A$" is a linear map $\R^n \to \R^p$. Its matrix, by the theorem above, has columns $A(B\vv e_j) = A\vv b_j$. So we **define** the product $AB$ to be that matrix:
+If $B$ is $m\times n$ and $A$ is $p\times m$, then "do $B$, then $A$" is a linear map $\R^n \to \R^p$.
+
+By the theorem above, its matrix has columns $A(B\vv e_j) = A\vv b_j$. So we **define** the product $AB$ to be that matrix:
 
 !!! definition "Definition: matrix product"
     $$
     AB = \Big(A\vv b_1\ \Big|\ A\vv b_2\ \Big|\ \cdots\ \Big|\ A\vv b_n\Big), \qquad (AB)_{ij} = \sum_{k=1}^m A_{ik}B_{kj}.
     $$
 
-    The $(i,j)$ entry is the dot product of row $i$ of $A$ with column $j$ of $B$. Sizes: $(p\times m)(m\times n) = p\times n$, and the inner dimensions must match.
+    - The $(i,j)$ entry is the dot product of row $i$ of $A$ with column $j$ of $B$.
+    - Sizes: $(p\times m)(m\times n) = p\times n$. The inner dimensions must match.
 
-So $(AB)\vv x = A(B\vv x)$ by construction, and **the strange multiplication rule is forced by wanting products to mean composition**.
+So $(AB)\vv x = A(B\vv x)$ by construction.
+
+**The strange multiplication rule is forced by wanting products to mean composition.**
 
 Consequences:
 
-- **Associative:** $(AB)C = A(BC)$. Proof: both represent "do $C$, then $B$, then $A$," and composition of functions is associative. (Checking this with index sums is a mess; the function view makes it obvious.)
-- **Not commutative:** $AB \neq BA$ in general. Rotate-then-shear differs from shear-then-rotate. Example: $A = \begin{pmatrix}0&1\\0&0\end{pmatrix}$, $B = \begin{pmatrix}0&0\\1&0\end{pmatrix}$ give $AB = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $BA = \begin{pmatrix}0&0\\0&1\end{pmatrix}$.
+- **Associative:** $(AB)C = A(BC)$.
+    - Proof: both represent "do $C$, then $B$, then $A$," and composition of functions is associative.
+    - Checking this with index sums is a mess; the function view makes it obvious.
+- **Not commutative:** $AB \neq BA$ in general. Rotate-then-shear differs from shear-then-rotate.
+    - Example: $A = \begin{pmatrix}0&1\\0&0\end{pmatrix}$, $B = \begin{pmatrix}0&0\\1&0\end{pmatrix}$ give $AB = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ but $BA = \begin{pmatrix}0&0\\0&1\end{pmatrix}$.
 - **Distributive:** $A(B + C) = AB + AC$.
 - **Identity:** $I$ (ones on the diagonal) does nothing: $AI = IA = A$.
 
@@ -95,7 +117,12 @@ Consequences:
 !!! definition "Definition: transpose"
     $A^\top$ is $A$ flipped over its diagonal: $(A^\top)_{ij} = A_{ji}$. An $m\times n$ matrix becomes $n\times m$.
 
-A vector is an $n\times1$ matrix, so $\vv u^\top\vv v$ ($1\times n$ times $n\times1$) is the dot product, while $\vv u\vv v^\top$ ($n\times1$ times $1\times n$) is an $n\times n$ matrix called the **outer product**.
+A vector is an $n\times1$ matrix, so:
+
+| Expression | Shapes | Result |
+|---|---|---|
+| $\vv u^\top\vv v$ | $(1\times n)(n\times1)$ | a number: the dot product |
+| $\vv u\vv v^\top$ | $(n\times1)(1\times n)$ | an $n\times n$ matrix: the **outer product** |
 
 !!! theorem "Theorem"
     $(AB)^\top = B^\top A^\top$.
@@ -105,7 +132,13 @@ A vector is an $n\times1$ matrix, so $\vv u^\top\vv v$ ($1\times n$ times $n\tim
 
 (Like putting on socks then shoes, and taking off shoes then socks: the order reverses.)
 
-A useful identity: $(A\vv x)\cdot\vv y = (A\vv x)^\top\vv y = \vv x^\top A^\top\vv y = \vv x\cdot(A^\top\vv y)$. **The transpose is what moves a matrix to the other side of a dot product.**
+A useful identity:
+
+$$
+(A\vv x)\cdot\vv y = (A\vv x)^\top\vv y = \vv x^\top A^\top\vv y = \vv x\cdot(A^\top\vv y).
+$$
+
+**The transpose is what moves a matrix to the other side of a dot product.**
 
 ## 5. Special matrices
 
@@ -118,8 +151,10 @@ A useful identity: $(A\vv x)\cdot\vv y = (A\vv x)^\top\vv y = \vv x^\top A^\top\
 | Projection | $P^2 = P$ | flattening onto a subspace: doing it twice = once |
 
 !!! ml "Where this shows up"
-    - **A dense neural network layer** is $\vv h = \sigma(W\vv x + \vv b)$: a linear map, a shift, then a nonlinearity. Without the nonlinearity, stacking layers would be pointless, since $W_2(W_1\vv x) = (W_2W_1)\vv x$ is a single linear map.
-    - **Batches:** stack $B$ inputs as rows of $X$ ($B\times d$). Then $XW^\top$ applies the layer to all of them in one matrix product, which is why GPUs (fast at matrix multiplication) dominate deep learning.
+    - **A dense neural network layer** is $\vv h = \sigma(W\vv x + \vv b)$: a linear map, a shift, then a nonlinearity.
+        - Without the nonlinearity, stacking layers would be pointless: $W_2(W_1\vv x) = (W_2W_1)\vv x$ is a single linear map.
+    - **Batches:** stack $B$ inputs as rows of $X$ ($B\times d$). Then $XW^\top$ applies the layer to all of them in one matrix product.
+        - That's why GPUs, which are fast at matrix multiplication, dominate deep learning.
     - **Attention** computes $QK^\top$: all query–key dot products at once.
     - **Embeddings:** looking up a token's embedding is multiplying a one-hot vector by the embedding matrix, i.e. selecting a column.
 
@@ -128,27 +163,40 @@ A useful identity: $(A\vv x)\cdot\vv y = (A\vv x)^\top\vv y = \vv x^\top A^\top\
 **1.** Compute $\begin{pmatrix}1&2\\0&1\end{pmatrix}\begin{pmatrix}3\\-1\end{pmatrix}$ with both the row and the column picture.
 
 ??? success "Solution"
-    Rows: $(3 - 2, 0 - 1) = (1, -1)$. Columns: $3\begin{pmatrix}1\\0\end{pmatrix} - 1\begin{pmatrix}2\\1\end{pmatrix} = \begin{pmatrix}1\\-1\end{pmatrix}$.
+    - **Rows:** $(3 - 2,\ 0 - 1) = (1, -1)$.
+    - **Columns:** $3\begin{pmatrix}1\\0\end{pmatrix} - 1\begin{pmatrix}2\\1\end{pmatrix} = \begin{pmatrix}1\\-1\end{pmatrix}$.
 
 **2.** Find the matrix that reflects $\R^2$ across the line $y = x$.
 
 ??? success "Solution"
-    $\vv e_1 \mapsto (0,1)$, $\vv e_2 \mapsto (1, 0)$. So $\begin{pmatrix}0&1\\1&0\end{pmatrix}$.
+    $\vv e_1 \mapsto (0,1)$ and $\vv e_2 \mapsto (1, 0)$. So the matrix is $\begin{pmatrix}0&1\\1&0\end{pmatrix}$.
 
 **3.** Show that $R_\alpha R_\beta = R_{\alpha+\beta}$ by multiplying the matrices. What identities did you just re-derive?
 
 ??? success "Solution"
-    The top-left entry is $\cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha+\beta)$; the bottom-left is $\sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha + \beta)$; the others follow similarly. Composing rotations adds angles, so the matrix product *is* the angle-addition formulas.
+    - Top-left entry: $\cos\alpha\cos\beta - \sin\alpha\sin\beta = \cos(\alpha+\beta)$.
+    - Bottom-left entry: $\sin\alpha\cos\beta + \cos\alpha\sin\beta = \sin(\alpha + \beta)$.
+    - The others follow similarly.
+
+    Composing rotations adds angles, so the matrix product *is* the angle-addition formulas.
 
 **4.** Is $T(x, y) = (x + y, 2x, xy)$ linear? What about $T(x,y) = (x+1, y)$?
 
 ??? success "Solution"
-    No in both cases. The first: $T(2\cdot(1,1)) = (4, 4, 4)$ but $2T(1,1) = (4, 4, 2)$. The second moves the origin: $T(0,0) = (1, 0) \neq (0,0)$, and every linear map sends $0$ to $0$.
+    No in both cases.
+
+    - **First:** $T(2\cdot(1,1)) = (4, 4, 4)$, but $2T(1,1) = (4, 4, 2)$.
+    - **Second:** it moves the origin. $T(0,0) = (1, 0) \neq (0,0)$, and every linear map sends $0$ to $0$.
 
 **5.** If $A$ is $3\times5$ and $B$ is $5\times2$, which of $AB$, $BA$, $A^\top B$, $B^\top A^\top$ are defined, and what are their sizes?
 
 ??? success "Solution"
-    $AB$: $3\times2$. $BA$: $(5\times2)(3\times5)$, not defined. $A^\top B$: $(5\times3)(5\times2)$, not defined. $B^\top A^\top = (AB)^\top$: $2\times3$.
+    | Product | Shapes | Result |
+    |---|---|---|
+    | $AB$ | $(3\times5)(5\times2)$ | $3\times2$ |
+    | $BA$ | $(5\times2)(3\times5)$ | not defined |
+    | $A^\top B$ | $(5\times3)(5\times2)$ | not defined |
+    | $B^\top A^\top = (AB)^\top$ | $(2\times5)(5\times3)$ | $2\times3$ |
 
 **6.** Prove that the product of two orthogonal matrices is orthogonal.
 
@@ -158,4 +206,9 @@ A useful identity: $(A\vv x)\cdot\vv y = (A\vv x)^\top\vv y = \vv x^\top A^\top\
 **7.** Show that two linear layers without activation, $W_2(W_1\vv x + \vv b_1) + \vv b_2$, equal a single layer $W\vv x + \vv b$. Find $W$ and $\vv b$.
 
 ??? success "Solution"
-    $W_2W_1\vv x + W_2\vv b_1 + \vv b_2$, so $W = W_2W_1$ and $\vv b = W_2\vv b_1 + \vv b_2$. Depth gives no extra expressive power without nonlinearities.
+    Expanding gives $W_2W_1\vv x + W_2\vv b_1 + \vv b_2$, so:
+
+    - $W = W_2W_1$
+    - $\vv b = W_2\vv b_1 + \vv b_2$
+
+    Depth gives no extra expressive power without nonlinearities.

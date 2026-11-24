@@ -1,8 +1,18 @@
 # Phase 7 · Optimization
 
-**Goal:** understand the algorithms that train models: when minimization is easy (convexity), why gradient descent converges and how fast, what SGD, momentum and Adam add, and how constraints are handled (KKT, duality).
+**Goal:** understand the algorithms that train models:
 
-**Why it matters:** "training" *is* optimization. Knowing the theory tells you why learning rates have upper limits, why ill-conditioned problems zigzag, why momentum helps, and what a convergence guarantee can and cannot promise for a non-convex network.
+- when minimization is easy (convexity);
+- why gradient descent converges, and how fast;
+- what SGD, momentum and Adam add;
+- how constraints are handled (KKT, duality).
+
+**Why it matters:** "training" *is* optimization. Knowing the theory tells you:
+
+- why learning rates have upper limits;
+- why ill-conditioned problems zigzag;
+- why momentum helps;
+- what a convergence guarantee can and cannot promise for a non-convex network.
 
 **Time:** about 10–14 hours.
 

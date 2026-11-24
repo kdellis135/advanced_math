@@ -85,4 +85,13 @@ Every symbol used on this site, with where it's introduced.
 | $\xi$ xi | $\pi$ pi | $\rho$ rho | $\sigma, \Sigma$ sigma | $\tau$ tau | $\varphi, \phi$ phi |
 | $\chi$ chi | $\psi$ psi | $\omega, \Omega$ omega | | | |
 
-Common conventions in ML papers: $\theta$ for parameters, $\eta$ for the learning rate, $\lambda$ for regularization strength (or eigenvalues), $\sigma$ for standard deviation (or the sigmoid), $\epsilon$ for noise or small constants, $\mu$ for means.
+Common conventions in ML papers:
+
+| Symbol | Usually means |
+|---|---|
+| $\theta$ | parameters |
+| $\eta$ | the learning rate |
+| $\lambda$ | regularization strength (or eigenvalues) |
+| $\sigma$ | standard deviation (or the sigmoid) |
+| $\epsilon$ | noise, or small constants |
+| $\mu$ | means |
