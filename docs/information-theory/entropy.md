@@ -1,3 +1,7 @@
+---
+description: "Shannon entropy from first principles: surprise, why entropy uses a logarithm, bounds on entropy, joint and conditional entropy, and differential entropy."
+---
+
 # Entropy
 
 <div class="lesson-meta" markdown>

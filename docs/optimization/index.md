@@ -1,3 +1,7 @@
+---
+description: "Phase 7 of a free math-for-ML course: convexity and Jensen's inequality, gradient descent convergence, SGD, momentum, Adam, KKT conditions and duality."
+---
+
 # Phase 7 · Optimization
 
 **Goal:** understand the algorithms that train models:

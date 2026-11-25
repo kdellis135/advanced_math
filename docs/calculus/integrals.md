@@ -1,3 +1,7 @@
+---
+description: "Integrals as limits of sums, the fundamental theorem of calculus with proof, substitution and integration by parts, improper integrals and integrals as averages."
+---
+
 # Integrals
 
 <div class="lesson-meta" markdown>

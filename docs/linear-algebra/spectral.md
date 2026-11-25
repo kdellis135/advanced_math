@@ -1,3 +1,7 @@
+---
+description: "The spectral theorem for symmetric matrices with proof, quadratic forms, positive definite matrices and the Rayleigh quotient as optimization with eigenvalues."
+---
+
 # Symmetric matrices and the spectral theorem
 
 <div class="lesson-meta" markdown>

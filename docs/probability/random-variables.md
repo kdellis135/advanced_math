@@ -1,3 +1,7 @@
+---
+description: "Random variables, expectation, linearity of expectation, variance, and expected loss: the quantity every machine learning model is trained to minimize."
+---
+
 # Random variables and expectation
 
 <div class="lesson-meta" markdown>

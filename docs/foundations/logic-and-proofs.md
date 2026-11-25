@@ -1,3 +1,7 @@
+---
+description: "Learn to read and write mathematical proofs: logical connectives, quantifiers, direct proof, contrapositive, contradiction, induction and proving if-and-only-if."
+---
+
 # Logic and proofs
 
 <div class="lesson-meta" markdown>

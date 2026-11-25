@@ -1,3 +1,7 @@
+---
+description: "Phase 10 of a free math course: differential equations and Fourier analysis, connecting calculus and linear algebra to physics, signals and modern ML."
+---
+
 # Phase 10 · Signals & Dynamics
 
 **Goal:** two topics that connect everything you've learned to physics, engineering and modern ML:

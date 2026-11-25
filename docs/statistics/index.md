@@ -1,3 +1,7 @@
+---
+description: "Phase 6 of a free math-for-ML course: maximum likelihood, MAP and Bayesian inference, bias–variance and regularization, confidence intervals and hypothesis tests."
+---
+
 # Phase 6 · Statistics
 
 **Goal:** go from data back to the process that generated it.

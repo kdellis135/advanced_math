@@ -1,3 +1,7 @@
+---
+description: "The bias–variance decomposition derived, underfitting vs overfitting, ridge regression as regularization, cross-validation and double descent in deep learning."
+---
+
 # Bias, variance and generalization
 
 <div class="lesson-meta" markdown>

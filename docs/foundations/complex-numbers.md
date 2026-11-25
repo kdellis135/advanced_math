@@ -1,3 +1,7 @@
+---
+description: "Complex numbers as rotations: the complex plane, polar form, Euler's formula, roots of unity and the fundamental theorem of algebra, with interactive figures."
+---
+
 # Complex numbers
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Differential equations explained: exponential growth and decay, separable and linear first-order equations, oscillations, systems via eigenvalues and Euler's method."
+---
+
 # Differential equations
 
 <div class="lesson-meta" markdown>

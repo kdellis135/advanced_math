@@ -1,3 +1,7 @@
+---
+description: "Exponentials, the number e, logarithms and trigonometry rebuilt from first principles, with why each one matters for probability, information and signals."
+---
+
 # Exponentials, logarithms and trig
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Partial derivatives and the gradient: what differentiability really means in many dimensions, directional derivatives, steepest ascent and a first look at gradient descent."
+---
+
 # Partial derivatives and the gradient
 
 <div class="lesson-meta" markdown>

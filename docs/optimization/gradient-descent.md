@@ -1,3 +1,7 @@
+---
+description: "Gradient descent explained: the descent lemma, ill-conditioning, convergence rates, stochastic gradient descent, momentum, Adam and Newton's method."
+---
+
 # Gradient descent and friends
 
 <div class="lesson-meta" markdown>

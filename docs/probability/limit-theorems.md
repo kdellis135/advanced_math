@@ -1,3 +1,7 @@
+---
+description: "Markov's and Chebyshev's inequalities, the law of large numbers, the central limit theorem and Hoeffding's inequality, with proofs and interactive simulations."
+---
+
 # Inequalities and limit theorems
 
 <div class="lesson-meta" markdown>

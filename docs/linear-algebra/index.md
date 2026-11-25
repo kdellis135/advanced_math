@@ -1,3 +1,7 @@
+---
+description: "Phase 3 of a free math-for-ML course: vectors, matrices as transformations, rank, determinants, least squares, eigenvalues, the spectral theorem, SVD and PCA."
+---
+
 # Phase 3 · Linear Algebra
 
 **Goal:** see matrices the way experts do, as **transformations of space**, and understand the decompositions (eigen, spectral, SVD) that power data science.

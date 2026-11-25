@@ -1,3 +1,7 @@
+---
+description: "The axioms of probability, conditional probability, the law of total probability, Bayes' theorem, independence and the Monty Hall problem, with worked examples."
+---
+
 # Probability, conditioning and Bayes
 
 <div class="lesson-meta" markdown>

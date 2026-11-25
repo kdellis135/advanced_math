@@ -1,3 +1,7 @@
+---
+description: "Constrained optimization: inequality constraints, the KKT conditions, Lagrangian duality, and support vector machines as a worked example."
+---
+
 # Constraints, KKT and duality
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Phase 9 of a free math course: Big-O and asymptotics, recurrences and the master theorem, graphs and graph algorithms, number theory and RSA."
+---
+
 # Phase 9 · Discrete Math & Algorithms
 
 **Goal:** the math of computation.

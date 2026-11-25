@@ -1,3 +1,7 @@
+---
+description: "Lagrange multipliers explained with the level-set picture: the method, eigenvectors as constrained optima, maximum entropy, several constraints and the meaning of λ."
+---
+
 # Lagrange multipliers
 
 <div class="lesson-meta" markdown>

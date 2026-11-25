@@ -1,3 +1,7 @@
+---
+description: "A cheat sheet of mathematical notation for machine learning: logic, sets, sums, calculus, linear algebra, probability, information theory and Greek letters."
+---
+
 # Notation cheat sheet
 
 Every symbol used on this site, with where it's introduced.

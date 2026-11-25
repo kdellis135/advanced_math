@@ -1,3 +1,7 @@
+---
+description: "Number theory for computing: divisibility, the GCD and Euclid's algorithm, modular arithmetic, Fermat's little theorem and how RSA encryption works."
+---
+
 # Number theory for computing
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Solving Ax = b: the row and column pictures, Gaussian elimination, when a system has zero, one or infinitely many solutions, LU decomposition and the inverse."
+---
+
 # Solving linear systems
 
 <div class="lesson-meta" markdown>

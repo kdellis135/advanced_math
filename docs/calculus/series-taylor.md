@@ -1,3 +1,7 @@
+---
+description: "Infinite series, power series and Taylor polynomials, with Taylor's theorem on the error, Euler's formula, and why Taylor expansions underpin optimization and ML."
+---
+
 # Series and Taylor expansions
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "The determinant as the factor by which a matrix scales volume: its defining properties, the formulas, the product rule and where determinants are really used."
+---
+
 # Determinants
 
 <div class="lesson-meta" markdown>

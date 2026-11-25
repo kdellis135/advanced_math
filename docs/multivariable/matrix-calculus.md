@@ -1,3 +1,7 @@
+---
+description: "Matrix calculus for machine learning: layout conventions, the differential method, core gradient identities, the softmax cross-entropy gradient and numerical gradient checks."
+---
+
 # Matrix calculus for ML
 
 <div class="lesson-meta" markdown>

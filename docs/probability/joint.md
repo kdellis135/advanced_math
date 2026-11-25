@@ -1,3 +1,7 @@
+---
+description: "Joint, marginal and conditional distributions, conditional expectation, covariance and correlation, the covariance matrix and the multivariate Gaussian."
+---
+
 # Several random variables
 
 <div class="lesson-meta" markdown>

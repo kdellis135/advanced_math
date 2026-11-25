@@ -1,3 +1,7 @@
+---
+description: "Fourier series and transforms as linear algebra: functions as vectors, coefficients as projections, the Fourier transform, convolution, the DFT and the FFT."
+---
+
 # Fourier series and transforms
 
 <div class="lesson-meta" markdown>

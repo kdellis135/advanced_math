@@ -1,3 +1,7 @@
+---
+description: "The full roadmap of math for machine learning: how the ten phases depend on each other, suggested tracks, every lesson in order and your saved progress."
+---
+
 # The roadmap
 
 <p class="progress-label">Your progress</p>

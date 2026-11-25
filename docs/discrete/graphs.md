@@ -1,3 +1,7 @@
+---
+description: "Graph theory for computing: trees, BFS and DFS, DAGs and topological sort, Dijkstra's shortest paths algorithm, and graphs as adjacency matrices."
+---
+
 # Graphs
 
 <div class="lesson-meta" markdown>

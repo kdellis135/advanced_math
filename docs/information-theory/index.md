@@ -1,3 +1,7 @@
+---
+description: "Phase 8 of a free math-for-ML course: entropy, cross-entropy, KL divergence, mutual information and Shannon's source coding theorem."
+---
+
 # Phase 8 · Information Theory
 
 **Goal:** measure information. Learn:

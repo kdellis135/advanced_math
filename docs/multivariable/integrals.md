@@ -1,3 +1,7 @@
+---
+description: "Double integrals, change of variables and the Jacobian determinant, the Gaussian integral, and how probability densities transform under a change of variables."
+---
+
 # Multiple integrals and change of variables
 
 <div class="lesson-meta" markdown>

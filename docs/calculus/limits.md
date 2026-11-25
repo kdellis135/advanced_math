@@ -1,3 +1,7 @@
+---
+description: "The epsilon-delta definition of a limit built up step by step, with limit laws, the squeeze theorem, sin(x)/x, limits of sequences and continuity."
+---
+
 # Limits and continuity
 
 <div class="lesson-meta" markdown>

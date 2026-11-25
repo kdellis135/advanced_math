@@ -1,3 +1,7 @@
+---
+description: "Start learning the math behind machine learning: what this free course assumes, how it is organized, and a warm-up to check you are ready for lesson one."
+---
+
 # Start Here
 
 Welcome back to math. This time it goes differently, for three reasons:

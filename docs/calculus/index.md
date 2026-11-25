@@ -1,3 +1,7 @@
+---
+description: "Phase 2 of a free math-for-ML course: limits, derivatives, the mean value theorem, integrals and Taylor series, explained properly with full proofs."
+---
+
 # Phase 2 · Calculus
 
 **Goal:** understand single-variable calculus *properly*:

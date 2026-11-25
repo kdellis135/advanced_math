@@ -1,3 +1,7 @@
+---
+description: "Subspaces, span, linear independence, basis and dimension, the four fundamental subspaces, rank–nullity and the invertible matrix theorem, explained with proofs."
+---
+
 # Vector spaces, basis, rank
 
 <div class="lesson-meta" markdown>

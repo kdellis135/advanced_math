@@ -1,3 +1,7 @@
+---
+description: "Counting for probability: the sum and product rules, permutations, combinations and binomial coefficients, stars and bars, inclusion–exclusion and the birthday problem."
+---
+
 # Counting
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Recurrences for divide-and-conquer algorithms: analyzing merge sort, the master theorem with proof, and solving linear recurrences like Fibonacci."
+---
+
 # Recurrences and divide and conquer
 
 <div class="lesson-meta" markdown>

@@ -1,3 +1,7 @@
+---
+description: "Cross-entropy, KL divergence and mutual information explained, why minimizing cross-entropy loss is maximum likelihood, forward vs reverse KL and the ELBO."
+---
+
 # Cross-entropy, KL and mutual information
 
 <div class="lesson-meta" markdown>

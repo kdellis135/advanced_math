@@ -1,3 +1,7 @@
+---
+description: "The derivative as the best linear approximation, with proofs of the product, quotient and chain rules and worked examples of derivatives used in machine learning."
+---
+
 # Derivatives
 
 <div class="lesson-meta" markdown>

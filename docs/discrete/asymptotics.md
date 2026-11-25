@@ -1,3 +1,7 @@
+---
+description: "Big-O, Big-Omega and Big-Theta defined precisely, the growth hierarchy of functions, analyzing sums and loops, and the n log n lower bound for comparison sorting."
+---
+
 # Asymptotics and Big-O
 
 <div class="lesson-meta" markdown>

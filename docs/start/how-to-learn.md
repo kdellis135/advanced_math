@@ -1,3 +1,7 @@
+---
+description: "How to self-study university math as an adult: the three-pass reading method, reading proofs actively, a confusion log, spaced review and using AI as a tutor."
+---
+
 # How to learn this without losing again
 
 You didn't struggle with university math because you can't do math. You were good at high-school math, and the skills are the same.

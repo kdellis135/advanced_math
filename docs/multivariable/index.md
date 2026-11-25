@@ -1,3 +1,7 @@
+---
+description: "Phase 4 of a free math-for-ML course: gradients, Jacobians, the chain rule and backpropagation, Hessians, matrix calculus, change of variables and Lagrange multipliers."
+---
+
 # Phase 4 · Multivariable Calculus
 
 **Goal:** extend calculus to functions of many variables, which is the setting of every ML model, since a loss is a function of millions of parameters.

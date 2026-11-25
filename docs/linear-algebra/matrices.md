@@ -1,3 +1,7 @@
+---
+description: "Matrices are linear transformations: two ways to read a matrix times a vector, why matrix multiplication is composition, the transpose and special matrices."
+---
+
 # Matrices are transformations
 
 <div class="lesson-meta" markdown>

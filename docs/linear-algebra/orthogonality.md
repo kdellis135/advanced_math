@@ -1,3 +1,7 @@
+---
+description: "Orthogonal projection onto lines and subspaces, least squares regression and the normal equations, orthonormal bases, Gram–Schmidt and the QR decomposition."
+---
+
 # Orthogonality and least squares
 
 <div class="lesson-meta" markdown>

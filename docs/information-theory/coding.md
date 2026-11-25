@@ -1,3 +1,7 @@
+---
+description: "Compression and coding: prefix-free codes, Kraft's inequality, Shannon's source coding theorem, Huffman coding and why prediction is compression."
+---
+
 # Compression and coding
 
 <div class="lesson-meta" markdown>

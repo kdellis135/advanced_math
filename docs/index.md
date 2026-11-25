@@ -1,4 +1,6 @@
 ---
+title: "Math for Machine Learning, from the Ground Up"
+description: "A free course in the math behind machine learning: calculus, linear algebra, probability, statistics, optimization and information theory, with proofs, worked examples and interactive figures."
 hide:
   - navigation
   - toc

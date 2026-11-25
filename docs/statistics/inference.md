@@ -1,3 +1,7 @@
+---
+description: "Standard errors, confidence intervals and hypothesis tests explained from first principles, with A/B testing of two proportions and the multiple comparisons trap."
+---
+
 # Confidence intervals and tests
 
 <div class="lesson-meta" markdown>

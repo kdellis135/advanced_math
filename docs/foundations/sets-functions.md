@@ -1,3 +1,7 @@
+---
+description: "Sets, functions, injections and bijections, and summation notation, made precise, plus the notation you will meet on page one of every machine learning paper."
+---
+
 # Sets, functions and notation
 
 <div class="lesson-meta" markdown>

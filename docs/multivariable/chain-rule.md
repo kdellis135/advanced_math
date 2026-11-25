@@ -1,3 +1,7 @@
+---
+description: "Jacobians and the multivariable chain rule, computational graphs, forward vs reverse mode autodiff, and backpropagation derived by hand for a neuron and a full layer."
+---
+
 # Jacobians, the chain rule and backprop
 
 <div class="lesson-meta" markdown>

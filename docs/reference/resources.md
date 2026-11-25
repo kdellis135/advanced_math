@@ -1,3 +1,7 @@
+---
+description: "The best free resources for learning the math behind machine learning: MIT OpenCourseWare courses, intuition-building videos and free textbooks, by topic."
+---
+
 # Free resources
 
 The best free material to pair with each phase. Videos are good for intuition; courses and books are for depth and many more exercises. Everything here is free to access.

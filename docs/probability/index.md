@@ -1,3 +1,7 @@
+---
+description: "Phase 5 of a free math-for-ML course: counting, conditional probability and Bayes, random variables, common distributions, covariance, the LLN and the CLT."
+---
+
 # Phase 5 · Probability
 
 **Goal:** reason precisely about uncertainty:

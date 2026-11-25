@@ -1,3 +1,7 @@
+---
+description: "Convex sets and convex functions, why every local minimum of a convex function is global, a catalogue of convex losses, and Jensen's inequality with proof."
+---
+
 # Convexity and Jensen
 
 <div class="lesson-meta" markdown>

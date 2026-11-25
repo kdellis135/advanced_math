@@ -1,3 +1,7 @@
+---
+description: "Vectors as lists and as arrows: length, the dot product and angles, the Cauchy–Schwarz and triangle inequalities, and the L1, L2 and max norms used in ML."
+---
+
 # Vectors and the dot product
 
 <div class="lesson-meta" markdown>

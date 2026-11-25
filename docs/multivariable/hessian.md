@@ -1,3 +1,7 @@
+---
+description: "The Hessian matrix and second-order Taylor expansion: classifying critical points, curvature and condition number, and Newton's method in many dimensions."
+---
+
 # The Hessian and second-order Taylor
 
 <div class="lesson-meta" markdown>

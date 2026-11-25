@@ -1,3 +1,7 @@
+---
+description: "The probability distributions that matter most: Bernoulli, binomial, geometric, Poisson, uniform, exponential and Gaussian, with means, variances and an interactive explorer."
+---
+
 # The distribution zoo
 
 <div class="lesson-meta" markdown>

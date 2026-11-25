@@ -1,3 +1,7 @@
+---
+description: "Maximum likelihood estimation and MAP: what makes an estimator good, how MLE explains squared-error and cross-entropy loss, and Bayesian inference with priors."
+---
+
 # Estimation, MLE and MAP
 
 <div class="lesson-meta" markdown>

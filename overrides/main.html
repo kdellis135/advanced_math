@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{#-
+  SEO additions on top of Material's defaults (which already emit <title>,
+  <meta name="description"> and <link rel="canonical">):
+  - Google Search Console verification (set extra.google_site_verification in mkdocs.yml)
+  - Open Graph and Twitter card tags, so shared links get a title, summary and image
+  - JSON-LD structured data: WebSite + Course on the home page,
+    LearningResource + BreadcrumbList on every other page
+-#}
+
+{% block extrahead %}
+  {%- set site_url = config.site_url | default("", true) -%}
+  {%- set description = page.meta.description if page.meta and page.meta.description else config.site_description -%}
+  {%- if page.meta and page.meta.title -%}
+    {%- set title = page.meta.title ~ " - " ~ config.site_name -%}
+  {%- elif page.title and not page.is_homepage -%}
+    {%- set title = (page.title | striptags) ~ " - " ~ config.site_name -%}
+  {%- else -%}
+    {%- set title = config.site_name -%}
+  {%- endif -%}
+  {%- set image = site_url ~ "assets/social-card.png" -%}
+  {%- set page_url = page.canonical_url | default(site_url, true) -%}
+
+  {%- if config.extra.google_site_verification %}
+  <meta name="google-site-verification" content="{{ config.extra.google_site_verification }}">
+  {%- endif %}
+
+  <meta property="og:type" content="{{ 'website' if page.is_homepage else 'article' }}">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ page_url }}">
+  <meta property="og:image" content="{{ image }}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ config.site_name }}: the math behind machine learning, rebuilt from the ground up">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ image }}">
+
+  {%- if page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": {{ (site_url ~ "#website") | tojson }},
+        "url": {{ site_url | tojson }},
+        "name": {{ config.site_name | tojson }},
+        "description": {{ config.site_description | tojson }},
+        "inLanguage": "en"
+      },
+      {
+        "@type": "Course",
+        "@id": {{ (site_url ~ "#course") | tojson }},
+        "url": {{ site_url | tojson }},
+        "name": {{ config.site_name | tojson }},
+        "description": {{ description | tojson }},
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "educationalLevel": "Undergraduate",
+        "teaches": ["Calculus", "Linear algebra", "Multivariable calculus", "Probability", "Statistics", "Optimization", "Information theory", "Discrete mathematics", "Differential equations", "Fourier analysis"],
+        "image": {{ image | tojson }}
+      }
+    ]
+  }
+  </script>
+  {%- else %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "LearningResource",
+        "url": {{ page_url | tojson }},
+        "name": {{ (page.title | striptags) | tojson }},
+        "description": {{ description | tojson }},
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "learningResourceType": "Lesson",
+        "image": {{ image | tojson }},
+        "isPartOf": { "@id": {{ (site_url ~ "#course") | tojson }} }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ site_url | tojson }} }
+          {%- set ns = namespace(pos=1) -%}
+          {%- for section in page.ancestors | reverse -%}
+            {%- set first = section.children | first -%}
+            {%- if first and first.is_page and first.is_index and first.url != page.url -%}
+              {%- set ns.pos = ns.pos + 1 -%}
+              ,
+          { "@type": "ListItem", "position": {{ ns.pos }}, "name": {{ (section.title | striptags) | tojson }}, "item": {{ first.canonical_url | tojson }} }
+            {%- endif -%}
+          {%- endfor -%}
+          ,
+          { "@type": "ListItem", "position": {{ ns.pos + 1 }}, "name": {{ (page.title | striptags) | tojson }}, "item": {{ page_url | tojson }} }
+        ]
+      }
+    ]
+  }
+  </script>
+  {%- endif %}
+{% endblock %}

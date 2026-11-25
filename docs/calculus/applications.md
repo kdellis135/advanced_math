@@ -1,3 +1,7 @@
+---
+description: "Using derivatives: finding extrema, the mean value theorem, concavity, one-dimensional least squares, L'Hôpital's rule and Newton's method, with proofs."
+---
+
 # Using derivatives
 
 <div class="lesson-meta" markdown>

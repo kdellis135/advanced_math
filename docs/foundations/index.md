@@ -1,3 +1,7 @@
+---
+description: "Phase 1 of a free math-for-ML course: logic and proofs, sets and functions, exponentials, logarithms, trigonometry and complex numbers."
+---
+
 # Phase 1 · Foundations
 
 **Goal:**

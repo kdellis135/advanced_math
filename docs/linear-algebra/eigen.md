@@ -1,3 +1,7 @@
+---
+description: "Eigenvalues and eigenvectors explained visually: the characteristic equation, diagonalization, matrix powers and dynamics, and why complex eigenvalues mean rotation."
+---
+
 # Eigenvalues and eigenvectors
 
 <div class="lesson-meta" markdown>

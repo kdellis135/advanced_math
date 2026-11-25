@@ -1,3 +1,7 @@
+---
+description: "The singular value decomposition for every matrix, where it comes from, low-rank approximation (Eckart–Young), principal component analysis (PCA) and the pseudoinverse."
+---
+
 # SVD and PCA
 
 <div class="lesson-meta" markdown>
